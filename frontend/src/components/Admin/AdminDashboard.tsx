@@ -3,7 +3,6 @@ import { api } from '../../services/api';
 import {
   Users,
   BookOpen,
-  TrendingUp,
   Activity,
   UserPlus,
   Zap,

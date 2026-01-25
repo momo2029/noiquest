@@ -41,7 +41,7 @@ export interface AuthResponse {
 }
 
 // 练习题难度
-export type Difficulty = 'easy' | 'medium' | 'hard' | 'EASY' | 'MEDIUM' | 'HARD';
+export type Difficulty = 'easy' | 'medium' | 'hard';
 
 // 题目类型
 export type QuestionType = 'CODING' | 'FILL_BLANK' | 'CODE_ORDER' | 'MULTIPLE_CHOICE' | 'MATCHING' | 'BUG_FIX';

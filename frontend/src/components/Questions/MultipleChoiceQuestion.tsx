@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Exercise, MultipleChoiceData } from '../../types';
-import { CheckCircle, Circle, Send } from 'lucide-react';
+import { CheckCircle, Send } from 'lucide-react';
 
 interface MultipleChoiceQuestionProps {
   exercise: Exercise;

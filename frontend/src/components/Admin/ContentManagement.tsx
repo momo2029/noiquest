@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { BookOpen, Layers, FileText, Users, CheckCircle, XCircle } from 'lucide-react';
+import { Layers, FileText, CheckCircle, XCircle } from 'lucide-react';
 
 interface ExerciseData {
   id: string;

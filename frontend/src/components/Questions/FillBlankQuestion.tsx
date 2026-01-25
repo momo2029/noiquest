@@ -22,17 +22,6 @@ export default function FillBlankQuestion({ exercise, onSubmit, disabled }: Fill
     onSubmit(answers);
   };
 
-  // 解析代码并替换空白处
-  const renderCode = () => {
-    let codeHtml = data.code;
-    data.blanks.forEach(blank => {
-      const placeholder = `___${blank.id}___`;
-      const inputHtml = `<span class="blank-input" data-id="${blank.id}"></span>`;
-      codeHtml = codeHtml.replace(placeholder, inputHtml);
-    });
-    return codeHtml;
-  };
-
   // 将代码分割成行并渲染
   const lines = data.code.split('\n');
 

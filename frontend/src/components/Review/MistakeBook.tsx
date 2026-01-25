@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { MistakeRecord } from '../../types';
-import { CheckCircle, ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react';
+import { CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function MistakeBook() {
   const [mistakes, setMistakes] = useState<MistakeRecord[]>([]);

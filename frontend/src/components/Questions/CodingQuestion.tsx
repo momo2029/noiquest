@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Exercise } from '../../types';
-import { Send, Play, Lightbulb } from 'lucide-react';
+import { Send, Lightbulb } from 'lucide-react';
 
 interface CodingQuestionProps {
   exercise: Exercise;

@@ -205,7 +205,7 @@ export default function DataAnalytics() {
             </div>
             <div className="space-y-3">
               {data.streakDistribution.map(stat => {
-                const total = data.streakDistribution.reduce((sum, s) => sum + stat.count, 0);
+                const total = data.streakDistribution.reduce((sum, s) => sum + s.count, 0);
                 const percent = total > 0 ? (stat.count / total) * 100 : 0;
                 return (
                   <div key={stat.range}>

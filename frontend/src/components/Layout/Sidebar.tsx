@@ -7,8 +7,7 @@ import {
   ClipboardList,
   LayoutDashboard,
   Map,
-  RefreshCw,
-  Target
+  RefreshCw
 } from 'lucide-react';
 
 interface SidebarProps {

@@ -228,11 +228,15 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
         });
 
         // 更新每日任务进度
+        const questTemplates = await prisma.dailyQuestTemplate.findMany({
+          where: { questType: 'complete_exercises' },
+          select: { id: true },
+        });
         await prisma.userDailyQuest.updateMany({
           where: {
             userId,
             date: today,
-            questType: 'complete_exercises',
+            templateId: { in: questTemplates.map(t => t.id) },
             completed: false,
           },
           data: {

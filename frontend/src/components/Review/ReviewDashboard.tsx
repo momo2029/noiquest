@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { ReviewStatus, MistakeRecord, KnowledgeMastery } from '../../types';
+import { ReviewStatus, KnowledgeMastery } from '../../types';
 import MistakeBook from './MistakeBook';
 import WeaknessChart from './WeaknessChart';
 import { RefreshCw, BookOpen, Brain, AlertTriangle, Play, TrendingUp } from 'lucide-react';

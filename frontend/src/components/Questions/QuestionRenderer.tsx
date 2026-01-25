@@ -1,4 +1,4 @@
-import { Exercise, QuestionType } from '../../types';
+import { Exercise } from '../../types';
 import FillBlankQuestion from './FillBlankQuestion';
 import CodeOrderQuestion from './CodeOrderQuestion';
 import MultipleChoiceQuestion from './MultipleChoiceQuestion';

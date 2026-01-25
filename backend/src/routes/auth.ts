@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { z } from 'zod';
 import prisma from '../config/database.js';
 import { config } from '../config/index.js';
@@ -45,6 +45,7 @@ router.post('/register', async (req, res, next) => {
     const user = await prisma.user.create({
       data: {
         username: data.username,
+        email: `${data.username}@placeholder.local`,
         password: hashedPassword,
         name: data.name,
         role: data.role || 'STUDENT',
@@ -68,7 +69,7 @@ router.post('/register', async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
       config.jwt.secret,
-      { expiresIn: config.jwt.expiresIn }
+      { expiresIn: config.jwt.expiresIn } as SignOptions
     );
 
     res.status(201).json({ user, token });
@@ -105,7 +106,7 @@ router.post('/login', async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
       config.jwt.secret,
-      { expiresIn: config.jwt.expiresIn }
+      { expiresIn: config.jwt.expiresIn } as SignOptions
     );
 
     // 返回用户信息（不包含密码）

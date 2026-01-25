@@ -3,12 +3,11 @@ import { CheckCircle, Star, Play, Lock } from 'lucide-react';
 
 interface LessonCardProps {
   lesson: Lesson;
-  index: number;
   unitUnlocked: boolean;
   onStart: () => void;
 }
 
-export default function LessonCard({ lesson, index, unitUnlocked, onStart }: LessonCardProps) {
+export default function LessonCard({ lesson, unitUnlocked, onStart }: LessonCardProps) {
   const isLocked = !unitUnlocked;
   const exerciseCount = lesson.exercises?.length || 0;
 

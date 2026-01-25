@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Heart, HeartCrack } from 'lucide-react';
+import { HeartCrack } from 'lucide-react';
 
 interface HeartLostAnimationProps {
   onComplete?: () => void;

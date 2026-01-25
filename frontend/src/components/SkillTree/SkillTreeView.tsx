@@ -3,7 +3,7 @@ import { api } from '../../services/api';
 import { SkillUnit, DailyQuest, DailyStatus } from '../../types';
 import SkillUnitNode from './SkillUnitNode';
 import LessonCard from './LessonCard';
-import { Target, Flame, Trophy, ChevronRight } from 'lucide-react';
+import { Target, Flame, Trophy } from 'lucide-react';
 
 interface SkillTreeViewProps {
   onStartLesson: (lessonId: string) => void;
@@ -191,11 +191,10 @@ export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
               <h3 className="text-white font-bold">{selectedUnit.title}</h3>
             </div>
             <div className="space-y-2">
-              {selectedUnit.lessons.map((lesson, index) => (
+              {selectedUnit.lessons.map((lesson) => (
                 <LessonCard
                   key={lesson.id}
                   lesson={lesson}
-                  index={index}
                   unitUnlocked={selectedUnit.unlocked}
                   onStart={() => onStartLesson(lesson.id)}
                 />

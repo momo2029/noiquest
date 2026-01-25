@@ -4,7 +4,7 @@ import { Exercise, LessonCompleteResult } from '../../types';
 import QuestionRenderer from '../Questions/QuestionRenderer';
 import AnswerFeedback from '../Feedback/AnswerFeedback';
 import LevelUpModal from '../Feedback/LevelUpModal';
-import { X, Heart, Zap, ChevronRight } from 'lucide-react';
+import { X, Heart, Zap } from 'lucide-react';
 
 interface LessonSessionProps {
   lessonId: string;

@@ -70,7 +70,7 @@ router.post('/chat', authenticate, async (req: AuthRequest, res: Response, next)
       throw new AppError(`AI 服务暂时不可用: ${errorText}`, 502);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { choices?: { message?: { content?: string } }[] };
     const assistantMessage = data.choices?.[0]?.message?.content || '抱歉，我没有理解你的问题。';
 
     // 保存 AI 回复
@@ -235,7 +235,7 @@ ${code}
       throw new AppError('AI 服务暂时不可用', 502);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { choices?: { message?: { content?: string } }[] };
     const explanation = data.choices?.[0]?.message?.content || '抱歉，无法解释这段代码。';
 
     res.json({ explanation });
@@ -287,7 +287,7 @@ ${errorMsg}
       throw new AppError('AI 服务暂时不可用', 502);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { choices?: { message?: { content?: string } }[] };
     const analysis = data.choices?.[0]?.message?.content || '抱歉，无法分析这个错误。';
 
     res.json({ analysis });

@@ -20,16 +20,22 @@ export default function ExerciseDetail({
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
 
-  const difficultyColors = {
+  const difficultyColors: Record<string, string> = {
     easy: 'bg-green-500',
     medium: 'bg-yellow-500',
-    hard: 'bg-red-500'
+    hard: 'bg-red-500',
+    EASY: 'bg-green-500',
+    MEDIUM: 'bg-yellow-500',
+    HARD: 'bg-red-500'
   };
 
-  const difficultyLabels = {
+  const difficultyLabels: Record<string, string> = {
     easy: '简单',
     medium: '中等',
-    hard: '困难'
+    hard: '困难',
+    EASY: '简单',
+    MEDIUM: '中等',
+    HARD: '困难'
   };
 
   return (
