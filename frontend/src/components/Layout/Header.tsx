@@ -107,7 +107,7 @@ export default function Header({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
-              <span className="text-2xl">🦉</span>
+              <span className="text-2xl">🐿️</span>
             </div>
             <span className="font-black text-white text-lg">
               NOI<span className="text-[#1cb0f6]">Quest</span>

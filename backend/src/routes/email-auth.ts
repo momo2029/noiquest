@@ -6,6 +6,7 @@ import nodemailer from 'nodemailer';
 import prisma from '../config/database.js';
 import { config } from '../config/index.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { useInviteCode } from './invite.js';
 
 const router = Router();
 
@@ -104,7 +105,7 @@ router.post('/send-code', async (req, res, next) => {
 
     // 发送邮件
     const sent = await sendEmail(email, code);
-    
+
     if (sent) {
       res.json({ message: '验证码已发送到你的邮箱' });
     } else {
@@ -112,7 +113,7 @@ router.post('/send-code', async (req, res, next) => {
       // 在开发模式下返回验证码，方便测试
       if (config.nodeEnv === 'development') {
         console.log(`[开发模式] 验证码: ${code} (邮箱: ${email})`);
-        res.json({ 
+        res.json({
           message: '邮件发送失败，但验证码已生成（开发模式）',
           code: code // 开发模式下返回验证码
         });
@@ -135,12 +136,26 @@ const registerSchema = z.object({
   password: z.string().min(6, '密码至少6位'),
   name: z.string().min(1, '姓名不能为空').max(50),
   role: z.enum(['STUDENT', 'TEACHER']).optional(),
+  inviteCode: z.string().min(1, '邀请码不能为空').optional(),
 });
 
 // 邮箱注册
 router.post('/register', async (req, res, next) => {
   try {
-    const { email, code, password, name, role } = registerSchema.parse(req.body);
+    const { email, code, password, name, role, inviteCode } = registerSchema.parse(req.body);
+
+    // 检查是否需要邀请码
+    if (config.invite.required) {
+      if (!inviteCode) {
+        throw new AppError('注册需要邀请码', 400);
+      }
+
+      // 验证邀请码
+      const inviteResult = await useInviteCode(inviteCode);
+      if (!inviteResult.valid) {
+        throw new AppError(inviteResult.error || '邀请码无效', 400);
+      }
+    }
 
     // 验证验证码
     const verification = await prisma.verificationCode.findFirst({
@@ -179,6 +194,7 @@ router.post('/register', async (req, res, next) => {
         password: hashedPassword,
         name,
         role: role || 'STUDENT',
+        inviteCode: inviteCode?.toUpperCase(),
       },
       select: {
         id: true,
@@ -275,6 +291,13 @@ router.post('/login', async (req, res, next) => {
     }
     next(error);
   }
+});
+
+// 获取注册配置（是否需要邀请码）
+router.get('/config', async (_req, res) => {
+  res.json({
+    inviteRequired: config.invite.required,
+  });
 });
 
 export default router;

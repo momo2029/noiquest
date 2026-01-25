@@ -62,7 +62,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
         {/* Logo */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl mb-3 shadow-lg shadow-green-500/30">
-            <span className="text-3xl">🦉</span>
+            <span className="text-3xl">🐿️</span>
           </div>
           <h1 className="text-2xl font-black text-white mb-1">
             NOI<span className="text-[#58cc02]">Quest</span>

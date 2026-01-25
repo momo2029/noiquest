@@ -18,6 +18,7 @@ import SkillTreeView from './components/SkillTree/SkillTreeView';
 import LessonSession from './components/SkillTree/LessonSession';
 import ReviewDashboard from './components/Review/ReviewDashboard';
 import ReviewSession from './components/Review/ReviewSession';
+import AdminLayout from './components/Admin/AdminLayout';
 import { UserRole, Exercise, Student, Assignment, AppSettings, CodeFile, LessonCompleteResult, ReviewCompleteResult } from './types';
 import { exercises } from './data/exercises';
 import {
@@ -75,7 +76,7 @@ function MainApp() {
   const [executionTime, setExecutionTime] = useState<number | null>(null);
 
   // 视图状态 - 根据用户角色设置默认视图
-  const userRole: UserRole = user?.role === 'TEACHER' ? 'teacher' : 'student';
+  const userRole: UserRole = user?.role === 'TEACHER' ? 'teacher' : user?.role === 'ADMIN' ? 'admin' : 'student';
   const [currentView, setCurrentView] = useState<string>(
     userRole === 'student' ? 'skill-tree' : 'dashboard'
   );
@@ -454,7 +455,7 @@ int main() {
       <div className="h-screen flex items-center justify-center bg-[#131f24]">
         <div className="text-center">
           <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-4 mx-auto animate-pulse">
-            <span className="text-3xl">🦉</span>
+            <span className="text-3xl">🐿️</span>
           </div>
           <p className="text-white">加载中...</p>
         </div>
@@ -474,6 +475,16 @@ int main() {
     return (
       <EmailRegister
         onBack={() => setAuthView('login')}
+      />
+    );
+  }
+
+  // 管理员显示管理后台
+  if (user?.role === 'ADMIN') {
+    return (
+      <AdminLayout
+        userName={user.name}
+        onLogout={logout}
       />
     );
   }

@@ -31,7 +31,7 @@ rsync -avz --progress \
 
 # 重新构建并启动服务
 echo "[2/2] 重启服务..."
-ssh $SERVER "cd $REMOTE_DIR/deploy && docker-compose up -d --build"
+ssh $SERVER "cd $REMOTE_DIR/deploy && docker-compose down && docker-compose up -d --build"
 
 echo ""
 echo "=========================================="

@@ -39,7 +39,7 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-3xl mb-4 shadow-lg shadow-green-500/30">
-            <span className="text-4xl">🦉</span>
+            <span className="text-4xl">🐿️</span>
           </div>
           <h1 className="text-3xl font-black text-white mb-2">
             NOI<span className="text-[#58cc02]">Quest</span>

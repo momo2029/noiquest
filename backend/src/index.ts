@@ -19,8 +19,12 @@ import { questionsRouter } from './routes/questions.js';
 import { dailyRouter } from './routes/daily.js';
 import { reviewRouter } from './routes/review.js';
 import { adminRouter } from './routes/admin.js';
+import { inviteRouter } from './routes/invite.js';
 
 const app = express();
+
+// 信任代理（用于处理 X-Forwarded-For 头部）
+app.set('trust proxy', true);
 
 // 安全中间件
 app.use(helmet());
@@ -65,6 +69,7 @@ app.use('/api/questions', questionsRouter);
 app.use('/api/daily', dailyRouter);
 app.use('/api/review', reviewRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/invite', inviteRouter);
 
 // 错误处理
 app.use(errorHandler);

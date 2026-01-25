@@ -4,6 +4,7 @@ import { Exercise, LessonCompleteResult } from '../../types';
 import QuestionRenderer from '../Questions/QuestionRenderer';
 import AnswerFeedback from '../Feedback/AnswerFeedback';
 import LevelUpModal from '../Feedback/LevelUpModal';
+import AIHintModal from '../Feedback/AIHintModal';
 import { X, Heart, Zap } from 'lucide-react';
 
 interface LessonSessionProps {
@@ -21,8 +22,11 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
   const [loading, setLoading] = useState(true);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackData, setFeedbackData] = useState<{ correct: boolean; feedback: string; xp: number } | null>(null);
+  const [lastAnswerCorrect, setLastAnswerCorrect] = useState(false);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [lessonTitle, setLessonTitle] = useState('');
+  const [currentQuestionMistakes, setCurrentQuestionMistakes] = useState(0);
+  const [showAIHint, setShowAIHint] = useState(false);
 
   useEffect(() => {
     startLesson();
@@ -53,12 +57,15 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
         xp: result.xpEarned,
       });
       setShowFeedback(true);
+      setLastAnswerCorrect(result.correct);
 
       if (result.correct) {
         setXpEarned(prev => prev + result.xpEarned);
+        setCurrentQuestionMistakes(0); // 答对后重置当前题目错误次数
       } else {
         setMistakes(prev => prev + 1);
         setHearts(prev => Math.max(0, prev - 1));
+        setCurrentQuestionMistakes(prev => prev + 1); // 增加当前题目错误次数
       }
     } catch (error) {
       console.error('Failed to submit answer:', error);
@@ -66,14 +73,20 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
   };
 
   const handleContinue = async () => {
-    setShowFeedback(false);
-    setFeedbackData(null);
+    // 如果答错了，只关闭反馈，让用户重试当前题目
+    if (!lastAnswerCorrect) {
+      setShowFeedback(false);
+      setFeedbackData(null);
 
-    // 检查是否用完生命值
-    if (hearts <= 0) {
-      onExit();
+      // 检查是否用完生命值
+      if (hearts <= 0) {
+        onExit();
+      }
       return;
     }
+
+    setShowFeedback(false);
+    setFeedbackData(null);
 
     // 检查是否完成所有题目
     if (currentIndex >= exercises.length - 1) {
@@ -86,6 +99,7 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
       }
     } else {
       setCurrentIndex(prev => prev + 1);
+      setCurrentQuestionMistakes(0); // 切换到下一题时重置错误次数
     }
   };
 
@@ -163,6 +177,16 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
           feedback={feedbackData.feedback}
           xpEarned={feedbackData.xp}
           onContinue={handleContinue}
+          showAIHintButton={!feedbackData.correct && currentQuestionMistakes >= 2}
+          onAIHint={() => setShowAIHint(true)}
+        />
+      )}
+
+      {/* AI 提示弹窗 */}
+      {showAIHint && currentExercise && (
+        <AIHintModal
+          exercise={currentExercise}
+          onClose={() => setShowAIHint(false)}
         />
       )}
 

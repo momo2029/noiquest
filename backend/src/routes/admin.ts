@@ -483,4 +483,121 @@ router.post('/announcements', async (req: AuthRequest, res: Response, next) => {
   }
 });
 
+// ==================== 班级管理 ====================
+
+// 获取班级列表
+router.get('/classes', async (_req: AuthRequest, res: Response, next) => {
+  try {
+    const classes = await prisma.class.findMany({
+      include: {
+        _count: { select: { students: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.json({
+      classes: classes.map(c => ({
+        id: c.id,
+        name: c.name,
+        description: c.description,
+        teacherId: c.teacherId,
+        createdAt: c.createdAt,
+        _count: { students: c._count.students },
+      })),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 获取班级学生列表
+router.get('/classes/:classId/students', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { classId } = req.params;
+
+    const students = await prisma.user.findMany({
+      where: { classId },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        name: true,
+        level: true,
+        xp: true,
+        totalXp: true,
+        streak: true,
+        createdAt: true,
+      },
+      orderBy: { totalXp: 'desc' },
+    });
+
+    res.json({ students });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 创建班级
+router.post('/classes', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { name, description } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ error: '班级名称不能为空' });
+    }
+
+    const newClass = await prisma.class.create({
+      data: {
+        name,
+        description,
+        teacherId: req.user!.id, // 创建者作为班级教师
+      },
+    });
+
+    res.status(201).json(newClass);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 更新班级
+router.patch('/classes/:classId', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { classId } = req.params;
+    const { name, description } = req.body;
+
+    const updatedClass = await prisma.class.update({
+      where: { id: classId },
+      data: {
+        ...(name && { name }),
+        ...(description !== undefined && { description }),
+      },
+    });
+
+    res.json(updatedClass);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 删除班级
+router.delete('/classes/:classId', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { classId } = req.params;
+
+    // 先将班级内的学生移出班级
+    await prisma.user.updateMany({
+      where: { classId },
+      data: { classId: null },
+    });
+
+    // 删除班级
+    await prisma.class.delete({ where: { id: classId } });
+
+    res.json({ message: '班级已删除' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export { router as adminRouter };

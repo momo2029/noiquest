@@ -1,5 +1,14 @@
 import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
+
+// 根据 NODE_ENV 加载对应的环境文件
+const envFile = process.env.NODE_ENV === 'production'
+  ? '.env.production'
+  : '.env.development';
+
+// 先尝试加载环境特定文件，再加载默认 .env
+dotenv.config({ path: path.resolve(process.cwd(), envFile) });
+dotenv.config(); // 加载 .env 作为后备
 
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
@@ -14,6 +23,16 @@ export const config = {
     apiKey: process.env.DOUBAO_API_KEY || '',
     apiUrl: process.env.DOUBAO_API_URL || 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
     model: process.env.DOUBAO_MODEL || 'ep-20250106161733-w2w9w',
+  },
+
+  // AI 调用限制
+  ai: {
+    dailyLimit: parseInt(process.env.AI_DAILY_LIMIT || '100', 10),  // 每日调用次数限制
+  },
+
+  // 邀请码配置
+  invite: {
+    required: process.env.INVITE_REQUIRED !== 'false',  // 是否需要邀请码注册，默认需要
   },
 
   cors: {

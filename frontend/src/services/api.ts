@@ -172,6 +172,12 @@ class ApiService {
     return this.request<{ hints: string[] }>(`/questions/${exerciseId}/hint`);
   }
 
+  async getAIHint(exerciseId: string): Promise<{ hint: string }> {
+    return this.request<{ hint: string }>(`/ai/hint/${exerciseId}`, {
+      method: 'POST',
+    });
+  }
+
   // ==================== 每日目标 API ====================
 
   async getDailyStatus(): Promise<DailyStatus> {
@@ -331,6 +337,69 @@ class ApiService {
     return this.request('/admin/settings', {
       method: 'PUT',
       body: JSON.stringify(settings),
+    });
+  }
+
+  // ==================== 班级管理 API ====================
+
+  async getAdminClasses(): Promise<any> {
+    return this.request('/admin/classes');
+  }
+
+  async getAdminClassStudents(classId: string): Promise<any> {
+    return this.request(`/admin/classes/${classId}/students`);
+  }
+
+  async createAdminClass(data: { name: string; description?: string }): Promise<any> {
+    return this.request('/admin/classes', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateAdminClass(classId: string, data: { name?: string; description?: string }): Promise<any> {
+    return this.request(`/admin/classes/${classId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteAdminClass(classId: string): Promise<any> {
+    return this.request(`/admin/classes/${classId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // ==================== 邀请码 API ====================
+
+  async getInviteCodes(params?: { used?: boolean }): Promise<any> {
+    const query = new URLSearchParams();
+    if (params?.used !== undefined) query.set('used', String(params.used));
+    return this.request(`/invite?${query.toString()}`);
+  }
+
+  async generateInviteCodes(data: {
+    count: number;
+    type: string;
+    maxUses: number;
+    expiresInDays?: number;
+    note?: string;
+  }): Promise<any> {
+    return this.request('/invite/generate', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteInviteCode(id: string): Promise<any> {
+    return this.request(`/invite/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async deleteExpiredInviteCodes(): Promise<any> {
+    return this.request('/invite/expired/batch', {
+      method: 'DELETE',
     });
   }
 }

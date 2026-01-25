@@ -1,5 +1,5 @@
 // 用户角色
-export type UserRole = 'student' | 'teacher';
+export type UserRole = 'student' | 'teacher' | 'admin';
 
 // 认证相关
 export interface LoginRequest {
@@ -182,7 +182,6 @@ export interface AIMessage {
 
 // 应用设置
 export interface AppSettings {
-  apiKey: string;
   role: UserRole;
   currentStudentId?: string;
   theme: 'dark' | 'light';

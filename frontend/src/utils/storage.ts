@@ -7,12 +7,8 @@ const STORAGE_KEYS = {
   CURRENT_CODE: 'cplus_current_code',
 };
 
-// 默认 API Key（系统预配置）
-const DEFAULT_API_KEY = '59a1214d-18e9-4627-8141-6c5dc830c6e2';
-
 // 默认设置
 const DEFAULT_SETTINGS: AppSettings = {
-  apiKey: DEFAULT_API_KEY,
   role: 'student',
   theme: 'dark',
   fontSize: 16,
@@ -45,7 +41,7 @@ export function getSettings(): AppSettings {
   const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
   if (data) {
     const settings = JSON.parse(data);
-    return { ...DEFAULT_SETTINGS, ...settings, apiKey: settings.apiKey || DEFAULT_API_KEY };
+    return { ...DEFAULT_SETTINGS, ...settings };
   }
   return DEFAULT_SETTINGS;
 }
