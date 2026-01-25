@@ -1,0 +1,330 @@
+import { Router, Response } from 'express';
+import prisma from '../config/database.js';
+import { authenticate, AuthRequest } from '../middleware/auth.js';
+
+const router = Router();
+
+// 获取题目（含类型数据）
+router.get('/:exerciseId', authenticate, async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { exerciseId } = req.params;
+
+    const exercise = await prisma.exercise.findUnique({
+      where: { id: exerciseId },
+      include: {
+        unit: {
+          select: { id: true, title: true, icon: true },
+        },
+        lesson: {
+          select: { id: true, title: true },
+        },
+      },
+    });
+
+    if (!exercise) {
+      return res.status(404).json({ error: '题目不存在' });
+    }
+
+    // 获取用户进度
+    const userId = req.user!.id;
+    const progress = await prisma.exerciseProgress.findUnique({
+      where: { userId_exerciseId: { userId, exerciseId } },
+    });
+
+    res.json({
+      ...exercise,
+      userProgress: progress ? {
+        completed: progress.completed,
+        code: progress.code,
+        completedAt: progress.completedAt,
+      } : null,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 提交答案
+router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { exerciseId } = req.params;
+    const { answer, lessonId } = req.body;
+    const userId = req.user!.id;
+
+    const exercise = await prisma.exercise.findUnique({
+      where: { id: exerciseId },
+    });
+
+    if (!exercise) {
+      return res.status(404).json({ error: '题目不存在' });
+    }
+
+    let isCorrect = false;
+    let feedback = '';
+    let correctAnswer: any = null;
+
+    // 根据题型验证答案
+    switch (exercise.type) {
+      case 'FILL_BLANK': {
+        const questionData = exercise.questionData as any;
+        const blanks = questionData?.blanks || [];
+        const userAnswers = answer as Record<string, string>;
+
+        let allCorrect = true;
+        const blankResults: Record<string, { correct: boolean; expected: string }> = {};
+
+        for (const blank of blanks) {
+          const userAnswer = userAnswers[blank.id]?.trim();
+          const alternatives = blank.alternatives || [blank.answer];
+          const correct = alternatives.some((alt: string) =>
+            alt.toLowerCase() === userAnswer?.toLowerCase()
+          );
+
+          blankResults[blank.id] = {
+            correct,
+            expected: blank.answer,
+          };
+
+          if (!correct) allCorrect = false;
+        }
+
+        isCorrect = allCorrect;
+        correctAnswer = blankResults;
+        feedback = isCorrect ? '所有填空都正确！' : '部分填空不正确，请检查。';
+        break;
+      }
+
+      case 'CODE_ORDER': {
+        const questionData = exercise.questionData as any;
+        const correctOrder = questionData?.lines?.map((l: any) => l.id).sort((a: string, b: string) => {
+          const lineA = questionData.lines.find((l: any) => l.id === a);
+          const lineB = questionData.lines.find((l: any) => l.id === b);
+          return lineA.order - lineB.order;
+        });
+
+        const userOrder = answer as string[];
+        isCorrect = JSON.stringify(correctOrder) === JSON.stringify(userOrder);
+        correctAnswer = correctOrder;
+        feedback = isCorrect ? '代码顺序正确！' : '代码顺序不正确，请重新排列。';
+        break;
+      }
+
+      case 'MULTIPLE_CHOICE': {
+        const questionData = exercise.questionData as any;
+        const correctOption = questionData?.options?.find((o: any) => o.correct);
+        isCorrect = answer === correctOption?.id;
+        correctAnswer = correctOption?.id;
+        feedback = isCorrect
+          ? '回答正确！'
+          : `回答错误。${questionData?.explanation || ''}`;
+        break;
+      }
+
+      case 'MATCHING': {
+        const questionData = exercise.questionData as any;
+        const correctPairs = questionData?.pairs || [];
+        const userPairs = answer as [string, string][];
+
+        // 检查每个配对是否正确
+        let allCorrect = true;
+        for (const [left, right] of userPairs) {
+          const isMatch = correctPairs.some(
+            (pair: [string, string]) => pair[0] === left && pair[1] === right
+          );
+          if (!isMatch) {
+            allCorrect = false;
+            break;
+          }
+        }
+
+        isCorrect = allCorrect && userPairs.length === correctPairs.length;
+        correctAnswer = correctPairs;
+        feedback = isCorrect ? '配对全部正确！' : '部分配对不正确，请重试。';
+        break;
+      }
+
+      case 'BUG_FIX': {
+        const questionData = exercise.questionData as any;
+        const bugs = questionData?.bugs || [];
+        const userFixes = answer as Record<number, string>;
+
+        let allCorrect = true;
+        const bugResults: Record<number, { correct: boolean; expected: string }> = {};
+
+        for (const bug of bugs) {
+          const userFix = userFixes[bug.line]?.trim();
+          const correct = userFix === bug.fix.trim();
+
+          bugResults[bug.line] = {
+            correct,
+            expected: bug.fix,
+          };
+
+          if (!correct) allCorrect = false;
+        }
+
+        isCorrect = allCorrect;
+        correctAnswer = bugResults;
+        feedback = isCorrect ? '所有错误都修复正确！' : '部分修复不正确，请检查。';
+        break;
+      }
+
+      case 'CODING':
+      default: {
+        // 编程题需要通过代码执行来验证，这里只保存代码
+        isCorrect = true; // 假设提交即完成
+        feedback = '代码已提交';
+        break;
+      }
+    }
+
+    // 更新练习进度
+    if (isCorrect) {
+      const existingProgress = await prisma.exerciseProgress.findUnique({
+        where: { userId_exerciseId: { userId, exerciseId } },
+      });
+
+      const isFirstCompletion = !existingProgress?.completed;
+
+      await prisma.exerciseProgress.upsert({
+        where: { userId_exerciseId: { userId, exerciseId } },
+        update: {
+          completed: true,
+          completedAt: new Date(),
+          code: typeof answer === 'string' ? answer : JSON.stringify(answer),
+        },
+        create: {
+          userId,
+          exerciseId,
+          completed: true,
+          completedAt: new Date(),
+          code: typeof answer === 'string' ? answer : JSON.stringify(answer),
+        },
+      });
+
+      // 首次完成给予 XP
+      if (isFirstCompletion) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: {
+            xp: { increment: exercise.xp },
+            totalXp: { increment: exercise.xp },
+          },
+        });
+
+        // 更新每日 XP 记录
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        await prisma.dailyXpRecord.upsert({
+          where: { userId_date: { userId, date: today } },
+          update: { xpEarned: { increment: exercise.xp } },
+          create: {
+            userId,
+            date: today,
+            xpEarned: exercise.xp,
+            goalMet: false,
+          },
+        });
+
+        // 更新每日任务进度
+        await prisma.userDailyQuest.updateMany({
+          where: {
+            userId,
+            date: today,
+            questType: 'complete_exercises',
+            completed: false,
+          },
+          data: {
+            currentValue: { increment: 1 },
+          },
+        });
+      }
+    } else {
+      // 记录错题
+      await prisma.mistakeRecord.upsert({
+        where: { userId_exerciseId: { userId, exerciseId } },
+        update: {
+          userAnswer: answer,
+          correctAnswer,
+          mistakeCount: { increment: 1 },
+          reviewed: false,
+        },
+        create: {
+          userId,
+          exerciseId,
+          userAnswer: answer,
+          correctAnswer,
+          mistakeCount: 1,
+          reviewed: false,
+        },
+      });
+
+      // 更新课程错误计数
+      if (lessonId) {
+        await prisma.userLessonProgress.updateMany({
+          where: { userId, lessonId },
+          data: { mistakes: { increment: 1 } },
+        });
+      }
+    }
+
+    res.json({
+      correct: isCorrect,
+      feedback,
+      correctAnswer: isCorrect ? null : correctAnswer,
+      xpEarned: isCorrect ? exercise.xp : 0,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 获取提示
+router.get('/:exerciseId/hint', authenticate, async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { exerciseId } = req.params;
+
+    const exercise = await prisma.exercise.findUnique({
+      where: { id: exerciseId },
+      select: {
+        hint: true,
+        type: true,
+        questionData: true,
+      },
+    });
+
+    if (!exercise) {
+      return res.status(404).json({ error: '题目不存在' });
+    }
+
+    let hints: string[] = [];
+
+    if (exercise.hint) {
+      hints.push(exercise.hint);
+    }
+
+    // 根据题型提供额外提示
+    const questionData = exercise.questionData as any;
+    if (questionData) {
+      switch (exercise.type) {
+        case 'FILL_BLANK':
+          questionData.blanks?.forEach((blank: any) => {
+            if (blank.hint) hints.push(`填空 ${blank.id}: ${blank.hint}`);
+          });
+          break;
+        case 'BUG_FIX':
+          questionData.bugs?.forEach((bug: any) => {
+            if (bug.hint) hints.push(`第 ${bug.line} 行: ${bug.hint}`);
+          });
+          break;
+      }
+    }
+
+    res.json({ hints });
+  } catch (error) {
+    next(error);
+  }
+});
+
+export { router as questionsRouter };

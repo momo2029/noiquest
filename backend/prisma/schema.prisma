@@ -1,0 +1,509 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户角色枚举
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+// 难度枚举
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+// 题目类型枚举
+enum QuestionType {
+  CODING          // 编程题（现有）
+  FILL_BLANK      // 代码填空题
+  CODE_ORDER      // 代码排序题
+  MULTIPLE_CHOICE // 选择题
+  MATCHING        // 配对题
+  BUG_FIX         // 改错题
+}
+
+// 每日目标等级枚举
+enum DailyGoalLevel {
+  CASUAL     // 10 XP
+  REGULAR    // 20 XP
+  SERIOUS    // 30 XP
+  INTENSE    // 50 XP
+}
+
+// 用户表
+model User {
+  id            String   @id @default(uuid())
+  username      String   @unique
+  email         String   @unique
+  password      String
+  name          String
+  avatar        String   @default("🦊")
+  role          Role     @default(STUDENT)
+
+  // 游戏化数据
+  level         Int      @default(1)
+  xp            Int      @default(0)
+  totalXp       Int      @default(0)
+  streak        Int      @default(0)
+  lastStudyDate DateTime?
+  hearts        Int      @default(5)
+  gems          Int      @default(0)
+
+  // 班级信息
+  classId       String?
+  class         Class?   @relation(fields: [classId], references: [id])
+
+  // 关联
+  progress      ExerciseProgress[]
+  achievements  UserAchievement[]
+  submissions   Submission[]
+  assignedHomework StudentHomework[]
+  chatMessages  ChatMessage[]
+
+  // 教师创建的作业
+  createdHomework Homework[] @relation("TeacherHomework")
+
+  // 多邻国模式关联
+  unitProgress    UserUnitProgress[]
+  lessonProgress  UserLessonProgress[]
+  dailySettings   UserDailySettings?
+  dailyQuests     UserDailyQuest[]
+  dailyXpRecords  DailyXpRecord[]
+  knowledgeMastery KnowledgeMastery[]
+  mistakeRecords  MistakeRecord[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([classId])
+  @@index([role])
+  @@index([username])
+}
+
+// 班级表
+model Class {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  teacherId   String
+
+  students    User[]
+  homework    Homework[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([teacherId])
+}
+
+// 练习题表
+model Exercise {
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  difficulty  Difficulty
+  category    String
+  starterCode String
+  hint        String?
+  solution    String?
+  xp          Int          @default(10)
+  orderIndex  Int          @default(0)
+
+  // 多邻国模式新增字段
+  type         QuestionType @default(CODING)
+  questionData Json?        // 存储不同题型的具体数据
+  unitId       String?
+  lessonId     String?
+
+  // 关联
+  progress    ExerciseProgress[]
+  submissions Submission[]
+  homeworkExercises HomeworkExercise[]
+  unit        SkillUnit?   @relation(fields: [unitId], references: [id])
+  lesson      Lesson?      @relation(fields: [lessonId], references: [id])
+  mistakeRecords MistakeRecord[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([category])
+  @@index([difficulty])
+  @@index([unitId])
+  @@index([lessonId])
+  @@index([type])
+}
+
+// 练习进度表
+model ExerciseProgress {
+  id          String   @id @default(uuid())
+  userId      String
+  exerciseId  String
+  completed   Boolean  @default(false)
+  code        String?
+  completedAt DateTime?
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, exerciseId])
+  @@index([userId])
+  @@index([exerciseId])
+}
+
+// 代码提交记录
+model Submission {
+  id          String   @id @default(uuid())
+  userId      String
+  exerciseId  String
+  code        String
+  status      String   @default("pending") // pending, success, error
+  output      String?
+  errorMsg    String?
+  executionTime Int?   // 毫秒
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([exerciseId])
+  @@index([createdAt])
+}
+
+// 成就表
+model Achievement {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  title       String
+  description String
+  icon        String
+  condition   String
+  xpReward    Int      @default(0)
+
+  users       UserAchievement[]
+
+  createdAt   DateTime @default(now())
+}
+
+// 用户成就关联表
+model UserAchievement {
+  id            String   @id @default(uuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+// 作业表
+model Homework {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  classId     String
+  teacherId   String
+  dueDate     DateTime?
+
+  class       Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher     User     @relation("TeacherHomework", fields: [teacherId], references: [id])
+  exercises   HomeworkExercise[]
+  students    StudentHomework[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([classId])
+  @@index([teacherId])
+}
+
+// 作业-练习关联表
+model HomeworkExercise {
+  id          String   @id @default(uuid())
+  homeworkId  String
+  exerciseId  String
+  orderIndex  Int      @default(0)
+
+  homework    Homework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@unique([homeworkId, exerciseId])
+}
+
+// 学生作业状态表
+model StudentHomework {
+  id          String   @id @default(uuid())
+  studentId   String
+  homeworkId  String
+  status      String   @default("pending") // pending, in_progress, completed
+  submittedAt DateTime?
+  score       Int?
+  feedback    String?
+
+  student     User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  homework    Homework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, homeworkId])
+  @@index([studentId])
+  @@index([homeworkId])
+}
+
+// AI 聊天消息表
+model ChatMessage {
+  id          String   @id @default(uuid())
+  userId      String
+  sessionId   String
+  role        String   // user, assistant
+  content     String
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([createdAt])
+}
+
+// 验证码表
+model VerificationCode {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
+  @@index([used])
+}
+
+// 系统配置表
+model SystemConfig {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+
+  updatedAt DateTime @updatedAt
+}
+
+// ==================== 多邻国模式新增模型 ====================
+
+// 技能单元
+model SkillUnit {
+  id             String   @id @default(uuid())
+  title          String
+  description    String
+  icon           String   @default("📚")
+  color          String   @default("from-blue-400 to-blue-600")
+  orderIndex     Int      @default(0)
+  requiredXp     Int      @default(0)
+  prerequisiteId String?
+
+  prerequisite   SkillUnit?  @relation("UnitPrerequisite", fields: [prerequisiteId], references: [id])
+  dependents     SkillUnit[] @relation("UnitPrerequisite")
+  lessons        Lesson[]
+  exercises      Exercise[]
+  userProgress   UserUnitProgress[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([orderIndex])
+  @@index([prerequisiteId])
+}
+
+// 课程
+model Lesson {
+  id           String     @id @default(uuid())
+  title        String
+  description  String?
+  orderIndex   Int        @default(0)
+  unitId       String
+
+  unit         SkillUnit  @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  exercises    Exercise[]
+  userProgress UserLessonProgress[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([unitId])
+  @@index([orderIndex])
+}
+
+// 用户单元进度
+model UserUnitProgress {
+  id               String    @id @default(uuid())
+  userId           String
+  unitId           String
+  unlocked         Boolean   @default(false)
+  completed        Boolean   @default(false)
+  lessonsCompleted Int       @default(0)
+  crownLevel       Int       @default(0)  // 0-5 皇冠等级
+
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unit   SkillUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, unitId])
+  @@index([userId])
+  @@index([unitId])
+}
+
+// 用户课程进度
+model UserLessonProgress {
+  id         String    @id @default(uuid())
+  userId     String
+  lessonId   String
+  completed  Boolean   @default(false)
+  mistakes   Int       @default(0)
+  perfectRun Boolean   @default(false)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, lessonId])
+  @@index([userId])
+  @@index([lessonId])
+}
+
+// 用户每日设置
+model UserDailySettings {
+  id              String         @id @default(uuid())
+  userId          String         @unique
+  dailyGoal       DailyGoalLevel @default(REGULAR)
+  reminderEnabled Boolean        @default(true)
+  reminderTime    String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 每日任务模板
+model DailyQuestTemplate {
+  id          String  @id @default(uuid())
+  title       String
+  description String
+  questType   String  // complete_exercises, study_minutes, perfect_lessons
+  targetValue Int
+  xpReward    Int     @default(10)
+  gemsReward  Int     @default(0)
+  active      Boolean @default(true)
+
+  instances UserDailyQuest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 用户每日任务
+model UserDailyQuest {
+  id           String   @id @default(uuid())
+  userId       String
+  templateId   String
+  currentValue Int      @default(0)
+  targetValue  Int
+  completed    Boolean  @default(false)
+  claimed      Boolean  @default(false)
+  xpReward     Int
+  gemsReward   Int      @default(0)
+  date         DateTime @db.Date
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template DailyQuestTemplate @relation(fields: [templateId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, templateId, date])
+  @@index([userId])
+  @@index([date])
+}
+
+// 每日 XP 记录
+model DailyXpRecord {
+  id       String   @id @default(uuid())
+  userId   String
+  date     DateTime @db.Date
+  xpEarned Int      @default(0)
+  goalMet  Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+}
+
+// 知识点掌握度
+model KnowledgeMastery {
+  id             String    @id @default(uuid())
+  userId         String
+  knowledgeKey   String    // category 或 unitId
+  knowledgeType  String    // category, unit
+  masteryLevel   Int       @default(0)  // 0-100
+  lastReviewedAt DateTime?
+  nextReviewAt   DateTime?
+  reviewCount    Int       @default(0)
+  correctCount   Int       @default(0)
+  incorrectCount Int       @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, knowledgeKey])
+  @@index([userId])
+  @@index([nextReviewAt])
+}
+
+// 错题本
+model MistakeRecord {
+  id            String    @id @default(uuid())
+  userId        String
+  exerciseId    String
+  userAnswer    Json?
+  correctAnswer Json?
+  reviewed      Boolean   @default(false)
+  reviewedAt    DateTime?
+  mistakeCount  Int       @default(1)
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, exerciseId])
+  @@index([userId])
+  @@index([reviewed])
+}
