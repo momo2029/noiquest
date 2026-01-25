@@ -18,6 +18,7 @@ import {
   KnowledgeMastery,
   ReviewSession,
   ReviewCompleteResult,
+  SystemConfig,
 } from '../types';
 
 const API_BASE_URL = '/api';
@@ -333,7 +334,7 @@ class ApiService {
     return this.request('/admin/settings');
   }
 
-  async updateAdminSettings(settings: Record<string, string>): Promise<any> {
+  async updateAdminSettings(settings: SystemConfig): Promise<any> {
     return this.request('/admin/settings', {
       method: 'PUT',
       body: JSON.stringify(settings),

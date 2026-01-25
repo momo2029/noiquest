@@ -364,3 +364,15 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
 }
+
+// 系统配置
+export interface SystemConfig {
+  siteName: string;
+  siteDescription: string;
+  inviteRequired: string;
+  aiDailyLimit: string;
+  defaultHearts: string;
+  defaultGems: string;
+  maintenanceMode: string;
+  announcement: string;
+}
