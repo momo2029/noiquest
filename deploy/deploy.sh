@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# NOI Studio 部署脚本
+# NOI Quest 部署脚本
 # 域名: 28920.com
 
 set -e
 
 echo "=========================================="
-echo "  NOI Studio 部署脚本"
+echo "  NOI Quest 部署脚本"
 echo "  域名: 28920.com"
 echo "=========================================="
 
@@ -52,7 +52,7 @@ fi
 
 # 4. 创建项目目录
 echo -e "${YELLOW}[4/7] 创建项目目录...${NC}"
-PROJECT_DIR="/opt/cplus-master"
+PROJECT_DIR="/opt/noiquest"
 mkdir -p $PROJECT_DIR
 cd $PROJECT_DIR
 
@@ -64,7 +64,7 @@ if [ -d ".git" ]; then
 else
     echo "请将代码上传到 $PROJECT_DIR"
     echo "您可以使用以下命令从本地上传:"
-    echo "  scp -r /path/to/cplus-master/* root@28920.com:$PROJECT_DIR/"
+    echo "  scp -r /path/to/noiquest/* root@28920.com:$PROJECT_DIR/"
 fi
 
 # 6. 获取 SSL 证书
@@ -146,8 +146,9 @@ echo ""
 echo "访问地址: https://28920.com"
 echo ""
 echo "测试账号:"
-echo "  教师: teacher / 123456"
-echo "  学生: student / 123456"
+echo "  教师: teacher@test.com / 123456"
+echo "  学生: student@test.com / 123456"
+echo "  管理: admin@test.com / 123456"
 echo ""
 echo "常用命令:"
 echo "  查看日志: docker-compose -f $PROJECT_DIR/deploy/docker-compose.yml logs -f"

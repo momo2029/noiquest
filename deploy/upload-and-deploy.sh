@@ -6,7 +6,7 @@
 set -e
 
 SERVER="root@28920.com"
-REMOTE_DIR="/opt/cplus-master"
+REMOTE_DIR="/opt/noiquest"
 
 echo "=========================================="
 echo "  上传代码到服务器"

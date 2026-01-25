@@ -4,18 +4,18 @@ services:
   # PostgreSQL 数据库
   postgres:
     image: postgres:15-alpine
-    container_name: cplus_postgres
+    container_name: noiquest_postgres
     restart: always
     environment:
-      POSTGRES_USER: cplus
-      POSTGRES_PASSWORD: CplusDB2024Secure!
-      POSTGRES_DB: cplus_master
+      POSTGRES_USER: noiquest
+      POSTGRES_PASSWORD: NoiquestDB2024Secure!
+      POSTGRES_DB: noiquest
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - cplus_network
+      - noiquest_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cplus -d cplus_master"]
+      test: ["CMD-SHELL", "pg_isready -U noiquest -d noiquest"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,20 +25,20 @@ services:
     build:
       context: ../backend
       dockerfile: ../deploy/Dockerfile.backend
-    container_name: cplus_backend
+    container_name: noiquest_backend
     restart: always
     env_file:
       - ../backend/.env
     environment:
       NODE_ENV: production
       PORT: 3001
-      DATABASE_URL: postgresql://cplus:CplusDB2024Secure!@postgres:5432/cplus_master
+      DATABASE_URL: postgresql://noiquest:NoiquestDB2024Secure!@postgres:5432/noiquest
       CORS_ORIGIN: https://28920.com
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - cplus_network
+      - noiquest_network
     expose:
       - "3001"
 
@@ -47,17 +47,17 @@ services:
     build:
       context: ../frontend
       dockerfile: ../deploy/Dockerfile.frontend
-    container_name: cplus_frontend
+    container_name: noiquest_frontend
     restart: always
     networks:
-      - cplus_network
+      - noiquest_network
     expose:
       - "80"
 
   # Nginx 反向代理
   nginx:
     image: nginx:alpine
-    container_name: cplus_nginx
+    container_name: noiquest_nginx
     restart: always
     ports:
       - "80:80"
@@ -70,12 +70,12 @@ services:
       - backend
       - frontend
     networks:
-      - cplus_network
+      - noiquest_network
 
   # Certbot for SSL
   certbot:
     image: certbot/certbot
-    container_name: cplus_certbot
+    container_name: noiquest_certbot
     volumes:
       - ./ssl:/etc/letsencrypt
       - certbot_data:/var/www/certbot
@@ -86,5 +86,5 @@ volumes:
   certbot_data:
 
 networks:
-  cplus_network:
+  noiquest_network:
     driver: bridge

@@ -54,7 +54,7 @@
 1. 克隆项目
 ```bash
 git clone <repository-url>
-cd cplus-master
+cd noiquest
 ```
 
 2. 安装依赖
@@ -114,7 +114,7 @@ docker-compose up -d
 ## 项目结构
 
 ```
-cplus-master/
+noiquest/
 ├── backend/                 # 后端代码
 │   ├── src/
 │   │   ├── config/         # 配置文件
