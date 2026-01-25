@@ -111,6 +111,7 @@ class ApiService {
     password: string;
     name: string;
     role?: 'STUDENT' | 'TEACHER';
+    inviteCode?: string;
   }): Promise<PhoneAuthResponse> {
     const response = await this.request<PhoneAuthResponse>('/email-auth/register', {
       method: 'POST',
@@ -401,6 +402,13 @@ class ApiService {
   async deleteExpiredInviteCodes(): Promise<any> {
     return this.request('/invite/expired/batch', {
       method: 'DELETE',
+    });
+  }
+
+  async verifyInviteCode(code: string): Promise<{ valid: boolean; type: string }> {
+    return this.request('/invite/verify', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
     });
   }
 }

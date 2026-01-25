@@ -31,6 +31,9 @@ rsync -avz --progress \
     --exclude '.git' \
     --exclude 'dist' \
     --exclude '*.log' \
+    --exclude '.env' \
+    --exclude '.env.development' \
+    --include '.env.production' \
     "$PROJECT_DIR/" "$SERVER:$REMOTE_DIR/"
 
 # 执行部署脚本

@@ -122,6 +122,7 @@ model Exercise {
   solution    String?
   xp          Int          @default(10)
   orderIndex  Int          @default(0)
+  isPublished Boolean      @default(true)
 
   // 多邻国模式新增字段
   type         QuestionType @default(CODING)
@@ -136,6 +137,7 @@ model Exercise {
   unit        SkillUnit?   @relation(fields: [unitId], references: [id])
   lesson      Lesson?      @relation(fields: [lessonId], references: [id])
   mistakeRecords MistakeRecord[]
+  knowledgePoints ExerciseKnowledgePoint[]
 
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -145,6 +147,7 @@ model Exercise {
   @@index([unitId])
   @@index([lessonId])
   @@index([type])
+  @@index([isPublished])
 }
 
 // 练习进度表
@@ -321,6 +324,7 @@ model SkillUnit {
   orderIndex     Int      @default(0)
   requiredXp     Int      @default(0)
   prerequisiteId String?
+  isPublished    Boolean  @default(true)
 
   prerequisite   SkillUnit?  @relation("UnitPrerequisite", fields: [prerequisiteId], references: [id])
   dependents     SkillUnit[] @relation("UnitPrerequisite")
@@ -333,6 +337,7 @@ model SkillUnit {
 
   @@index([orderIndex])
   @@index([prerequisiteId])
+  @@index([isPublished])
 }
 
 // 课程
@@ -342,6 +347,7 @@ model Lesson {
   description  String?
   orderIndex   Int        @default(0)
   unitId       String
+  isPublished  Boolean    @default(true)
 
   unit         SkillUnit  @relation(fields: [unitId], references: [id], onDelete: Cascade)
   exercises    Exercise[]
@@ -352,6 +358,7 @@ model Lesson {
 
   @@index([unitId])
   @@index([orderIndex])
+  @@index([isPublished])
 }
 
 // 用户单元进度
@@ -550,4 +557,35 @@ model AIUsageRecord {
   @@unique([userId, date])
   @@index([userId])
   @@index([date])
+}
+
+// ==================== 知识点系统 ====================
+
+// 知识点
+model KnowledgePoint {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  category    String
+  orderIndex  Int      @default(0)
+
+  exercises   ExerciseKnowledgePoint[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+}
+
+// 题目-知识点关联
+model ExerciseKnowledgePoint {
+  id               String         @id @default(uuid())
+  exerciseId       String
+  knowledgePointId String
+
+  exercise         Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  knowledgePoint   KnowledgePoint @relation(fields: [knowledgePointId], references: [id], onDelete: Cascade)
+
+  @@unique([exerciseId, knowledgePointId])
+  @@index([exerciseId])
+  @@index([knowledgePointId])
 }

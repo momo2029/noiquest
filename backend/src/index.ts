@@ -20,6 +20,7 @@ import { dailyRouter } from './routes/daily.js';
 import { reviewRouter } from './routes/review.js';
 import { adminRouter } from './routes/admin.js';
 import { inviteRouter } from './routes/invite.js';
+import { adminContentRouter } from './routes/admin-content.js';
 
 const app = express();
 
@@ -69,6 +70,7 @@ app.use('/api/questions', questionsRouter);
 app.use('/api/daily', dailyRouter);
 app.use('/api/review', reviewRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/admin/content', adminContentRouter);
 app.use('/api/invite', inviteRouter);
 
 // 错误处理

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserRole } from '../../types';
+import { api } from '../../services/api';
 
 interface EmailRegisterProps {
   onBack: () => void;
@@ -15,6 +16,7 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState<UserRole>('student');
+  const [inviteCode, setInviteCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [codeCountdown, setCodeCountdown] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -59,13 +61,26 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!validateEmail(email)) {
       setError('请输入正确的邮箱地址');
       return;
     }
-    setStep(2);
+    if (!inviteCode.trim()) {
+      setError('请输入邀请码');
+      return;
+    }
+
+    setLoading(true);
     setError('');
+    try {
+      await api.verifyInviteCode(inviteCode.trim());
+      setStep(2);
+    } catch (err) {
+      setError((err as Error).message || '邀请码无效');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRegister = async () => {
@@ -86,6 +101,8 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
       return;
     }
 
+
+
     setLoading(true);
     setError('');
     try {
@@ -95,6 +112,7 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
         password,
         name: name.trim(),
         role: role.toUpperCase() as 'STUDENT' | 'TEACHER',
+        inviteCode: inviteCode.trim() || undefined,
       });
     } catch (err) {
       setError((err as Error).message || '注册失败');
@@ -140,9 +158,23 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    邀请码 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={inviteCode}
+                    onChange={(e) => setInviteCode(e.target.value)}
+                    placeholder="请输入邀请码"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
+                    disabled={loading}
+                  />
+                </div>
+
                 <button
                   onClick={handleNext}
-                  disabled={loading || !validateEmail(email)}
+                  disabled={loading || !validateEmail(email) || !inviteCode.trim()}
                   className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-xl font-medium transition-colors"
                 >
                   {loading ? '加载中...' : '下一步'}

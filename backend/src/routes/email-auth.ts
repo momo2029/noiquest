@@ -136,7 +136,7 @@ const registerSchema = z.object({
   password: z.string().min(6, '密码至少6位'),
   name: z.string().min(1, '姓名不能为空').max(50),
   role: z.enum(['STUDENT', 'TEACHER']).optional(),
-  inviteCode: z.string().min(1, '邀请码不能为空').optional(),
+  inviteCode: z.string().min(1, '邀请码不能为空'),
 });
 
 // 邮箱注册

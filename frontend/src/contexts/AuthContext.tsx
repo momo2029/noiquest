@@ -12,6 +12,7 @@ interface AuthContextType extends AuthState {
     password: string;
     name: string;
     role?: 'STUDENT' | 'TEACHER';
+    inviteCode?: string;
   }) => Promise<void>;
   sendVerificationCode: (email: string) => Promise<{ message: string; code?: string }>;
   logout: () => void;
@@ -95,6 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string;
     name: string;
     role?: 'STUDENT' | 'TEACHER';
+    inviteCode?: string;
   }) => {
     const response = await api.emailRegister(data);
     setState({
