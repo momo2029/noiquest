@@ -327,34 +327,51 @@ router.post('/lessons/:lessonId/complete', authenticate, async (req: AuthRequest
       },
     });
 
-    // 计算获得的 XP
-    const xpEarned = lesson.exercises.reduce((sum, e) => sum + e.xp, 0);
-    const bonusXp = perfectRun ? Math.floor(xpEarned * 0.2) : 0;
-    const totalXp = xpEarned + bonusXp;
-
-    // 更新用户 XP
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        xp: { increment: totalXp },
-        totalXp: { increment: totalXp },
-      },
-    });
-
-    // 更新每日 XP 记录
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    await prisma.dailyXpRecord.upsert({
-      where: { userId_date: { userId, date: today } },
-      update: { xpEarned: { increment: totalXp } },
-      create: {
+    // 计算获得的 XP（只计算已完成的题目，XP 在答题时已经给过了）
+    // 这里只计算完美通关奖励
+    const completedExercises = await prisma.exerciseProgress.findMany({
+      where: {
         userId,
-        date: today,
-        xpEarned: totalXp,
-        goalMet: false,
+        exerciseId: { in: lesson.exercises.map(e => e.id) },
+        completed: true,
       },
     });
+
+    const xpEarned = completedExercises.reduce((sum, progress) => {
+      const exercise = lesson.exercises.find(e => e.id === progress.exerciseId);
+      return sum + (exercise?.xp || 0);
+    }, 0);
+
+    // 只有完美通关才给奖励 XP
+    const bonusXp = perfectRun ? Math.floor(xpEarned * 0.2) : 0;
+
+    // 只更新奖励 XP（题目 XP 在答题时已给）
+    if (bonusXp > 0) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          xp: { increment: bonusXp },
+          totalXp: { increment: bonusXp },
+        },
+      });
+    }
+
+    // 更新每日 XP 记录（只记录奖励 XP）
+    if (bonusXp > 0) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      await prisma.dailyXpRecord.upsert({
+        where: { userId_date: { userId, date: today } },
+        update: { xpEarned: { increment: bonusXp } },
+        create: {
+          userId,
+          date: today,
+          xpEarned: bonusXp,
+          goalMet: false,
+        },
+      });
+    }
 
     // 解锁下一个单元（如果当前单元完成）
     if (unitCompleted) {
@@ -380,7 +397,7 @@ router.post('/lessons/:lessonId/complete', authenticate, async (req: AuthRequest
 
     res.json({
       message: '课程完成',
-      xpEarned: totalXp,
+      xpEarned: xpEarned + bonusXp,
       bonusXp,
       perfectRun,
       unitCompleted,

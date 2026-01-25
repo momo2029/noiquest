@@ -7,7 +7,6 @@ set -e
 
 echo "=========================================="
 echo "  NOI Quest 部署脚本"
-echo "  域名: 28920.com"
 echo "=========================================="
 
 # 颜色定义
@@ -16,11 +15,28 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+# 项目目录
+PROJECT_DIR="/opt/noiquest"
+
 # 检查是否为 root 用户
 if [ "$EUID" -ne 0 ]; then
     echo -e "${RED}请使用 root 用户运行此脚本${NC}"
     exit 1
 fi
+
+# 直接设置环境变量（避免加载 .env 时的特殊字符问题）
+POSTGRES_DB="noiquest_master"
+POSTGRES_USER="noiquest_user"
+POSTGRES_PASSWORD="noiquest_user"
+JWT_SECRET="d9827349817234*&^*76nmo"
+DOMAIN="28920.com"
+CERTBOT_EMAIL="cobola@126.com"
+CORS_ORIGIN="https://28920.com"
+
+# 验证必要的环境变量（可选，因为我们已经直接设置了）
+
+echo "域名: $DOMAIN"
+echo ""
 
 # 1. 更新系统并安装依赖
 echo -e "${YELLOW}[1/7] 更新系统并安装依赖...${NC}"
@@ -72,18 +88,18 @@ echo -e "${YELLOW}[6/7] 配置 SSL 证书...${NC}"
 mkdir -p deploy/ssl
 
 # 首先使用临时 nginx 配置获取证书
-if [ ! -f "deploy/ssl/live/28920.com/fullchain.pem" ]; then
+if [ ! -f "deploy/ssl/live/$DOMAIN/fullchain.pem" ]; then
     echo "获取 Let's Encrypt SSL 证书..."
 
     # 创建临时 nginx 配置用于证书验证
-    cat > /tmp/nginx-certbot.conf << 'NGINX_TEMP'
+    cat > /tmp/nginx-certbot.conf << NGINX_TEMP
 events {
     worker_connections 1024;
 }
 http {
     server {
         listen 80;
-        server_name 28920.com www.28920.com;
+        server_name $DOMAIN www.$DOMAIN;
         location /.well-known/acme-challenge/ {
             root /var/www/certbot;
         }
@@ -113,11 +129,11 @@ NGINX_TEMP
         certbot/certbot certonly \
         --webroot \
         --webroot-path=/var/www/certbot \
-        --email 16983052@qq.com \
+        --email $CERTBOT_EMAIL \
         --agree-tos \
         --no-eff-email \
-        -d 28920.com \
-        -d www.28920.com
+        -d $DOMAIN \
+        -d www.$DOMAIN
 
     # 停止临时 nginx
     docker stop temp_nginx
@@ -143,12 +159,7 @@ echo -e "${GREEN}=========================================="
 echo "  部署完成!"
 echo "==========================================${NC}"
 echo ""
-echo "访问地址: https://28920.com"
-echo ""
-echo "测试账号:"
-echo "  教师: teacher@test.com / 123456"
-echo "  学生: student@test.com / 123456"
-echo "  管理: admin@test.com / 123456"
+echo "访问地址: https://$DOMAIN"
 echo ""
 echo "常用命令:"
 echo "  查看日志: docker-compose -f $PROJECT_DIR/deploy/docker-compose.yml logs -f"

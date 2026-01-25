@@ -6,16 +6,18 @@ services:
     image: postgres:15-alpine
     container_name: noiquest_postgres
     restart: always
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: noiquest
-      POSTGRES_PASSWORD: NoiquestDB2024Secure!
-      POSTGRES_DB: noiquest
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - noiquest_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U noiquest -d noiquest"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,12 +30,12 @@ services:
     container_name: noiquest_backend
     restart: always
     env_file:
-      - ../backend/.env
+      - .env
     environment:
       NODE_ENV: production
       PORT: 3001
-      DATABASE_URL: postgresql://noiquest:NoiquestDB2024Secure!@postgres:5432/noiquest
-      CORS_ORIGIN: https://28920.com
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      CORS_ORIGIN: ${CORS_ORIGIN}
     depends_on:
       postgres:
         condition: service_healthy
