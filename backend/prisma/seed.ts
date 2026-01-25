@@ -837,11 +837,32 @@ async function main() {
     },
   });
 
+  // 创建管理员账户
+  await prisma.user.upsert({
+    where: { username: 'admin' },
+    update: {},
+    create: {
+      username: 'admin',
+      email: 'admin@28920.com',
+      password: hashedPassword,
+      name: '系统管理员',
+      role: 'ADMIN',
+      avatar: '👑',
+      level: 99,
+      xp: 99999,
+      totalXp: 99999,
+      gems: 9999,
+    },
+  });
+
   console.log('✅ 数据库初始化完成！');
   console.log('');
   console.log('测试账号：');
   console.log('  教师: teacher@test.com / 123456');
   console.log('  学生: student@test.com / 123456');
+  console.log('  管理员: admin@28920.com / 123456');
+  console.log('');
+  console.log('⚠️  请尽快修改管理员默认密码！');
 }
 
 main()

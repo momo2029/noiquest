@@ -27,12 +27,12 @@ services:
       dockerfile: ../deploy/Dockerfile.backend
     container_name: cplus_backend
     restart: always
+    env_file:
+      - ../backend/.env
     environment:
       NODE_ENV: production
       PORT: 3001
       DATABASE_URL: postgresql://cplus:CplusDB2024Secure!@postgres:5432/cplus_master
-      JWT_SECRET: NOIQuestJWTSecret2024SuperSecure!ChangeThis!
-      JWT_EXPIRES_IN: 7d
       CORS_ORIGIN: https://28920.com
     depends_on:
       postgres:
