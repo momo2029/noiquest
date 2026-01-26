@@ -12,14 +12,14 @@ interface AnswerFeedbackProps {
 
 export default function AnswerFeedback({ correct, feedback, xpEarned, onContinue, showAIHintButton, onAIHint }: AnswerFeedbackProps) {
   const [countdown, setCountdown] = useState(3);
+  const [autoContinue, setAutoContinue] = useState(false);
 
   useEffect(() => {
     if (!correct) return;
 
-    const timer = setTimeout(() => {
-      onContinue();
-    }, 3000);
+    console.log('✅ 答题正确，启动自动跳转...');
 
+    // 倒计时显示
     const countdownTimer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
@@ -30,11 +30,24 @@ export default function AnswerFeedback({ correct, feedback, xpEarned, onContinue
       });
     }, 1000);
 
+    // 3秒后自动跳转
+    const timer = setTimeout(() => {
+      console.log('⏱️  3秒倒计时结束，执行自动跳转');
+      setAutoContinue(true);
+      onContinue();
+    }, 3000);
+
     return () => {
+      console.log('🧹 清理定时器');
       clearTimeout(timer);
       clearInterval(countdownTimer);
     };
   }, [correct, onContinue]);
+
+  // 调试：显示状态
+  useEffect(() => {
+    console.log(`📊 状态更新 - correct: ${correct}, countdown: ${countdown}, autoContinue: ${autoContinue}`);
+  }, [correct, countdown, autoContinue]);
 
   return (
     <div className={`

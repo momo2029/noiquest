@@ -39,6 +39,13 @@ enum DailyGoalLevel {
   INTENSE    // 50 XP
 }
 
+// 错题状态枚举
+enum MistakeStatus {
+  UNREVIEWED   // 未复习
+  REVIEWING    // 复习中
+  MASTERED     // 已掌握
+}
+
 // 用户表
 model User {
   id            String   @id @default(uuid())
@@ -55,7 +62,10 @@ model User {
   totalXp       Int      @default(0)
   streak        Int      @default(0)
   lastStudyDate DateTime?
+  streakProtectedAt DateTime?              // 上次使用 Streak 保护的时间
   hearts        Int      @default(5)
+  maxHearts     Int      @default(5)           // 最大生命值
+  heartsUpdatedAt DateTime @default(now())     // 心的更新时间（用于计算恢复）
   gems          Int      @default(0)
 
   // 邀请码
@@ -95,6 +105,9 @@ model User {
 
   // 复习提醒
   reviewReminders    ReviewReminder[]
+
+  // 兑换记录
+  redeemRecords      RedeemRecord[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -391,7 +404,8 @@ model UserUnitProgress {
   unlocked         Boolean   @default(false)
   completed        Boolean   @default(false)
   lessonsCompleted Int       @default(0)
-  crownLevel       Int       @default(0)  // 0-5 皇冠等级
+  crownLevel       Int       @default(0)  // 0-3 皇冠等级
+  perfectCount     Int       @default(0)  // 完美通关次数
 
   user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   unit   SkillUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
@@ -406,12 +420,15 @@ model UserUnitProgress {
 
 // 用户课程进度
 model UserLessonProgress {
-  id         String    @id @default(uuid())
-  userId     String
-  lessonId   String
-  completed  Boolean   @default(false)
-  mistakes   Int       @default(0)
-  perfectRun Boolean   @default(false)
+  id              String    @id @default(uuid())
+  userId          String
+  lessonId        String
+  completed       Boolean   @default(false)
+  mistakes        Int       @default(0)
+  perfectRun      Boolean   @default(false)
+  completedCount  Int       @default(0)   // 完成次数（区分首次/重做）
+  xpEarned        Int       @default(0)   // 累计获得XP
+  lastCompletedAt DateTime?               // 最后完成时间
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
@@ -522,14 +539,20 @@ model KnowledgeMastery {
 
 // 错题本
 model MistakeRecord {
-  id            String    @id @default(uuid())
+  id            String        @id @default(uuid())
   userId        String
   exerciseId    String
-  userAnswer    Json?
-  correctAnswer Json?
-  reviewed      Boolean   @default(false)
-  reviewedAt    DateTime?
-  mistakeCount  Int       @default(1)
+  lessonId      String?                            // 所属课程
+  unitId        String?                            // 所属单元
+  status        MistakeStatus @default(UNREVIEWED) // 错题状态
+  wrongCount    Int           @default(1)          // 错误次数
+  correctStreak Int           @default(0)          // 连续答对次数（达到2次变为MASTERED）
+  userAnswer    Json?                              // 最近一次错误答案
+  correctAnswer Json?                              // 正确答案
+  wrongAnswers  Json?                              // 历史错误答案 [{ answer, timestamp }]
+  lastWrongAt   DateTime      @default(now())      // 最后错误时间
+  reviewedAt    DateTime?                          // 最后复习时间
+  masteredAt    DateTime?                          // 掌握时间
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   exercise Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
@@ -539,7 +562,8 @@ model MistakeRecord {
 
   @@unique([userId, exerciseId])
   @@index([userId])
-  @@index([reviewed])
+  @@index([userId, status])
+  @@index([userId, lessonId])
 }
 
 // ==================== 邀请码系统 ====================
@@ -785,4 +809,48 @@ model ReviewReminder {
 
   @@index([userId, read])
   @@index([type])
+}
+
+// ==================== 兑换码系统 ====================
+
+// 兑换码类型枚举
+enum RedeemCodeType {
+  GEMS            // 宝石
+  HEARTS          // 生命值
+  STREAK_PROTECT  // Streak 保护
+}
+
+// 兑换码
+model RedeemCode {
+  id          String         @id @default(uuid())
+  code        String         @unique
+  type        RedeemCodeType
+  value       Int                              // 数量（宝石数/心数/天数）
+  maxUses     Int            @default(1)       // 最大使用次数
+  usedCount   Int            @default(0)       // 已使用次数
+  expiresAt   DateTime?                        // 过期时间
+  createdBy   String?                          // 创建者ID
+  note        String?                          // 备注
+
+  records     RedeemRecord[]
+
+  createdAt   DateTime       @default(now())
+
+  @@index([code])
+  @@index([type])
+}
+
+// 兑换记录
+model RedeemRecord {
+  id          String     @id @default(uuid())
+  userId      String
+  codeId      String
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code        RedeemCode @relation(fields: [codeId], references: [id], onDelete: Cascade)
+
+  redeemedAt  DateTime   @default(now())
+
+  @@unique([userId, codeId])
+  @@index([userId])
 }
