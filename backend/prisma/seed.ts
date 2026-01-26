@@ -346,12 +346,16 @@ const diverseExercises = [
 
 const exercises = [
   {
+    id: 'ex-hello-world',
     title: 'Hello World',
     description: '编写你的第一个C++程序，在屏幕上输出 "Hello, World!"',
     difficulty: 'EASY' as Difficulty,
     category: '基础入门',
+    type: 'CODING' as QuestionType,
     xp: 10,
     orderIndex: 1,
+    unitId: 'unit-basics',
+    lessonId: 'lesson-hello',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -370,12 +374,16 @@ int main() {
 }`
   },
   {
+    id: 'ex-variable-input',
     title: '变量与输入',
     description: '声明一个整数变量，从键盘读取一个数字，然后输出这个数字的两倍',
     difficulty: 'EASY' as Difficulty,
     category: '基础入门',
+    type: 'CODING' as QuestionType,
     xp: 15,
     orderIndex: 2,
+    unitId: 'unit-basics',
+    lessonId: 'lesson-variables',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -398,12 +406,16 @@ int main() {
 }`
   },
   {
+    id: 'ex-condition',
     title: '条件判断',
     description: '读取一个整数，判断它是正数、负数还是零',
     difficulty: 'EASY' as Difficulty,
     category: '条件语句',
+    type: 'CODING' as QuestionType,
     xp: 20,
     orderIndex: 3,
+    unitId: 'unit-conditionals',
+    lessonId: 'lesson-if-else',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -435,12 +447,16 @@ int main() {
 }`
   },
   {
+    id: 'ex-max-value',
     title: '求最大值',
     description: '读取三个整数，找出并输出其中的最大值',
     difficulty: 'EASY' as Difficulty,
     category: '条件语句',
+    type: 'CODING' as QuestionType,
     xp: 20,
     orderIndex: 4,
+    unitId: 'unit-conditionals',
+    lessonId: 'lesson-nested-if',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -469,12 +485,16 @@ int main() {
 }`
   },
   {
+    id: 'ex-sum-1-to-n',
     title: '计算1到N的和',
     description: '读取一个正整数N，计算并输出1+2+3+...+N的结果',
     difficulty: 'EASY' as Difficulty,
     category: '循环语句',
+    type: 'CODING' as QuestionType,
     xp: 25,
     orderIndex: 5,
+    unitId: 'unit-loops',
+    lessonId: 'lesson-for',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -504,12 +524,16 @@ int main() {
 }`
   },
   {
+    id: 'ex-multiplication-table',
     title: '九九乘法表',
     description: '使用嵌套循环输出九九乘法表',
     difficulty: 'MEDIUM' as Difficulty,
     category: '循环语句',
+    type: 'CODING' as QuestionType,
     xp: 35,
     orderIndex: 6,
+    unitId: 'unit-loops',
+    lessonId: 'lesson-nested-loop',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -533,12 +557,16 @@ int main() {
 }`
   },
   {
+    id: 'ex-prime-check',
     title: '判断素数',
     description: '读取一个正整数，判断它是否为素数',
     difficulty: 'MEDIUM' as Difficulty,
     category: '循环语句',
+    type: 'CODING' as QuestionType,
     xp: 40,
     orderIndex: 7,
+    unitId: 'unit-loops',
+    lessonId: 'lesson-while',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -576,12 +604,16 @@ int main() {
 }`
   },
   {
+    id: 'ex-array-sum',
     title: '数组求和',
     description: '读取5个整数存入数组，计算并输出它们的和与平均值',
     difficulty: 'MEDIUM' as Difficulty,
     category: '数组',
+    type: 'CODING' as QuestionType,
     xp: 35,
     orderIndex: 8,
+    unitId: 'unit-arrays',
+    lessonId: 'lesson-array-traverse',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -616,12 +648,16 @@ int main() {
 }`
   },
   {
+    id: 'ex-bubble-sort',
     title: '冒泡排序',
     description: '读取5个整数，使用冒泡排序从小到大排序后输出',
     difficulty: 'MEDIUM' as Difficulty,
     category: '数组',
+    type: 'CODING' as QuestionType,
     xp: 45,
     orderIndex: 9,
+    unitId: 'unit-algorithms',
+    lessonId: 'lesson-bubble-sort',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -667,12 +703,16 @@ int main() {
 }`
   },
   {
+    id: 'ex-binary-search',
     title: '二分查找',
     description: '在有序数组中使用二分查找法查找目标值',
     difficulty: 'HARD' as Difficulty,
     category: '算法',
+    type: 'CODING' as QuestionType,
     xp: 60,
     orderIndex: 10,
+    unitId: 'unit-algorithms',
+    lessonId: 'lesson-binary-search',
     starterCode: `#include <iostream>
 using namespace std;
 
@@ -867,11 +907,11 @@ async function main() {
     });
   }
 
-  // 创建练习题
+  // 创建练习题（编程题）
   console.log('📝 创建练习题...');
   for (const exercise of exercises) {
     await prisma.exercise.upsert({
-      where: { id: exercise.title },
+      where: { id: exercise.id },
       update: exercise,
       create: exercise,
     });
@@ -891,22 +931,43 @@ async function main() {
   console.log('🏆 创建成就...');
   for (const achievement of achievements) {
     await prisma.achievement.upsert({
-      where: { key: achievement.key },
-      update: achievement,
-      create: achievement,
+      where: { id: achievement.key },
+      update: {
+        key: achievement.key,
+        name: achievement.name,
+        description: achievement.description,
+        icon: achievement.icon,
+        category: achievement.category,
+        condition: JSON.stringify(achievement.condition),
+        reward: JSON.stringify(achievement.reward),
+        rarity: achievement.rarity,
+        orderIndex: achievement.orderIndex,
+      },
+      create: {
+        id: achievement.key,
+        key: achievement.key,
+        name: achievement.name,
+        description: achievement.description,
+        icon: achievement.icon,
+        category: achievement.category,
+        condition: JSON.stringify(achievement.condition),
+        reward: JSON.stringify(achievement.reward),
+        rarity: achievement.rarity,
+        orderIndex: achievement.orderIndex,
+      },
     });
   }
 
   // 创建测试用户
   console.log('👤 创建测试用户...');
-  const hashedPassword = await bcrypt.hash('123456', 12);
+  const hashedPassword = await bcrypt.hash('666999', 12);
 
   await prisma.user.upsert({
-    where: { username: 'teacher' },
+    where: { username: 'teacher@28920.com' },
     update: {},
     create: {
-      username: 'teacher',
-      email: 'teacher@test.com',
+      username: 'teacher@28920.com',
+      email: 'teacher@28920.com',
       password: hashedPassword,
       name: '张老师',
       role: 'TEACHER',
@@ -915,11 +976,11 @@ async function main() {
   });
 
   await prisma.user.upsert({
-    where: { username: 'student' },
+    where: { username: 'student@28920.com' },
     update: {},
     create: {
-      username: 'student',
-      email: 'student@test.com',
+      username: 'student@28920.com',
+      email: 'student@28920.com',
       password: hashedPassword,
       name: '小明',
       role: 'STUDENT',
@@ -929,10 +990,10 @@ async function main() {
 
   // 创建管理员账户
   await prisma.user.upsert({
-    where: { username: 'admin' },
+    where: { username: 'admin@28920.com' },
     update: {},
     create: {
-      username: 'admin',
+      username: 'admin@28920.com',
       email: 'admin@28920.com',
       password: hashedPassword,
       name: '系统管理员',
@@ -948,9 +1009,9 @@ async function main() {
   console.log('✅ 数据库初始化完成！');
   console.log('');
   console.log('测试账号：');
-  console.log('  教师: teacher@test.com / 123456');
-  console.log('  学生: student@test.com / 123456');
-  console.log('  管理员: admin@28920.com / 123456');
+  console.log('  教师: teacher@28920.com / 666999');
+  console.log('  学生: student@28920.com / 666999');
+  console.log('  管理员: admin@28920.com / 666999');
   console.log('');
   console.log('⚠️  请尽快修改管理员默认密码！');
 }
@@ -958,7 +1019,6 @@ async function main() {
 main()
   .catch((e) => {
     console.error(e);
-    process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();

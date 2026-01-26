@@ -4,16 +4,16 @@
   "description": "NOI Quest 后端服务",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "dotenv -e .env.development -- npx tsx watch src/index.ts",
-    "debug": "dotenv -e .env.development -- npx tsx watch src/index.ts",
+    "dev": "npx tsx watch src/index.ts",
+    "debug": "dotenv -e .env -- npx tsx watch src/index.ts",
     "build": "tsc",
-    "start": "dotenv -e .env.production -- node dist/index.js",
-    "db:generate": "dotenv -e .env.development -- prisma generate",
-    "db:push": "dotenv -e .env.development -- prisma db push",
-    "db:migrate": "dotenv -e .env.development -- prisma migrate dev",
-    "db:seed": "dotenv -e .env.development -- npx tsx prisma/seed.ts",
-    "db:push:prod": "dotenv -e .env.production -- prisma db push",
-    "db:seed:prod": "dotenv -e .env.production -- npx tsx prisma/seed.ts"
+    "start": "node dist/index.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "npx tsx prisma/seed.ts",
+    "db:push:prod": "prisma db push",
+    "db:seed:prod": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",

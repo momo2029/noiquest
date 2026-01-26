@@ -169,11 +169,55 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
         break;
       }
 
-      case 'CODING':
+      case 'CODING': {
+        // 编程题需要通过代码执行来验证
+        const questionData = exercise.questionData as any;
+        const userCode = typeof answer === 'string' ? answer : answer?.code;
+
+        // 检查是否提交了有效代码
+        if (!userCode || !userCode.trim()) {
+          isCorrect = false;
+          feedback = '请编写代码后再提交';
+          break;
+        }
+
+        // 检查代码是否与初始代码相同（没有修改）
+        if (exercise.starterCode && userCode.trim() === exercise.starterCode.trim()) {
+          isCorrect = false;
+          feedback = '请修改初始代码后再提交';
+          break;
+        }
+
+        // 如果有测试用例，需要验证（目前暂时标记为需要代码执行服务）
+        // TODO: 集成代码执行服务进行实际验证
+        if (questionData?.testCases && questionData.testCases.length > 0) {
+          // 暂时：有测试用例但无法执行时，提示用户
+          isCorrect = false;
+          feedback = '编程题需要代码执行服务验证，该功能正在开发中';
+          correctAnswer = { message: '请等待代码执行功能上线' };
+        } else {
+          // 没有测试用例的编程题，检查代码是否包含基本结构
+          const hasMainFunction = userCode.includes('main');
+          const hasOutput = userCode.includes('cout') || userCode.includes('printf') || userCode.includes('print');
+
+          if (!hasMainFunction) {
+            isCorrect = false;
+            feedback = '代码缺少 main 函数';
+          } else if (!hasOutput) {
+            isCorrect = false;
+            feedback = '代码缺少输出语句';
+          } else {
+            // 基本结构检查通过
+            isCorrect = true;
+            feedback = '代码结构正确！';
+          }
+        }
+        break;
+      }
+
       default: {
-        // 编程题需要通过代码执行来验证，这里只保存代码
-        isCorrect = true; // 假设提交即完成
-        feedback = '代码已提交';
+        isCorrect = false;
+        feedback = '未知题型';
         break;
       }
     }

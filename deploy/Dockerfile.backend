@@ -20,5 +20,7 @@ RUN npx prisma generate
 # 暴露端口
 EXPOSE 3001
 
-# 启动命令（使用 tsx 直接运行）
-CMD ["sh", "-c", "npx prisma migrate deploy && npx tsx prisma/seed.ts && npx tsx src/index.ts"]
+# 启动命令
+# - prisma db push: 根据 schema 同步数据库结构（全新安装或更新）
+# - 种子数据只在全新安装时执行，通过 SEED_DATABASE=true 环境变量触发
+CMD ["sh", "-c", "npx prisma db push && if [ \"$SEED_DATABASE\" = \"true\" ]; then echo '执行种子数据...' && npx tsx prisma/seed.ts; else echo '跳过种子数据'; fi && npx tsx src/index.ts"]

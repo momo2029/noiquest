@@ -1,5 +1,8 @@
 version: '3.8'
 
+# 全新安装专用配置
+# 与 docker-compose.yml 相同，但会执行数据库种子数据
+
 services:
   # PostgreSQL 数据库
   postgres:
@@ -22,7 +25,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # 后端 API
+  # 后端 API（启用种子数据）
   backend:
     build:
       context: ../backend
@@ -36,6 +39,7 @@ services:
       PORT: 3001
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       CORS_ORIGIN: ${CORS_ORIGIN}
+      SEED_DATABASE: "true"
     depends_on:
       postgres:
         condition: service_healthy

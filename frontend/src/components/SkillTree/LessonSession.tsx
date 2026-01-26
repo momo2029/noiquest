@@ -73,21 +73,16 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
   };
 
   const handleContinue = async () => {
-    // 如果答错了，只关闭反馈，让用户重试当前题目
-    if (!lastAnswerCorrect) {
-      setShowFeedback(false);
-      setFeedbackData(null);
-
-      // 检查是否用完生命值
-      if (hearts <= 0) {
-        onExit();
-      }
-      return;
-    }
-
     setShowFeedback(false);
     setFeedbackData(null);
 
+    // 答错时检查是否用完生命值
+    if (!lastAnswerCorrect && hearts <= 0) {
+      onExit();
+      return;
+    }
+
+    // 无论答对答错，都进入下一题（技能树核心设计：答错不重试，直接下一题）
     // 检查是否完成所有题目
     if (currentIndex >= exercises.length - 1) {
       try {
