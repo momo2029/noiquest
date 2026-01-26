@@ -417,7 +417,6 @@ int main() {
             />
           ) : (
             <ExerciseList
-              completedIds={completedIds}
               onSelectExercise={setSelectedExercise}
             />
           );

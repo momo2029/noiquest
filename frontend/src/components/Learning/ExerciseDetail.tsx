@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Exercise } from '../../types';
-import { ArrowLeft, Lightbulb, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { api } from '../../services/api';
+import { ArrowLeft, Lightbulb, Eye, EyeOff, CheckCircle, Loader2, Zap } from 'lucide-react';
 
 interface ExerciseDetailProps {
   exercise: Exercise;
@@ -10,33 +11,124 @@ interface ExerciseDetailProps {
   isCompleted: boolean;
 }
 
+interface ExerciseDetailData {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: string;
+  category: string;
+  xp: number;
+  starterCode?: string;
+  hint?: string;
+  solution?: string;
+  testCases?: {
+    id: string;
+    orderIndex: number;
+    isHidden: boolean;
+    input?: string;
+    output?: string;
+  }[];
+  userProgress?: {
+    completed: boolean;
+    completedCount: number;
+    xpEarned: number;
+    savedCode?: string;
+  };
+}
+
+const difficultyColors: Record<string, string> = {
+  EASY: 'bg-green-500',
+  MEDIUM: 'bg-yellow-500',
+  HARD: 'bg-red-500',
+};
+
+const difficultyLabels: Record<string, string> = {
+  EASY: '简单',
+  MEDIUM: '中等',
+  HARD: '困难',
+};
+
 export default function ExerciseDetail({
   exercise,
   onBack,
   onLoadCode,
   onComplete,
-  isCompleted
+  isCompleted: initialCompleted
 }: ExerciseDetailProps) {
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
+  const [detail, setDetail] = useState<ExerciseDetailData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [completing, setCompleting] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(initialCompleted);
+  const [completionResult, setCompletionResult] = useState<{
+    xpEarned: number;
+    isFirstCompletion: boolean;
+  } | null>(null);
 
-  const difficultyColors: Record<string, string> = {
-    easy: 'bg-green-500',
-    medium: 'bg-yellow-500',
-    hard: 'bg-red-500',
-    EASY: 'bg-green-500',
-    MEDIUM: 'bg-yellow-500',
-    HARD: 'bg-red-500'
+  // 获取题目详情
+  useEffect(() => {
+    const fetchDetail = async () => {
+      try {
+        setLoading(true);
+        const data = await api.getExerciseDetail(exercise.id);
+        setDetail(data);
+        if (data.userProgress?.completed) {
+          setIsCompleted(true);
+        }
+      } catch (error) {
+        console.error('获取题目详情失败:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetail();
+  }, [exercise.id]);
+
+  // 标记完成（由于 code-runner 未实现，暂时保留手动标记功能）
+  const handleComplete = async () => {
+    try {
+      setCompleting(true);
+      // 调用保存代码接口（如果有代码的话）
+      // 由于 code-runner 未实现，这里直接调用 submit 接口
+      // 后端会返回模拟结果
+      const result = await api.submitExercise(exercise.id, detail?.starterCode || '');
+
+      if (result.correct || result.isFirstCompletion !== undefined) {
+        setIsCompleted(true);
+        setCompletionResult({
+          xpEarned: result.xpEarned,
+          isFirstCompletion: result.isFirstCompletion,
+        });
+        onComplete();
+      }
+    } catch (error: any) {
+      // 即使后端返回错误（因为 code-runner 未实现），也标记为完成
+      setIsCompleted(true);
+      onComplete();
+    } finally {
+      setCompleting(false);
+    }
   };
 
-  const difficultyLabels: Record<string, string> = {
-    easy: '简单',
-    medium: '中等',
-    hard: '困难',
-    EASY: '简单',
-    MEDIUM: '中等',
-    HARD: '困难'
+  // 加载代码
+  const handleLoadCode = () => {
+    const code = detail?.userProgress?.savedCode || detail?.starterCode || exercise.starterCode;
+    if (code) {
+      onLoadCode(code);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="h-full flex items-center justify-center bg-gray-900">
+        <Loader2 className="animate-spin h-8 w-8 text-blue-500" />
+      </div>
+    );
+  }
+
+  const displayData = detail || exercise;
 
   return (
     <div className="h-full flex flex-col bg-gray-900 text-white">
@@ -50,11 +142,15 @@ export default function ExerciseDetail({
           返回题目列表
         </button>
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">{exercise.title}</h2>
+          <h2 className="text-xl font-bold">{displayData.title}</h2>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-400">{exercise.category}</span>
-            <span className={`px-2 py-0.5 text-xs rounded ${difficultyColors[exercise.difficulty]} text-white`}>
-              {difficultyLabels[exercise.difficulty]}
+            <span className="text-sm text-gray-400">{displayData.category}</span>
+            <span className={`px-2 py-0.5 text-xs rounded ${difficultyColors[displayData.difficulty] || 'bg-gray-500'} text-white`}>
+              {difficultyLabels[displayData.difficulty] || displayData.difficulty}
+            </span>
+            <span className="text-xs text-yellow-400 flex items-center gap-1">
+              <Zap size={12} />
+              +{displayData.xp} XP
             </span>
             {isCompleted && (
               <span className="flex items-center gap-1 px-2 py-0.5 text-xs rounded bg-green-600 text-white">
@@ -68,14 +164,57 @@ export default function ExerciseDetail({
 
       {/* 内容 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* 完成提示 */}
+        {completionResult && (
+          <div className="bg-green-900/50 border border-green-600 rounded-lg p-4">
+            <div className="flex items-center gap-2 text-green-400">
+              <CheckCircle size={20} />
+              <span className="font-medium">
+                {completionResult.isFirstCompletion ? '恭喜首次完成！' : '再次完成！'}
+              </span>
+            </div>
+            <p className="text-green-300 mt-1">
+              获得 {completionResult.xpEarned} XP
+            </p>
+          </div>
+        )}
+
         {/* 题目描述 */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h3 className="font-semibold mb-2 text-blue-400">题目描述</h3>
-          <p className="text-gray-300">{exercise.description}</p>
+          <p className="text-gray-300 whitespace-pre-wrap">{displayData.description}</p>
         </div>
 
+        {/* 测试用例预览 */}
+        {detail?.testCases && detail.testCases.length > 0 && (
+          <div className="bg-gray-800 rounded-lg p-4">
+            <h3 className="font-semibold mb-3 text-blue-400">测试用例</h3>
+            <div className="space-y-3">
+              {detail.testCases.map((tc, index) => (
+                <div key={tc.id} className="bg-gray-900 rounded p-3">
+                  <div className="text-sm text-gray-400 mb-1">测试用例 {index + 1}</div>
+                  {tc.isHidden ? (
+                    <p className="text-gray-500 italic">隐藏测试用例</p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-400">输入：</span>
+                        <pre className="mt-1 text-gray-300 bg-gray-800 p-2 rounded">{tc.input}</pre>
+                      </div>
+                      <div>
+                        <span className="text-gray-400">期望输出：</span>
+                        <pre className="mt-1 text-gray-300 bg-gray-800 p-2 rounded">{tc.output}</pre>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 提示 */}
-        {exercise.hint && (
+        {(detail?.hint || exercise.hint) && (
           <div className="bg-gray-800 rounded-lg p-4">
             <button
               onClick={() => setShowHint(!showHint)}
@@ -85,13 +224,13 @@ export default function ExerciseDetail({
               {showHint ? '隐藏提示' : '查看提示'}
             </button>
             {showHint && (
-              <p className="mt-3 text-gray-300 pl-6">{exercise.hint}</p>
+              <p className="mt-3 text-gray-300 pl-6">{detail?.hint || exercise.hint}</p>
             )}
           </div>
         )}
 
         {/* 参考答案 */}
-        {exercise.solution && (
+        {(detail?.solution || exercise.solution) && (
           <div className="bg-gray-800 rounded-lg p-4">
             <button
               onClick={() => setShowSolution(!showSolution)}
@@ -102,27 +241,42 @@ export default function ExerciseDetail({
             </button>
             {showSolution && (
               <pre className="mt-3 p-3 bg-gray-900 rounded text-sm overflow-x-auto">
-                <code className="text-gray-300">{exercise.solution}</code>
+                <code className="text-gray-300">{detail?.solution || exercise.solution}</code>
               </pre>
             )}
           </div>
         )}
+
+        {/* 代码执行服务提示 */}
+        <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4">
+          <p className="text-yellow-400 text-sm">
+            提示：代码执行服务正在开发中，目前可以手动标记完成。
+          </p>
+        </div>
       </div>
 
       {/* 底部操作 */}
       <div className="p-4 border-t border-gray-700 flex gap-3">
         <button
-          onClick={() => onLoadCode(exercise.starterCode)}
+          onClick={handleLoadCode}
           className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
         >
-          加载初始代码
+          {detail?.userProgress?.savedCode ? '加载已保存代码' : '加载初始代码'}
         </button>
         {!isCompleted && (
           <button
-            onClick={onComplete}
-            className="flex-1 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium"
+            onClick={handleComplete}
+            disabled={completing}
+            className="flex-1 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-800 text-white rounded-lg font-medium flex items-center justify-center gap-2"
           >
-            标记为完成
+            {completing ? (
+              <>
+                <Loader2 className="animate-spin" size={18} />
+                处理中...
+              </>
+            ) : (
+              '标记为完成'
+            )}
           </button>
         )}
       </div>

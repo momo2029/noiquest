@@ -151,6 +151,11 @@ model Exercise {
   // 多邻国模式新增字段
   type         QuestionType @default(CODING)
   questionData Json?        // 存储不同题型的具体数据
+
+  // 题目来源区分
+  source       String       @default("SKILL_TREE")  // SKILL_TREE | EXERCISE_LIBRARY
+
+  // 技能树关联（仅 source=SKILL_TREE 时有值）
   unitId       String?
   lessonId     String?
 
@@ -163,6 +168,7 @@ model Exercise {
   mistakeRecords MistakeRecord[]
   knowledgePoints ExerciseKnowledgePoint[]
   statistics  ExerciseStatistics?
+  testCases   TestCase[]   // 测试用例（练习题库编程题）
 
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -173,16 +179,19 @@ model Exercise {
   @@index([lessonId])
   @@index([type])
   @@index([isPublished])
+  @@index([source])
 }
 
 // 练习进度表
 model ExerciseProgress {
-  id          String   @id @default(uuid())
-  userId      String
-  exerciseId  String
-  completed   Boolean  @default(false)
-  code        String?
-  completedAt DateTime?
+  id             String   @id @default(uuid())
+  userId         String
+  exerciseId     String
+  completed      Boolean  @default(false)
+  code           String?
+  completedAt    DateTime?
+  completedCount Int      @default(0)   // 完成次数（区分首次/重做）
+  xpEarned       Int      @default(0)   // 累计获得XP
 
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
@@ -544,6 +553,7 @@ model MistakeRecord {
   exerciseId    String
   lessonId      String?                            // 所属课程
   unitId        String?                            // 所属单元
+  source        String        @default("SKILL_TREE")  // SKILL_TREE | EXERCISE_LIBRARY | REVIEW
   status        MistakeStatus @default(UNREVIEWED) // 错题状态
   wrongCount    Int           @default(1)          // 错误次数
   correctStreak Int           @default(0)          // 连续答对次数（达到2次变为MASTERED）
@@ -564,6 +574,7 @@ model MistakeRecord {
   @@index([userId])
   @@index([userId, status])
   @@index([userId, lessonId])
+  @@index([source])
 }
 
 // ==================== 邀请码系统 ====================
@@ -853,4 +864,26 @@ model RedeemRecord {
 
   @@unique([userId, codeId])
   @@index([userId])
+}
+
+// ==================== 练习题库测试用例 ====================
+
+// 测试用例（练习题库编程题专用）
+model TestCase {
+  id          String   @id @default(uuid())
+  exerciseId  String
+  input       String   @db.Text    // 输入数据
+  output      String   @db.Text    // 期望输出
+  isHidden    Boolean  @default(false)  // 是否隐藏（防作弊）
+  orderIndex  Int      @default(0)
+  timeLimit   Int?     // 单独的时间限制（毫秒），null 则用默认值
+  memoryLimit Int?     // 单独的内存限制（KB），null 则用默认值
+
+  exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([exerciseId])
+  @@index([orderIndex])
 }

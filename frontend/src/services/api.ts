@@ -731,6 +731,183 @@ class ApiService {
   async getPopularExercises(limit: number = 10): Promise<any[]> {
     return this.request(`/admin/statistics/popular?limit=${limit}`);
   }
+
+  // ==================== 生命值 API ====================
+
+  async getHeartsStatus(): Promise<{
+    hearts: number;
+    maxHearts: number;
+    nextRecoveryIn: number | null;
+    fullRecoveryIn: number | null;
+    canStartLesson: boolean;
+    prices: { single: number; full: number };
+    userGems: number;
+  }> {
+    return this.request('/hearts');
+  }
+
+  async purchaseHearts(type: 'single' | 'full'): Promise<{
+    success: boolean;
+    message: string;
+    hearts: number;
+    maxHearts: number;
+    gemsSpent: number;
+    gemsRemaining: number;
+  }> {
+    return this.request('/hearts/purchase', {
+      method: 'POST',
+      body: JSON.stringify({ type }),
+    });
+  }
+
+  // ==================== 宝石 API ====================
+
+  async getGemsStatus(): Promise<{ gems: number }> {
+    return this.request('/gems');
+  }
+
+  // ==================== Streak API ====================
+
+  async getStreakStatus(): Promise<{
+    streak: number;
+    lastStudyDate: string | null;
+    isAtRisk: boolean;
+    isBroken: boolean;
+    canProtect: boolean;
+    protectDeadline: string | null;
+    previousStreak: number | null;
+    protectCost: number;
+    userGems: number;
+  }> {
+    return this.request('/streak');
+  }
+
+  async purchaseStreakProtect(): Promise<{
+    success: boolean;
+    message: string;
+    streak: number;
+    gemsSpent: number;
+    gemsRemaining: number;
+  }> {
+    return this.request('/streak/protect', { method: 'POST' });
+  }
+
+  async getStreakMilestones(): Promise<{
+    currentStreak: number;
+    milestones: {
+      days: number;
+      xpReward: number;
+      gemsReward: number;
+      name: string;
+      achieved: boolean;
+      progress: number;
+    }[];
+  }> {
+    return this.request('/streak/milestones');
+  }
+
+  // ==================== 兑换码 API ====================
+
+  async redeemCode(code: string): Promise<{
+    success: boolean;
+    type?: string;
+    value?: number;
+    message: string;
+    error?: string;
+    user?: { gems: number; hearts: number; streak: number };
+  }> {
+    return this.request('/redeem/redeem', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    });
+  }
+
+  async getRedeemHistory(): Promise<{
+    records: {
+      id: string;
+      code: string;
+      type: string;
+      value: number;
+      redeemedAt: string;
+    }[];
+  }> {
+    return this.request('/redeem/history');
+  }
+
+  // ==================== 练习题库 API ====================
+
+  async getExerciseCategories(source?: string): Promise<string[]> {
+    const query = source ? `?source=${source}` : '';
+    return this.request(`/exercises/meta/categories${query}`);
+  }
+
+  async getExercises(params?: {
+    source?: string;
+    category?: string;
+    difficulty?: string;
+    status?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    exercises: {
+      id: string;
+      title: string;
+      description: string;
+      difficulty: string;
+      category: string;
+      xp: number;
+      completed: boolean;
+      completedCount: number;
+    }[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  }> {
+    const query = new URLSearchParams();
+    if (params?.source) query.set('source', params.source);
+    if (params?.category) query.set('category', params.category);
+    if (params?.difficulty) query.set('difficulty', params.difficulty);
+    if (params?.status) query.set('status', params.status);
+    if (params?.search) query.set('search', params.search);
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+    return this.request(`/exercises?${query.toString()}`);
+  }
+
+  async getExerciseDetail(exerciseId: string): Promise<any> {
+    return this.request(`/exercises/${exerciseId}`);
+  }
+
+  async saveExerciseCode(exerciseId: string, code: string): Promise<{ message: string }> {
+    return this.request(`/exercises/${exerciseId}/save`, {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    });
+  }
+
+  async runExerciseCode(exerciseId: string, code: string): Promise<any> {
+    return this.request(`/exercises/${exerciseId}/run`, {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    });
+  }
+
+  async submitExercise(exerciseId: string, code: string): Promise<{
+    correct: boolean;
+    message: string;
+    xpEarned: number;
+    isFirstCompletion: boolean;
+    totalXp?: number;
+  }> {
+    return this.request(`/exercises/${exerciseId}/submit`, {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    });
+  }
 }
 
 export const api = new ApiService();

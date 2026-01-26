@@ -18,10 +18,18 @@ model MistakeRecord {
   mistakeCount  Int      @default(1)  // 错误次数
   reviewed      Boolean  @default(false)
   reviewedAt    DateTime?
+  source        String   @default("SKILL_TREE")  // SKILL_TREE | EXERCISE_LIBRARY | REVIEW
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
 ```
+
+**source 字段说明：**
+| 值 | 说明 |
+|-----|------|
+| SKILL_TREE | 技能树课程中做错 |
+| EXERCISE_LIBRARY | 练习题库中做错 |
+| REVIEW | 复习时做错（再次错误） |
 
 ### KnowledgeMastery (知识点掌握度)
 

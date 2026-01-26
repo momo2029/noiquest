@@ -26,6 +26,10 @@ import { achievementsRouter } from './routes/achievements.js';
 import { analyticsRouter } from './routes/analytics.js';
 import { adminStatisticsRouter } from './routes/admin-statistics.js';
 import { remindersRouter } from './routes/reminders.js';
+import { heartsRouter } from './routes/hearts.js';
+import { gemsRouter } from './routes/gems.js';
+import { streakRouter } from './routes/streak.js';
+import { redeemRouter } from './routes/redeem.js';
 
 const app = express();
 
@@ -93,6 +97,10 @@ app.use('/api/achievements', achievementsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/admin/statistics', adminStatisticsRouter);
 app.use('/api/reminders', remindersRouter);
+app.use('/api/hearts', heartsRouter);
+app.use('/api/gems', gemsRouter);
+app.use('/api/streak', streakRouter);
+app.use('/api/redeem', redeemRouter);
 
 // 错误处理
 app.use(errorHandler);

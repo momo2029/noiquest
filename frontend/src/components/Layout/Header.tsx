@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { UserRole, AppSettings, Student, DailyStatus } from '../../types';
 import { calculateLevel } from '../../data/exercises';
 import { api } from '../../services/api';
+import HeartsDisplay from '../Hearts/HeartsDisplay';
+import GemsDisplay from '../Gems/GemsDisplay';
 import {
   Settings,
   User,
@@ -13,8 +15,6 @@ import {
   Minus,
   Plus,
   Flame,
-  Heart,
-  Gem,
   Zap,
   LogOut,
   Target,
@@ -186,16 +186,13 @@ export default function Header({
             </div>
 
             {/* 生命值 */}
-            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-xl">
-              <Heart className="text-red-300" size={20} />
-              <span className="text-white font-bold">{student.hearts}</span>
-            </div>
+            <HeartsDisplay
+              hearts={student.hearts}
+              maxHearts={5}
+            />
 
             {/* 宝石 */}
-            <div className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-xl">
-              <Gem className="text-blue-300" size={20} />
-              <span className="text-white font-bold">{student.gems}</span>
-            </div>
+            <GemsDisplay gems={student.gems} />
 
             {/* 等级和经验 */}
             <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl">
