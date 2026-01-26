@@ -85,6 +85,17 @@ model User {
   knowledgeMastery KnowledgeMastery[]
   mistakeRecords  MistakeRecord[]
 
+  // 排行榜与联赛
+  leaderboardEntries LeaderboardEntry[]
+  league             UserLeague?
+
+  // 学习分析
+  learningSessions   LearningSession[]
+  dailyLearningStats DailyLearningStats[]
+
+  // 复习提醒
+  reviewReminders    ReviewReminder[]
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -138,6 +149,7 @@ model Exercise {
   lesson      Lesson?      @relation(fields: [lessonId], references: [id])
   mistakeRecords MistakeRecord[]
   knowledgePoints ExerciseKnowledgePoint[]
+  statistics  ExerciseStatistics?
 
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -194,16 +206,28 @@ model Submission {
 // 成就表
 model Achievement {
   id          String   @id @default(uuid())
-  code        String   @unique
-  title       String
-  description String
-  icon        String
-  condition   String
+  key         String?  @unique                   // 成就标识符（新字段，迁移后设为必填）
+  name        String   @default("")              // 成就名称
+  description String                             // 成就描述
+  icon        String                             // 图标
+  category    String   @default("MILESTONE")     // MILESTONE/STREAK/MASTERY/PERFECT/SPEED/COLLECTION
+  condition   Json     @default("{}")            // 解锁条件 { "type": "lessonsCompleted", "value": 10 }
+  reward      Json     @default("{\"xp\": 0, \"gems\": 0}")  // 奖励 { "xp": 50, "gems": 20 }
+  rarity      String   @default("COMMON")        // COMMON/RARE/EPIC/LEGENDARY
+  orderIndex  Int      @default(0)
+
+  // 兼容旧字段（迁移后可删除）
+  code        String?  @unique
+  title       String?
   xpReward    Int      @default(0)
 
   users       UserAchievement[]
 
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@index([category])
+  @@index([rarity])
 }
 
 // 用户成就关联表
@@ -212,12 +236,15 @@ model UserAchievement {
   userId        String
   achievementId String
   unlockedAt    DateTime @default(now())
+  progress      Int      @default(0)         // 当前进度（用于显示进度条）
+  notified      Boolean  @default(false)     // 是否已通知用户
 
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
 
   @@unique([userId, achievementId])
   @@index([userId])
+  @@index([notified])
 }
 
 // 作业表
@@ -588,4 +615,179 @@ model ExerciseKnowledgePoint {
   @@unique([exerciseId, knowledgePointId])
   @@index([exerciseId])
   @@index([knowledgePointId])
+}
+
+// ==================== 排行榜与联赛系统 ====================
+
+// 排行榜周期枚举
+enum LeaderboardPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  ALL_TIME
+}
+
+// 联赛等级枚举
+enum LeagueLevel {
+  BRONZE
+  SILVER
+  GOLD
+  DIAMOND
+  MASTER
+}
+
+// 排行榜条目
+model LeaderboardEntry {
+  id        String            @id @default(uuid())
+  userId    String
+  period    LeaderboardPeriod
+  periodKey String            // 2024-01-20 / 2024-W03 / 2024-01 / all
+  xp        Int               @default(0)
+  rank      Int?
+
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, period, periodKey])
+  @@index([period, periodKey])
+  @@index([xp(sort: Desc)])
+}
+
+// 用户联赛信息
+model UserLeague {
+  id          String      @id @default(uuid())
+  userId      String      @unique
+  league      LeagueLevel @default(BRONZE)
+  weeklyXp    Int         @default(0)
+  weeklyRank  Int?
+  promotedAt  DateTime?
+  demotedAt   DateTime?
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==================== 学习分析系统 ====================
+
+// 学习会话类型枚举
+enum SessionType {
+  LESSON
+  REVIEW
+  PRACTICE
+}
+
+// 学习会话记录
+model LearningSession {
+  id            String      @id @default(uuid())
+  userId        String
+  sessionType   SessionType
+  startedAt     DateTime    @default(now())
+  endedAt       DateTime?
+  duration      Int?        // 秒
+  exerciseCount Int         @default(0)
+  correctCount  Int         @default(0)
+  xpEarned      Int         @default(0)
+
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startedAt])
+  @@index([sessionType])
+}
+
+// 每日学习统计
+model DailyLearningStats {
+  id               String   @id @default(uuid())
+  userId           String
+  date             DateTime @db.Date
+  totalDuration    Int      @default(0)    // 总学习时长（秒）
+  sessionsCount    Int      @default(0)    // 学习次数
+  exercisesCount   Int      @default(0)    // 完成题目数
+  correctCount     Int      @default(0)    // 正确数
+  xpEarned         Int      @default(0)    // 获得XP
+  lessonsCompleted Int      @default(0)    // 完成课程数
+  reviewsCompleted Int      @default(0)    // 完成复习数
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([date])
+}
+
+// ==================== 题目统计系统 ====================
+
+// 题目统计
+model ExerciseStatistics {
+  id               String   @id @default(uuid())
+  exerciseId       String   @unique
+  totalAttempts    Int      @default(0)    // 总尝试次数
+  correctFirst     Int      @default(0)    // 首次正确次数
+  totalCorrect     Int      @default(0)    // 总正确次数
+  uniqueUsers      Int      @default(0)    // 独立用户数
+  totalTimeSeconds Int      @default(0)    // 总用时（秒）
+  skippedCount     Int      @default(0)    // 跳过次数
+  commonMistakes   Json?                   // 常见错误 [{ answer: "...", count: 10 }]
+
+  exercise         Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  updatedAt        DateTime @updatedAt
+}
+
+// ==================== 内容版本控制 ====================
+
+// 变更类型枚举
+enum ChangeType {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+// 内容版本记录
+model ContentVersion {
+  id          String     @id @default(uuid())
+  entityType  String     // SKILL_UNIT / LESSON / EXERCISE
+  entityId    String
+  version     Int
+  data        Json       // 完整的实体数据快照
+  changeType  ChangeType
+  changedBy   String     // 操作者ID
+  changeNote  String?    // 修改说明
+
+  createdAt   DateTime   @default(now())
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+// ==================== 复习提醒系统 ====================
+
+// 提醒类型枚举
+enum ReminderType {
+  DUE_REVIEW      // 有到期复习内容
+  INACTIVE        // 连续多天未学习
+  MASTERY_DROP    // 知识点掌握度下降
+  MISTAKES_PILE   // 错题累积超过阈值
+  STREAK_RISK     // 连续学习天数有风险
+}
+
+// 复习提醒
+model ReviewReminder {
+  id          String       @id @default(uuid())
+  userId      String
+  type        ReminderType
+  title       String
+  message     String
+  data        Json?        // 附加数据
+  read        Boolean      @default(false)
+  dismissed   Boolean      @default(false)
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime     @default(now())
+
+  @@index([userId, read])
+  @@index([type])
 }

@@ -327,6 +327,157 @@ class ApiService {
     return this.request('/admin/units');
   }
 
+  // ==================== 内容管理 API ====================
+
+  // 技能单元
+  async getContentSkillUnits(): Promise<any> {
+    return this.request('/admin/content/skill-units');
+  }
+
+  async createContentSkillUnit(data: {
+    title: string;
+    description: string;
+    icon?: string;
+    color?: string;
+    requiredXp?: number;
+    prerequisiteId?: string;
+  }): Promise<any> {
+    return this.request('/admin/content/skill-units', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateContentSkillUnit(id: string, data: {
+    title?: string;
+    description?: string;
+    icon?: string;
+    color?: string;
+    requiredXp?: number;
+    prerequisiteId?: string;
+    isPublished?: boolean;
+  }): Promise<any> {
+    return this.request(`/admin/content/skill-units/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteContentSkillUnit(id: string): Promise<any> {
+    return this.request(`/admin/content/skill-units/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async reorderContentSkillUnits(orders: { id: string; orderIndex: number }[]): Promise<any> {
+    return this.request('/admin/content/skill-units/reorder', {
+      method: 'PUT',
+      body: JSON.stringify({ orders }),
+    });
+  }
+
+  // 课程
+  async getContentLessons(unitId?: string): Promise<any> {
+    const query = unitId ? `?unitId=${unitId}` : '';
+    return this.request(`/admin/content/lessons${query}`);
+  }
+
+  async createContentLesson(data: {
+    title: string;
+    description?: string;
+    unitId: string;
+  }): Promise<any> {
+    return this.request('/admin/content/lessons', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateContentLesson(id: string, data: {
+    title?: string;
+    description?: string;
+    unitId?: string;
+    isPublished?: boolean;
+  }): Promise<any> {
+    return this.request(`/admin/content/lessons/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteContentLesson(id: string): Promise<any> {
+    return this.request(`/admin/content/lessons/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // 题目
+  async getContentExercises(params?: {
+    unitId?: string;
+    lessonId?: string;
+    type?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<any> {
+    const query = new URLSearchParams();
+    if (params?.unitId) query.set('unitId', params.unitId);
+    if (params?.lessonId) query.set('lessonId', params.lessonId);
+    if (params?.type) query.set('type', params.type);
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+    return this.request(`/admin/content/exercises?${query.toString()}`);
+  }
+
+  async getContentExercise(id: string): Promise<any> {
+    return this.request(`/admin/content/exercises/${id}`);
+  }
+
+  async createContentExercise(data: any): Promise<any> {
+    return this.request('/admin/content/exercises', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateContentExercise(id: string, data: any): Promise<any> {
+    return this.request(`/admin/content/exercises/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteContentExercise(id: string): Promise<any> {
+    return this.request(`/admin/content/exercises/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // 知识点
+  async getContentKnowledgePoints(category?: string): Promise<any> {
+    const query = category ? `?category=${category}` : '';
+    return this.request(`/admin/content/knowledge-points${query}`);
+  }
+
+  async createContentKnowledgePoint(data: { name: string; category: string }): Promise<any> {
+    return this.request('/admin/content/knowledge-points', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateContentKnowledgePoint(id: string, data: { name?: string; category?: string }): Promise<any> {
+    return this.request(`/admin/content/knowledge-points/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteContentKnowledgePoint(id: string): Promise<any> {
+    return this.request(`/admin/content/knowledge-points/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   async getAdminAnalytics(days: number = 30): Promise<any> {
     return this.request(`/admin/analytics?days=${days}`);
   }
