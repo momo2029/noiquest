@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 
+deploy/ssl/
 # Environment files
 .env
 .env.local
