@@ -19,6 +19,9 @@ import LessonSession from './components/SkillTree/LessonSession';
 import ReviewDashboard from './components/Review/ReviewDashboard';
 import ReviewSession from './components/Review/ReviewSession';
 import AdminLayout from './components/Admin/AdminLayout';
+import LeaderboardView from './components/Leaderboard/LeaderboardView';
+import AchievementsView from './components/Achievements/AchievementsView';
+import AnalyticsView from './components/Analytics/AnalyticsView';
 import { UserRole, Exercise, Student, Assignment, AppSettings, CodeFile, LessonCompleteResult, ReviewCompleteResult } from './types';
 import { exercises } from './data/exercises';
 import {
@@ -420,6 +423,12 @@ int main() {
           );
         case 'progress':
           return <ProgressTracker completedIds={completedIds} student={currentStudent} />;
+        case 'leaderboard':
+          return <LeaderboardView />;
+        case 'achievements':
+          return <AchievementsView />;
+        case 'analytics':
+          return <AnalyticsView />;
         default:
           return null;
       }

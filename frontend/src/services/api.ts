@@ -63,8 +63,8 @@ class ApiService {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: '请求失败' }));
-      throw new Error(error.message || '请求失败');
+      const error = await response.json().catch(() => ({ error: '请求失败' }));
+      throw new Error(error.error || '请求失败');
     }
 
     return response.json();
@@ -561,6 +561,175 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({ code }),
     });
+  }
+
+  // ==================== 排行榜 API ====================
+
+  async getLeaderboard(period: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'ALL_TIME' = 'WEEKLY', limit: number = 50): Promise<{
+    period: string;
+    periodKey: string;
+    entries: {
+      rank: number;
+      userId: string;
+      username: string;
+      name: string;
+      avatar: string;
+      xp: number;
+      league: string;
+    }[];
+    myRank: { rank: number; xp: number } | null;
+    totalParticipants: number;
+  }> {
+    return this.request(`/leaderboard?period=${period}&limit=${limit}`);
+  }
+
+  async getMyRankings(): Promise<Record<string, { rank: number; xp: number; total: number; percentile: number } | null>> {
+    return this.request('/leaderboard/me');
+  }
+
+  async getLeagueInfo(): Promise<{
+    currentLeague: string;
+    leagueName: string;
+    leagueColor: string;
+    weeklyXp: number;
+    weeklyRank: number;
+    totalInLeague: number;
+    promotionZone: { threshold: number; inZone: boolean; xpNeeded: number };
+    demotionZone: { threshold: number; inZone: boolean; safe: boolean };
+    rewards: { xpMultiplier: number; weeklyBonus: number };
+    endsIn: number;
+    endsAt: string;
+  }> {
+    return this.request('/leaderboard/league');
+  }
+
+  // ==================== 成就 API ====================
+
+  async getAchievements(): Promise<any[]> {
+    return this.request('/achievements');
+  }
+
+  async getUserAchievements(): Promise<{
+    unlocked: any[];
+    inProgress: any[];
+    locked: any[];
+  }> {
+    return this.request('/achievements/user');
+  }
+
+  async checkAchievements(): Promise<{ checked: boolean; newlyUnlocked: any[] }> {
+    return this.request('/achievements/check', { method: 'POST' });
+  }
+
+  async getUnnotifiedAchievements(): Promise<any[]> {
+    return this.request('/achievements/unnotified');
+  }
+
+  async markAchievementNotified(achievementId: string): Promise<{ success: boolean }> {
+    return this.request(`/achievements/${achievementId}/notified`, { method: 'POST' });
+  }
+
+  // ==================== 学习分析 API ====================
+
+  async getDailyAnalytics(date?: string): Promise<{
+    date: string;
+    totalDuration: number;
+    sessionsCount: number;
+    exercisesCount: number;
+    correctCount: number;
+    correctRate: number;
+    xpEarned: number;
+    lessonsCompleted: number;
+    reviewsCompleted: number;
+  }> {
+    const query = date ? `?date=${date}` : '';
+    return this.request(`/analytics/daily${query}`);
+  }
+
+  async getWeeklyAnalytics(): Promise<{
+    period: string;
+    summary: {
+      totalDuration: number;
+      totalExercises: number;
+      totalCorrect: number;
+      correctRate: number;
+      xpEarned: number;
+      lessonsCompleted: number;
+      reviewsCompleted: number;
+      streakDays: number;
+    };
+    dailyBreakdown: { date: string; duration: number; exercises: number; correctRate: number; xp: number }[];
+    peakHours: { hour: number; sessions: number; avgDuration: number }[];
+    comparison: { duration: string; exercises: string; correctRate: string };
+  }> {
+    return this.request('/analytics/weekly');
+  }
+
+  async getKnowledgeMap(): Promise<{
+    categories: {
+      name: string;
+      masteryLevel: number;
+      knowledgePoints: { name: string; masteryLevel: number; reviewDue: boolean; reviewCount: number }[];
+    }[];
+    overallMastery: number;
+    weakestPoints: string[];
+    strongestPoints: string[];
+  }> {
+    return this.request('/analytics/knowledge-map');
+  }
+
+  async getProgressTrend(days: number = 30): Promise<{
+    days: number;
+    trend: { date: string; xp: number; exercises: number; correctRate: number; duration: number }[];
+  }> {
+    return this.request(`/analytics/progress-trend?days=${days}`);
+  }
+
+  // ==================== 复习提醒 API ====================
+
+  async getReminders(unreadOnly: boolean = false): Promise<any[]> {
+    return this.request(`/reminders?unread=${unreadOnly}`);
+  }
+
+  async getReminderCount(): Promise<{ count: number }> {
+    return this.request('/reminders/count');
+  }
+
+  async markReminderRead(reminderId: string): Promise<{ success: boolean }> {
+    return this.request(`/reminders/${reminderId}/read`, { method: 'POST' });
+  }
+
+  async markAllRemindersRead(): Promise<{ success: boolean }> {
+    return this.request('/reminders/read-all', { method: 'POST' });
+  }
+
+  async dismissReminder(reminderId: string): Promise<{ success: boolean }> {
+    return this.request(`/reminders/${reminderId}/dismiss`, { method: 'POST' });
+  }
+
+  // ==================== 管理端统计 API ====================
+
+  async getExerciseStatistics(exerciseId: string): Promise<any> {
+    return this.request(`/admin/statistics/exercises/${exerciseId}/statistics`);
+  }
+
+  async getStatisticsOverview(): Promise<{
+    totalExercises: number;
+    totalAttempts: number;
+    totalUsers: number;
+    activeUsers: number;
+    avgCorrectRate: number;
+    today: { exercisesCompleted: number; xpEarned: number; activeUsers: number };
+  }> {
+    return this.request('/admin/statistics/overview');
+  }
+
+  async getDifficultExercises(limit: number = 10): Promise<any[]> {
+    return this.request(`/admin/statistics/difficult?limit=${limit}`);
+  }
+
+  async getPopularExercises(limit: number = 10): Promise<any[]> {
+    return this.request(`/admin/statistics/popular?limit=${limit}`);
   }
 }
 

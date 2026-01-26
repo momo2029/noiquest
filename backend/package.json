@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "dotenv -e .env.development -- npx tsx watch src/index.ts",
+    "debug": "dotenv -e .env.development -- npx tsx watch src/index.ts",
     "build": "tsc",
     "start": "dotenv -e .env.production -- node dist/index.js",
     "db:generate": "dotenv -e .env.development -- prisma generate",

@@ -7,7 +7,10 @@ import {
   ClipboardList,
   LayoutDashboard,
   Map,
-  RefreshCw
+  RefreshCw,
+  Trophy,
+  Award,
+  LineChart
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -22,6 +25,9 @@ export default function Sidebar({ role, currentView, onViewChange }: SidebarProp
     { id: 'editor', icon: Code, label: '代码编辑', color: 'blue' },
     { id: 'exercises', icon: BookOpen, label: '练习题库', color: 'cyan' },
     { id: 'review', icon: RefreshCw, label: '复习', color: 'orange' },
+    { id: 'leaderboard', icon: Trophy, label: '排行榜', color: 'yellow' },
+    { id: 'achievements', icon: Award, label: '成就', color: 'purple' },
+    { id: 'analytics', icon: LineChart, label: '学习报告', color: 'pink' },
     { id: 'progress', icon: BarChart3, label: '学习进度', color: 'purple' },
   ];
 

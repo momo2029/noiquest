@@ -62,7 +62,7 @@ router.post('/verify', async (req, res: Response, next) => {
     });
 
     if (!inviteCode) {
-      throw new AppError('邀请码不存在', 404);
+      throw new AppError('邀请码不存在', 400);
     }
 
     if (inviteCode.expiresAt && inviteCode.expiresAt < new Date()) {
@@ -88,6 +88,7 @@ export async function useInviteCode(code: string): Promise<{ valid: boolean; typ
     where: { code: code.toUpperCase() },
   });
 
+  console.log(inviteCode+'-----');
   if (!inviteCode) {
     return { valid: false, type: '', error: '邀请码不存在' };
   }

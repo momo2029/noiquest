@@ -47,9 +47,9 @@ export default function EmailLogin({ onRegister }: EmailLoginProps) {
         {/* Logo */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-center">
           <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">📧</span>
+            <span className="text-3xl">🐿️</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">邮箱登录</h1>
+          <h1 className="text-2xl font-bold text-white">NOI Quest 信息学奥赛C++ 训练营</h1>
           <p className="text-blue-100 mt-2">欢迎回到编程学习之旅</p>
         </div>
 

@@ -697,83 +697,123 @@ export const learningPath = [
 export const achievements = [
   {
     id: 'first-code',
-    title: '初出茅庐',
+    key: 'first-code',
+    name: '初出茅庐',
     description: '完成第一道编程题',
     icon: '🎯',
-    condition: 'complete_1_exercise',
-    xpReward: 20
+    category: 'MILESTONE',
+    condition: { type: 'exercisesCompleted', value: 1 },
+    reward: { xp: 20, gems: 5 },
+    rarity: 'COMMON',
+    orderIndex: 1
   },
   {
     id: 'streak-3',
-    title: '三天打鱼',
+    key: 'streak-3',
+    name: '三天打鱼',
     description: '连续学习3天',
     icon: '🔥',
-    condition: 'streak_3',
-    xpReward: 30
+    category: 'STREAK',
+    condition: { type: 'streak', value: 3 },
+    reward: { xp: 30, gems: 10 },
+    rarity: 'COMMON',
+    orderIndex: 2
   },
   {
     id: 'streak-7',
-    title: '一周坚持',
+    key: 'streak-7',
+    name: '一周坚持',
     description: '连续学习7天',
     icon: '💪',
-    condition: 'streak_7',
-    xpReward: 50
+    category: 'STREAK',
+    condition: { type: 'streak', value: 7 },
+    reward: { xp: 50, gems: 20 },
+    rarity: 'RARE',
+    orderIndex: 3
   },
   {
     id: 'streak-30',
-    title: '月度学霸',
+    key: 'streak-30',
+    name: '月度学霸',
     description: '连续学习30天',
     icon: '👑',
-    condition: 'streak_30',
-    xpReward: 200
+    category: 'STREAK',
+    condition: { type: 'streak', value: 30 },
+    reward: { xp: 200, gems: 100 },
+    rarity: 'EPIC',
+    orderIndex: 4
   },
   {
     id: 'complete-5',
-    title: '小试牛刀',
+    key: 'complete-5',
+    name: '小试牛刀',
     description: '完成5道编程题',
     icon: '⭐',
-    condition: 'complete_5_exercises',
-    xpReward: 50
+    category: 'MILESTONE',
+    condition: { type: 'exercisesCompleted', value: 5 },
+    reward: { xp: 50, gems: 15 },
+    rarity: 'COMMON',
+    orderIndex: 5
   },
   {
     id: 'complete-10',
-    title: '渐入佳境',
+    key: 'complete-10',
+    name: '渐入佳境',
     description: '完成10道编程题',
     icon: '🌟',
-    condition: 'complete_10_exercises',
-    xpReward: 100
+    category: 'MILESTONE',
+    condition: { type: 'exercisesCompleted', value: 10 },
+    reward: { xp: 100, gems: 30 },
+    rarity: 'RARE',
+    orderIndex: 6
   },
   {
     id: 'complete-all',
-    title: '全部通关',
+    key: 'complete-all',
+    name: '全部通关',
     description: '完成所有编程题',
     icon: '🏆',
-    condition: 'complete_all_exercises',
-    xpReward: 500
+    category: 'COLLECTION',
+    condition: { type: 'completeAll', value: 1 },
+    reward: { xp: 500, gems: 200 },
+    rarity: 'LEGENDARY',
+    orderIndex: 7
   },
   {
     id: 'level-5',
-    title: '初级程序员',
+    key: 'level-5',
+    name: '初级程序员',
     description: '达到5级',
     icon: '💻',
-    condition: 'reach_level_5',
-    xpReward: 50
+    category: 'MILESTONE',
+    condition: { type: 'level', value: 5 },
+    reward: { xp: 50, gems: 20 },
+    rarity: 'COMMON',
+    orderIndex: 8
   },
   {
     id: 'level-10',
-    title: '中级程序员',
+    key: 'level-10',
+    name: '中级程序员',
     description: '达到10级',
     icon: '🖥️',
-    condition: 'reach_level_10',
-    xpReward: 100
+    category: 'MILESTONE',
+    condition: { type: 'level', value: 10 },
+    reward: { xp: 100, gems: 50 },
+    rarity: 'RARE',
+    orderIndex: 9
   },
   {
     id: 'csp-j-ready',
-    title: 'CSP-J 预备',
+    key: 'csp-j-ready',
+    name: 'CSP-J 预备',
     description: '完成所有基础和中等难度题目',
     icon: '🎖️',
-    condition: 'complete_easy_medium',
-    xpReward: 200
+    category: 'COLLECTION',
+    condition: { type: 'completeEasyMedium', value: 1 },
+    reward: { xp: 200, gems: 100 },
+    rarity: 'LEGENDARY',
+    orderIndex: 10
   }
 ];
 

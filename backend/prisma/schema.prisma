@@ -206,8 +206,8 @@ model Submission {
 // 成就表
 model Achievement {
   id          String   @id @default(uuid())
-  key         String?  @unique                   // 成就标识符（新字段，迁移后设为必填）
-  name        String   @default("")              // 成就名称
+  key         String   @unique                   // 成就标识符
+  name        String                             // 成就名称
   description String                             // 成就描述
   icon        String                             // 图标
   category    String   @default("MILESTONE")     // MILESTONE/STREAK/MASTERY/PERFECT/SPEED/COLLECTION
@@ -215,11 +215,6 @@ model Achievement {
   reward      Json     @default("{\"xp\": 0, \"gems\": 0}")  // 奖励 { "xp": 50, "gems": 20 }
   rarity      String   @default("COMMON")        // COMMON/RARE/EPIC/LEGENDARY
   orderIndex  Int      @default(0)
-
-  // 兼容旧字段（迁移后可删除）
-  code        String?  @unique
-  title       String?
-  xpReward    Int      @default(0)
 
   users       UserAchievement[]
 

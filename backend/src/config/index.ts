@@ -13,6 +13,7 @@ dotenv.config(); // 加载 .env 作为后备
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
+  debug: process.env.DEBUG === 'true' || process.env.NODE_ENV === 'development',
 
   jwt: {
     secret: process.env.JWT_SECRET || 'default-secret-change-me',

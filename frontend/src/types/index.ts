@@ -138,12 +138,23 @@ export interface ExerciseProgress {
 // 成就
 export interface Achievement {
   id: string;
-  title: string;
+  key: string;
+  name: string;
   description: string;
   icon: string;
-  condition: string;
-  xpReward: number;
+  category: string;  // MILESTONE/STREAK/MASTERY/PERFECT/SPEED/COLLECTION
+  condition: {
+    type: string;
+    value: number;
+  };
+  reward: {
+    xp: number;
+    gems: number;
+  };
+  rarity: string;  // COMMON/RARE/EPIC/LEGENDARY
+  orderIndex: number;
   unlockedAt?: string;
+  progress?: number;
 }
 
 // 学生信息

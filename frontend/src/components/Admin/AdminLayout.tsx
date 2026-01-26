@@ -10,7 +10,8 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  PieChart
 } from 'lucide-react';
 import AdminDashboard from './AdminDashboard';
 import UserManagement from './UserManagement';
@@ -20,13 +21,14 @@ import InviteCodeManagement from './InviteCodeManagement';
 import ContentManagement from './ContentManagement';
 import DataAnalytics from './DataAnalytics';
 import SystemSettings from './SystemSettings';
+import AdminStatistics from './AdminStatistics';
 
 interface AdminLayoutProps {
   userName?: string;
   onLogout: () => void;
 }
 
-type AdminView = 'dashboard' | 'users' | 'classes' | 'points' | 'invites' | 'content' | 'analytics' | 'settings';
+type AdminView = 'dashboard' | 'users' | 'classes' | 'points' | 'invites' | 'content' | 'analytics' | 'statistics' | 'settings';
 
 export default function AdminLayout({ userName, onLogout }: AdminLayoutProps) {
   const [currentView, setCurrentView] = useState<AdminView>('dashboard');
@@ -40,6 +42,7 @@ export default function AdminLayout({ userName, onLogout }: AdminLayoutProps) {
     { id: 'invites', icon: Ticket, label: '邀请码管理', color: 'pink' },
     { id: 'content', icon: BookOpen, label: '内容管理', color: 'cyan' },
     { id: 'analytics', icon: BarChart3, label: '数据分析', color: 'orange' },
+    { id: 'statistics', icon: PieChart, label: '题目统计', color: 'red' },
     { id: 'settings', icon: Settings, label: '系统设置', color: 'gray' },
   ];
 
@@ -59,6 +62,8 @@ export default function AdminLayout({ userName, onLogout }: AdminLayoutProps) {
         return <ContentManagement />;
       case 'analytics':
         return <DataAnalytics />;
+      case 'statistics':
+        return <AdminStatistics />;
       case 'settings':
         return <SystemSettings />;
       default:

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { CheckCircle, XCircle, ChevronRight, RotateCcw, Zap, Lightbulb } from 'lucide-react';
 
 interface AnswerFeedbackProps {
@@ -10,6 +11,31 @@ interface AnswerFeedbackProps {
 }
 
 export default function AnswerFeedback({ correct, feedback, xpEarned, onContinue, showAIHintButton, onAIHint }: AnswerFeedbackProps) {
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    if (!correct) return;
+
+    const timer = setTimeout(() => {
+      onContinue();
+    }, 3000);
+
+    const countdownTimer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownTimer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(countdownTimer);
+    };
+  }, [correct, onContinue]);
+
   return (
     <div className={`
       fixed bottom-0 left-0 right-0 p-6 transition-all duration-300
@@ -71,7 +97,7 @@ export default function AnswerFeedback({ correct, feedback, xpEarned, onContinue
               }
             `}
           >
-            {correct ? '继续' : '重试'}
+            {correct ? `继续 (${countdown}s)` : '重试'}
             {correct ? <ChevronRight size={20} /> : <RotateCcw size={20} />}
           </button>
         </div>
