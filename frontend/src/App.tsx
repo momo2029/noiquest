@@ -22,7 +22,7 @@ import AdminLayout from './components/Admin/AdminLayout';
 import LeaderboardView from './components/Leaderboard/LeaderboardView';
 import AchievementsView from './components/Achievements/AchievementsView';
 import AnalyticsView from './components/Analytics/AnalyticsView';
-import { UserRole, Exercise, Student, Assignment, AppSettings, CodeFile, LessonCompleteResult, ReviewCompleteResult } from './types';
+import { UserRole, Exercise, Student, Assignment, AppSettings, LessonCompleteResult, ReviewCompleteResult } from './types';
 import { exercises } from './data/exercises';
 import { api } from './services/api';
 import {
@@ -32,27 +32,18 @@ import {
   saveStudents,
   getAssignments,
   saveAssignments,
-  generateId,
   createDefaultStudent,
   updateStreak,
-  addXp
+  addXp,
+  getCurrentView,
+  saveCurrentView,
 } from './utils/storage';
+import { useUserFiles } from './hooks/useUserFiles';
 
-const defaultFiles: CodeFile[] = [
-  {
-    id: 'main',
-    name: 'main.cpp',
-    content: `#include <iostream>
-using namespace std;
-
-int main() {
-    cout << "Hello, World!" << endl;
-    return 0;
-}
-`,
-    language: 'cpp'
-  }
-];
+// 学生可用的视图
+const STUDENT_VIEWS = ['skill-tree', 'review', 'editor', 'exercises', 'progress', 'leaderboard', 'achievements', 'analytics'];
+// 教师可用的视图
+const TEACHER_VIEWS = ['dashboard', 'students', 'assignments'];
 
 function MainApp() {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
@@ -63,9 +54,20 @@ function MainApp() {
   const [students, setStudents] = useState<Student[]>(() => getStudents());
   const [assignments, setAssignments] = useState<Assignment[]>(() => getAssignments());
 
-  // 编辑器状态
-  const [files, setFiles] = useState<CodeFile[]>(defaultFiles);
-  const [activeFileId, setActiveFileId] = useState('main');
+  // 编辑器状态 - 使用 useUserFiles hook
+  const {
+    files,
+    activeFile,
+    activeFileId,
+    openFileIds,
+    setActiveFileId,
+    updateFileContent,
+    createFile,
+    deleteFile,
+    openFile,
+    closeFile,
+  } = useUserFiles(isAuthenticated);
+
   const [selectedCode, setSelectedCode] = useState('');
 
   // 面板状态
@@ -79,11 +81,27 @@ function MainApp() {
   const [output, setOutput] = useState<string[]>([]);
   const [executionTime, setExecutionTime] = useState<number | null>(null);
 
-  // 视图状态 - 根据用户角色设置默认视图
+  // 视图状态 - 根据用户角色设置默认视图，支持路由记忆
   const userRole: UserRole = user?.role === 'TEACHER' ? 'teacher' : user?.role === 'ADMIN' ? 'admin' : 'student';
-  const [currentView, setCurrentView] = useState<string>(
-    userRole === 'student' ? 'skill-tree' : 'dashboard'
-  );
+  const defaultView = userRole === 'student' ? 'skill-tree' : 'dashboard';
+
+  const [currentView, setCurrentViewState] = useState<string>(() => {
+    const savedView = getCurrentView(defaultView);
+    // 验证保存的视图对当前角色是否有效
+    if (userRole === 'student' && STUDENT_VIEWS.includes(savedView)) {
+      return savedView;
+    } else if (userRole === 'teacher' && TEACHER_VIEWS.includes(savedView)) {
+      return savedView;
+    }
+    return defaultView;
+  });
+
+  // 包装 setCurrentView 以同时保存到 localStorage
+  const setCurrentView = useCallback((view: string) => {
+    setCurrentViewState(view);
+    saveCurrentView(view);
+  }, []);
+
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
   // 课程学习状态
@@ -115,13 +133,15 @@ function MainApp() {
     }
   }, [user, userRole]);
 
-  // 当用户角色变化时更新视图
+  // 当用户角色变化时验证并更新视图
   useEffect(() => {
-    setCurrentView(userRole === 'student' ? 'skill-tree' : 'dashboard');
-  }, [userRole]);
-
-  // 获取当前文件
-  const activeFile = files.find(f => f.id === activeFileId) || files[0];
+    const savedView = getCurrentView(defaultView);
+    if (userRole === 'student' && !STUDENT_VIEWS.includes(savedView)) {
+      setCurrentView(defaultView);
+    } else if (userRole === 'teacher' && !TEACHER_VIEWS.includes(savedView)) {
+      setCurrentView(defaultView);
+    }
+  }, [userRole, defaultView, setCurrentView]);
 
   // 保存设置
   useEffect(() => {
@@ -142,43 +162,10 @@ function MainApp() {
     }
   }, [currentStudent, students]);
 
-  // 更新文件内容
-  const updateFileContent = useCallback((content: string) => {
-    setFiles(prev => prev.map(f =>
-      f.id === activeFileId ? { ...f, content } : f
-    ));
-  }, [activeFileId]);
-
-  // 创建新文件
-  const createFile = useCallback((name: string) => {
-    const newFile: CodeFile = {
-      id: generateId(),
-      name: name.endsWith('.cpp') ? name : `${name}.cpp`,
-      content: `#include <iostream>
-using namespace std;
-
-int main() {
-
-    return 0;
-}
-`,
-      language: 'cpp'
-    };
-    setFiles(prev => [...prev, newFile]);
-    setActiveFileId(newFile.id);
-  }, []);
-
-  // 删除文件
-  const deleteFile = useCallback((id: string) => {
-    if (files.length <= 1) return;
-    setFiles(prev => prev.filter(f => f.id !== id));
-    if (activeFileId === id) {
-      setActiveFileId(files[0].id === id ? files[1].id : files[0].id);
-    }
-  }, [files, activeFileId]);
-
   // 运行代码
   const runCode = useCallback(async () => {
+    if (!activeFile) return;
+
     setIsRunning(true);
     setOutput([]);
     setShowOutput(true);
@@ -376,7 +363,7 @@ int main() {
                   <FileExplorer
                     files={files}
                     activeFileId={activeFileId}
-                    onSelectFile={setActiveFileId}
+                    onSelectFile={openFile}
                     onCreateFile={createFile}
                     onDeleteFile={deleteFile}
                     onClose={() => setShowFileExplorer(false)}
@@ -386,17 +373,17 @@ int main() {
                 <div className="flex-1 flex flex-col min-w-0">
                   <CodeEditor
                     file={activeFile}
-                    files={files}
+                    files={files.filter(f => openFileIds.includes(f.id))}
                     onContentChange={updateFileContent}
                     onSelectionChange={setSelectedCode}
                     onFileSelect={setActiveFileId}
-                    onFileClose={deleteFile}
+                    onFileClose={closeFile}
                     onRun={runCode}
                     isRunning={isRunning}
                   />
                 </div>
 
-                {showAIPanel && (
+                {showAIPanel && activeFile && (
                   <div className="w-80 border-l border-gray-700 flex-shrink-0">
                     <AIChat
                       selectedCode={selectedCode}

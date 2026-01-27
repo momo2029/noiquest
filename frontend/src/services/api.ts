@@ -64,7 +64,15 @@ class ApiService {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({ error: '请求失败' }));
-      throw new Error(error.error || '请求失败');
+      const errorMessage = error.error || '请求失败';
+
+      // 处理登录失效（单设备登录）
+      if (response.status === 401 && errorMessage === '登录已失效，请重新登录') {
+        this.setToken(null);
+        window.dispatchEvent(new CustomEvent('auth:session_expired'));
+      }
+
+      throw new Error(errorMessage);
     }
 
     return response.json();
@@ -923,6 +931,39 @@ class ApiService {
     return this.request('/exercises/execute', {
       method: 'POST',
       body: JSON.stringify({ code, stdin }),
+    });
+  }
+
+  // ==================== 用户文件 API ====================
+
+  async getUserFiles(): Promise<{
+    files: { id: string; name: string; updatedAt: string }[];
+  }> {
+    return this.request('/user-files');
+  }
+
+  async getUserFile(id: string): Promise<{
+    file: { id: string; name: string; content: string; updatedAt: string };
+  }> {
+    return this.request(`/user-files/${id}`);
+  }
+
+  async syncUserFiles(data: {
+    files: { id?: string; name: string; content: string }[];
+    deletedIds?: string[];
+  }): Promise<{
+    message: string;
+    files: { id: string; name: string; updatedAt: string }[];
+  }> {
+    return this.request('/user-files/sync', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteUserFile(id: string): Promise<{ message: string }> {
+    return this.request(`/user-files/${id}`, {
+      method: 'DELETE',
     });
   }
 }

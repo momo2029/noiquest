@@ -121,6 +121,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  // 监听登录失效事件（单设备登录）
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      logout();
+      alert('您的账号已在其他设备登录，请重新登录');
+    };
+
+    window.addEventListener('auth:session_expired', handleSessionExpired);
+    return () => window.removeEventListener('auth:session_expired', handleSessionExpired);
+  }, []);
+
   return (
     <AuthContext.Provider value={{ ...state, login, register, emailLogin, emailRegister, sendVerificationCode, logout }}>
       {children}

@@ -1,4 +1,11 @@
-// 文件存储服务 - localStorage + LRU 缓存
+/**
+ * 文件存储服务 - localStorage + LRU 缓存
+ *
+ * 存储结构：
+ * - user_files_meta: 所有文件的元信息
+ * - user_file_content_{id}: 单个文件的内容（最多缓存10个）
+ * - user_files_lru: LRU 顺序列表
+ */
 
 export interface FileMetadata {
   id: string;
@@ -17,7 +24,8 @@ const STORAGE_KEY_CONTENT_PREFIX = 'user_file_content_';
 const STORAGE_KEY_LRU = 'user_files_lru';
 const MAX_CACHED_CONTENTS = 10;
 
-// 获取所有文件元信息
+// ==================== 元信息操作 ====================
+
 export function getFilesMetadata(): FileMetadata[] {
   try {
     const data = localStorage.getItem(STORAGE_KEY_META);
@@ -27,12 +35,12 @@ export function getFilesMetadata(): FileMetadata[] {
   }
 }
 
-// 保存文件元信息
 export function saveFilesMetadata(files: FileMetadata[]): void {
   localStorage.setItem(STORAGE_KEY_META, JSON.stringify(files));
 }
 
-// 获取 LRU 列表（最近访问的文件 ID 列表）
+// ==================== LRU 缓存操作 ====================
+
 function getLruList(): string[] {
   try {
     const data = localStorage.getItem(STORAGE_KEY_LRU);
@@ -42,12 +50,10 @@ function getLruList(): string[] {
   }
 }
 
-// 保存 LRU 列表
 function saveLruList(list: string[]): void {
   localStorage.setItem(STORAGE_KEY_LRU, JSON.stringify(list));
 }
 
-// 更新 LRU（将文件 ID 移到最前面）
 function updateLru(fileId: string): void {
   const list = getLruList().filter(id => id !== fileId);
   list.unshift(fileId);
@@ -63,7 +69,8 @@ function updateLru(fileId: string): void {
   saveLruList(list);
 }
 
-// 获取文件内容（从 localStorage）
+// ==================== 文件内容操作 ====================
+
 export function getFileContent(fileId: string): string | null {
   try {
     const content = localStorage.getItem(STORAGE_KEY_CONTENT_PREFIX + fileId);
@@ -76,20 +83,19 @@ export function getFileContent(fileId: string): string | null {
   }
 }
 
-// 保存文件内容到 localStorage
 export function saveFileContent(fileId: string, content: string): void {
   localStorage.setItem(STORAGE_KEY_CONTENT_PREFIX + fileId, content);
   updateLru(fileId);
 }
 
-// 删除文件内容
 export function deleteFileContent(fileId: string): void {
   localStorage.removeItem(STORAGE_KEY_CONTENT_PREFIX + fileId);
   const list = getLruList().filter(id => id !== fileId);
   saveLruList(list);
 }
 
-// 获取完整文件（元信息 + 内容）
+// ==================== 完整文件操作 ====================
+
 export function getFullFile(fileId: string): FileWithContent | null {
   const files = getFilesMetadata();
   const meta = files.find(f => f.id === fileId);
@@ -101,7 +107,6 @@ export function getFullFile(fileId: string): FileWithContent | null {
   return { ...meta, content };
 }
 
-// 保存完整文件
 export function saveFullFile(file: FileWithContent): void {
   const files = getFilesMetadata();
   const index = files.findIndex(f => f.id === file.id);
@@ -124,34 +129,24 @@ export function saveFullFile(file: FileWithContent): void {
   saveFileContent(file.id, file.content);
 }
 
-// 删除文件
 export function deleteFile(fileId: string): void {
   const files = getFilesMetadata().filter(f => f.id !== fileId);
   saveFilesMetadata(files);
   deleteFileContent(fileId);
 }
 
-// 检查文件内容是否已缓存
+// ==================== 缓存状态查询 ====================
+
 export function isContentCached(fileId: string): boolean {
   return localStorage.getItem(STORAGE_KEY_CONTENT_PREFIX + fileId) !== null;
 }
 
-// 获取所有已缓存内容的文件 ID
 export function getCachedFileIds(): string[] {
   return getLruList();
 }
 
-// 清除所有文件数据
-export function clearAllFiles(): void {
-  const lruList = getLruList();
-  for (const id of lruList) {
-    localStorage.removeItem(STORAGE_KEY_CONTENT_PREFIX + id);
-  }
-  localStorage.removeItem(STORAGE_KEY_META);
-  localStorage.removeItem(STORAGE_KEY_LRU);
-}
+// ==================== 同步相关 ====================
 
-// 从后端数据初始化本地存储
 export function initFromBackend(files: { id: string; name: string; updatedAt: string }[]): void {
   const existingMeta = getFilesMetadata();
   const existingMap = new Map(existingMeta.map(f => [f.id, f]));
@@ -177,7 +172,6 @@ export function initFromBackend(files: { id: string; name: string; updatedAt: st
   saveFilesMetadata(newMeta);
 }
 
-// 获取需要同步的文件（新建或修改的）
 export function getFilesToSync(): FileWithContent[] {
   const files = getFilesMetadata();
   const toSync: FileWithContent[] = [];
@@ -194,7 +188,6 @@ export function getFilesToSync(): FileWithContent[] {
   return toSync;
 }
 
-// 标记文件为已同步
 export function markFilesSynced(fileIds: string[]): void {
   const files = getFilesMetadata();
   for (const file of files) {
@@ -206,12 +199,12 @@ export function markFilesSynced(fileIds: string[]): void {
   saveFilesMetadata(files);
 }
 
-// 生成临时 ID（用于新文件）
+// ==================== 工具函数 ====================
+
 export function generateTempId(): string {
-  return 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  return 'temp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
 }
 
-// 更新文件 ID（同步后用后端返回的真实 ID 替换临时 ID）
 export function updateFileId(oldId: string, newId: string): void {
   const files = getFilesMetadata();
   const file = files.find(f => f.id === oldId);
@@ -230,4 +223,13 @@ export function updateFileId(oldId: string, newId: string): void {
     const lru = getLruList().map(id => id === oldId ? newId : id);
     saveLruList(lru);
   }
+}
+
+export function clearAllFiles(): void {
+  const lruList = getLruList();
+  for (const id of lruList) {
+    localStorage.removeItem(STORAGE_KEY_CONTENT_PREFIX + id);
+  }
+  localStorage.removeItem(STORAGE_KEY_META);
+  localStorage.removeItem(STORAGE_KEY_LRU);
 }

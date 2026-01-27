@@ -177,3 +177,14 @@ export function saveCurrentCode(code: string): void {
 export function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
+
+// 当前视图（路由记忆）
+const STORAGE_KEY_CURRENT_VIEW = 'current_view';
+
+export function getCurrentView(defaultView: string): string {
+  return localStorage.getItem(STORAGE_KEY_CURRENT_VIEW) || defaultView;
+}
+
+export function saveCurrentView(view: string): void {
+  localStorage.setItem(STORAGE_KEY_CURRENT_VIEW, view);
+}
