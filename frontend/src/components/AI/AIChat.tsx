@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Trash2, Code, AlertCircle, Sparkles, Loader2, X, Bot, User, Lightbulb } from 'lucide-react';
+import { Send, Trash2, Code, AlertCircle, Sparkles, Loader2, X, Bot, User, Lightbulb, Maximize2, Minimize2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { AIMessage } from '../../types';
 import { sendMessage, explainCode, analyzeError, optimizeCode } from './AIService';
 
@@ -14,6 +17,7 @@ export default function AIChat({ selectedCode, currentCode, onClose }: AIChatPro
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [streamingText, setStreamingText] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -45,9 +49,16 @@ export default function AIChat({ selectedCode, currentCode, onClose }: AIChatPro
     setStreamingText('');
 
     try {
-      const response = await sendMessage(newMessages, (text) => {
-        setStreamingText(text);
-      });
+      const response = await sendMessage(
+        newMessages,
+        (text) => {
+          setStreamingText(text);
+        },
+        () => {
+          // 收到 thinking 状态时，显示"思考中"
+          setStreamingText('思考中...');
+        }
+      );
 
       setMessages([...newMessages, { role: 'assistant', content: response }]);
       setStreamingText('');
@@ -95,7 +106,7 @@ export default function AIChat({ selectedCode, currentCode, onClose }: AIChatPro
   ];
 
   return (
-    <div className="flex flex-col h-full bg-[#1e1e1e]">
+    <div className={`flex flex-col bg-[#1e1e1e] ${isFullscreen ? 'fixed inset-0 z-50' : 'h-full'}`}>
       {/* 头部 */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-[#3c3c3c]">
         <div className="flex items-center gap-2">
@@ -105,6 +116,13 @@ export default function AIChat({ selectedCode, currentCode, onClose }: AIChatPro
           <span className="font-medium text-white text-sm">AI 编程助手</span>
         </div>
         <div className="flex items-center gap-1">
+          <button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="p-1.5 text-gray-500 hover:text-white hover:bg-gray-700 rounded"
+            title={isFullscreen ? "退出全屏" : "全屏"}
+          >
+            {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+          </button>
           <button
             onClick={clearChat}
             className="p-1.5 text-gray-500 hover:text-white hover:bg-gray-700 rounded"
@@ -195,7 +213,36 @@ export default function AIChat({ selectedCode, currentCode, onClose }: AIChatPro
                   : 'bg-[#252526] text-gray-200'
               }`}
             >
-              <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{msg.content}</pre>
+              {msg.role === 'user' ? (
+                <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{msg.content}</pre>
+              ) : (
+                <div className="prose prose-invert prose-sm max-w-none">
+                  <ReactMarkdown
+                    components={{
+                      code({ node, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        const inline = !match && !String(children).includes('\n');
+                        return inline ? (
+                          <code className="bg-[#1e1e1e] px-1 py-0.5 rounded text-sm" {...props}>
+                            {children}
+                          </code>
+                        ) : (
+                          <SyntaxHighlighter
+                            style={vscDarkPlus}
+                            language={match ? match[1] : 'text'}
+                            PreTag="div"
+                            customStyle={{ margin: '0.5rem 0', borderRadius: '0.375rem', fontSize: '0.875rem' }}
+                          >
+                            {String(children).replace(/\n$/, '')}
+                          </SyntaxHighlighter>
+                        );
+                      },
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -206,7 +253,32 @@ export default function AIChat({ selectedCode, currentCode, onClose }: AIChatPro
               <Bot size={14} />
             </div>
             <div className="max-w-[85%] px-3 py-2 rounded-lg bg-[#252526] text-gray-200">
-              <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">{streamingText}</pre>
+              <div className="prose prose-invert prose-sm max-w-none">
+                <ReactMarkdown
+                  components={{
+                    code({ node, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      const inline = !match && !String(children).includes('\n');
+                      return inline ? (
+                        <code className="bg-[#1e1e1e] px-1 py-0.5 rounded text-sm" {...props}>
+                          {children}
+                        </code>
+                      ) : (
+                        <SyntaxHighlighter
+                          style={vscDarkPlus}
+                          language={match ? match[1] : 'text'}
+                          PreTag="div"
+                          customStyle={{ margin: '0.5rem 0', borderRadius: '0.375rem', fontSize: '0.875rem' }}
+                        >
+                          {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
+                      );
+                    },
+                  }}
+                >
+                  {streamingText}
+                </ReactMarkdown>
+              </div>
             </div>
           </div>
         )}

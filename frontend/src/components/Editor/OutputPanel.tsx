@@ -143,7 +143,7 @@ export default function OutputPanel({
       {/* 输出内容 */}
       <div
         ref={outputRef}
-        className="flex-1 overflow-y-auto p-3 font-mono text-sm"
+        className="flex-1 overflow-y-auto p-3 font-mono text-sm whitespace-pre-wrap break-all"
       >
         {output.length === 0 ? (
           <div className="text-gray-600 text-center py-8">

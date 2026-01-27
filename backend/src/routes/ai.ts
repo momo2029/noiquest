@@ -173,6 +173,14 @@ router.post('/chat/stream', authenticate, async (req: AuthRequest, res: Response
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no'); // 禁用 nginx 缓冲
+    res.flushHeaders(); // 立即发送响应头
+
+    // 立即发送思考状态，避免前端等待
+    res.write(`data: ${JSON.stringify({ status: 'thinking' })}\n\n`);
+    if (typeof (res as any).flush === 'function') {
+      (res as any).flush();
+    }
 
     // 调用豆包 API（流式）
     const response = await fetch(config.doubao.apiUrl, {
@@ -218,7 +226,10 @@ router.post('/chat/stream', authenticate, async (req: AuthRequest, res: Response
             const json = JSON.parse(data);
             const content = json.choices?.[0]?.delta?.content || '';
             fullContent += content;
-            res.write(`data: ${JSON.stringify({ content, sessionId: currentSessionId })}\n\n`);
+            res.write(`data: ${JSON.stringify({ content: fullContent, sessionId: currentSessionId })}\n\n`);
+            if (typeof (res as any).flush === 'function') {
+              (res as any).flush();
+            }
           } catch {
             // 忽略解析错误
           }

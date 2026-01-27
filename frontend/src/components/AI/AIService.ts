@@ -9,7 +9,8 @@ function getToken(): string | null {
 
 export async function sendMessage(
   messages: AIMessage[],
-  onStream?: (text: string) => void
+  onStream?: (text: string) => void,
+  onThinking?: () => void
 ): Promise<string> {
   const token = getToken();
 
@@ -57,9 +58,16 @@ export async function sendMessage(
               if (json.error) {
                 throw new Error(json.error);
               }
-              const content = json.content || '';
-              fullText = content;
-              onStream(fullText);
+              // 处理思考状态
+              if (json.status === 'thinking') {
+                onThinking?.();
+                continue;
+              }
+              // 只有当 content 存在时才更新
+              if (json.content !== undefined) {
+                fullText = json.content;
+                onStream(fullText);
+              }
             } catch (e) {
               if (e instanceof SyntaxError) {
                 // 忽略 JSON 解析错误
