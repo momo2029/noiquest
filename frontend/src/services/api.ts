@@ -908,6 +908,23 @@ class ApiService {
       body: JSON.stringify({ code }),
     });
   }
+
+  // 通用代码执行（编辑器直接运行）
+  async executeCode(code: string, stdin: string = ''): Promise<{
+    success: boolean;
+    stdout: string;
+    stderr: string;
+    status: { id: number; description: string };
+    time: number;
+    memory: number;
+    compileOutput?: string;
+    error?: string;
+  }> {
+    return this.request('/exercises/execute', {
+      method: 'POST',
+      body: JSON.stringify({ code, stdin }),
+    });
+  }
 }
 
 export const api = new ApiService();

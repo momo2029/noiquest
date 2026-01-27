@@ -24,6 +24,7 @@ import AchievementsView from './components/Achievements/AchievementsView';
 import AnalyticsView from './components/Analytics/AnalyticsView';
 import { UserRole, Exercise, Student, Assignment, AppSettings, CodeFile, LessonCompleteResult, ReviewCompleteResult } from './types';
 import { exercises } from './data/exercises';
+import { api } from './services/api';
 import {
   getSettings,
   saveSettings,
@@ -183,57 +184,74 @@ int main() {
     setShowOutput(true);
     const startTime = Date.now();
 
+    const code = activeFile.content;
+
     setOutput(prev => [...prev, '🔨 正在编译...']);
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      const result = await api.executeCode(code);
 
-    const code = activeFile.content;
-    const errors: string[] = [];
-
-    if (!code.includes('#include')) {
-      errors.push('警告: 没有包含任何头文件');
-    }
-    if (!code.includes('int main()') && !code.includes('int main(void)')) {
-      errors.push('错误: 缺少 main 函数');
-    }
-    if ((code.match(/{/g) || []).length !== (code.match(/}/g) || []).length) {
-      errors.push('错误: 大括号不匹配');
-    }
-    if (code.includes('cout') && !code.includes('<iostream>')) {
-      errors.push('错误: 使用 cout 需要包含 <iostream>');
-    }
-
-    if (errors.length > 0) {
-      setOutput(prev => [...prev, '❌ 编译失败:', ...errors.map(e => `   ${e}`)]);
-      setIsRunning(false);
-      setExecutionTime(Date.now() - startTime);
-      return;
-    }
-
-    setOutput(prev => [...prev, '✅ 编译成功!', '', '📤 程序输出:', '─'.repeat(40)]);
-
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    const coutMatches = code.matchAll(/cout\s*<<\s*"([^"]*)"/g);
-    const outputs: string[] = [];
-    for (const match of coutMatches) {
-      outputs.push(match[1]);
-    }
-
-    const varOutputs = code.matchAll(/cout\s*<<\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*(?:<<|;)/g);
-    for (const match of varOutputs) {
-      if (match[1] !== 'endl') {
-        outputs.push(`[变量 ${match[1]} 的值]`);
+      if (result.error) {
+        setOutput(prev => [...prev, `❌ 错误: ${result.error}`]);
+        setExecutionTime(Date.now() - startTime);
+        setIsRunning(false);
+        return;
       }
+
+      // 编译错误
+      if (result.status.id === 6) {
+        setOutput(prev => [
+          ...prev,
+          '❌ 编译失败:',
+          '',
+          result.compileOutput || '未知编译错误',
+        ]);
+        setExecutionTime(Date.now() - startTime);
+        setIsRunning(false);
+        return;
+      }
+
+      setOutput(prev => [...prev, '✅ 编译成功!', '', '📤 程序输出:', '─'.repeat(40)]);
+
+      // 运行时错误
+      if (result.status.id === 5) {
+        setOutput(prev => [...prev, '⏱️ 超时: 程序运行时间超过限制']);
+      } else if (result.status.id === 7) {
+        setOutput(prev => [...prev, '💥 运行时错误: 段错误 (SIGSEGV)']);
+        if (result.stderr) {
+          setOutput(prev => [...prev, result.stderr]);
+        }
+      } else if (result.status.id === 11) {
+        setOutput(prev => [...prev, `💥 运行时错误: ${result.status.description}`]);
+        if (result.stderr) {
+          setOutput(prev => [...prev, result.stderr]);
+        }
+      } else {
+        // 正常输出
+        if (result.stdout) {
+          setOutput(prev => [...prev, result.stdout]);
+        } else {
+          setOutput(prev => [...prev, '(程序没有输出)']);
+        }
+        if (result.stderr) {
+          setOutput(prev => [...prev, '', '⚠️ 标准错误:', result.stderr]);
+        }
+      }
+
+      setOutput(prev => [
+        ...prev,
+        '',
+        '─'.repeat(40),
+        `✨ 程序运行结束 (${result.time.toFixed(3)}s)`,
+      ]);
+    } catch (error: any) {
+      setOutput(prev => [
+        ...prev,
+        '❌ 执行失败:',
+        error.message || '无法连接到代码执行服务',
+      ]);
     }
 
-    if (outputs.length > 0) {
-      setOutput(prev => [...prev, ...outputs]);
-    } else {
-      setOutput(prev => [...prev, '(程序没有输出)']);
-    }
-
-    setOutput(prev => [...prev, '', '─'.repeat(40), '✨ 程序运行结束']);
     setExecutionTime(Date.now() - startTime);
     setIsRunning(false);
   }, [activeFile]);

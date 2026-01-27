@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth.js';
+import { runTestCases } from '../services/cppExec.js';
 
 const router = Router();
 
@@ -224,6 +225,41 @@ router.get('/recommendations', authenticate, async (req: AuthRequest, res: Respo
       recommendations: recommendations.slice(0, limit),
     });
   } catch (error) {
+    next(error);
+  }
+});
+
+// 通用代码执行（不需要 exerciseId，用于编辑器直接运行）
+// 注意：必须放在 /:id 路由之前，否则 'execute' 会被当作 id 参数
+router.post('/execute', authenticate, async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { code, stdin = '' } = req.body;
+
+    if (!code || !code.trim()) {
+      return res.status(400).json({ error: '请提供代码' });
+    }
+
+    // 调用代码执行服务
+    const { executeCode } = await import('../services/cppExec.js');
+    const result = await executeCode(code, stdin);
+
+    res.json({
+      success: result.status.id === 3, // ACCEPTED
+      stdout: result.stdout,
+      stderr: result.stderr,
+      status: result.status,
+      time: result.time,
+      memory: result.memory,
+      compileOutput: result.compileOutput,
+    });
+  } catch (error: any) {
+    // 如果是网络错误（CppExec 服务不可用）
+    if (error.cause?.code === 'ECONNREFUSED' || error.message?.includes('ECONNREFUSED')) {
+      return res.status(503).json({
+        error: '代码执行服务不可用，请稍后再试',
+        details: '无法连接到 CppExec 服务',
+      });
+    }
     next(error);
   }
 });
@@ -519,30 +555,27 @@ router.post('/:id/run', authenticate, async (req: AuthRequest, res: Response, ne
       return res.status(400).json({ error: '该题目没有测试用例' });
     }
 
-    // TODO: 集成代码执行服务
-    // 目前返回模拟结果，后续接入 Judge0 或自建沙箱
-    const results = exercise.testCases.map((tc, index) => ({
-      testCase: index + 1,
-      passed: false,
+    // 调用代码执行服务
+    const testCases = exercise.testCases.map(tc => ({
+      input: tc.input,
+      output: tc.output,
       isHidden: tc.isHidden,
-      ...(tc.isHidden ? {} : {
-        input: tc.input,
-        expected: tc.output,
-        actual: '// 代码执行服务未接入',
-      }),
-      time: 0,
-      memory: 0,
     }));
 
+    const results = await runTestCases(code, testCases);
+
+    const passedCount = results.filter(r => r.passed).length;
+    const allPassed = passedCount === results.length;
+
     res.json({
-      success: false,
-      message: '代码执行服务未接入，请稍后再试',
+      success: allPassed,
+      message: allPassed ? '所有测试用例通过！' : `通过 ${passedCount}/${results.length} 个测试用例`,
       results,
-      allPassed: false,
+      allPassed,
       summary: {
-        total: exercise.testCases.length,
-        passed: 0,
-        failed: exercise.testCases.length,
+        total: results.length,
+        passed: passedCount,
+        failed: results.length - passedCount,
       },
     });
   } catch (error) {
@@ -570,9 +603,20 @@ router.post('/:id/submit', authenticate, async (req: AuthRequest, res: Response,
       return res.status(404).json({ error: '练习题不存在' });
     }
 
-    // TODO: 集成代码执行服务验证答案
-    // 目前模拟验证失败，后续接入真实执行服务
-    const allPassed = false; // 实际应该执行代码验证
+    if (exercise.testCases.length === 0) {
+      return res.status(400).json({ error: '该题目没有测试用例' });
+    }
+
+    // 调用代码执行服务验证答案
+    const testCases = exercise.testCases.map(tc => ({
+      input: tc.input,
+      output: tc.output,
+      isHidden: tc.isHidden,
+    }));
+
+    const results = await runTestCases(code, testCases);
+    const passedCount = results.filter(r => r.passed).length;
+    const allPassed = passedCount === results.length;
 
     if (!allPassed) {
       // 记录错题
@@ -600,13 +644,14 @@ router.post('/:id/submit', authenticate, async (req: AuthRequest, res: Response,
 
       return res.json({
         correct: false,
-        message: '代码执行服务未接入，无法验证答案',
+        message: `通过 ${passedCount}/${results.length} 个测试用例`,
+        results,
         xpEarned: 0,
         isFirstCompletion: false,
       });
     }
 
-    // 以下是答案正确的逻辑（目前不会执行到）
+    // 答案正确的逻辑
     const existingProgress = await prisma.exerciseProgress.findUnique({
       where: {
         userId_exerciseId: { userId, exerciseId },
@@ -684,6 +729,7 @@ router.post('/:id/submit', authenticate, async (req: AuthRequest, res: Response,
     res.json({
       correct: true,
       message: isFirstCompletion ? '恭喜完成！' : '再次完成！',
+      results,
       xpEarned,
       isFirstCompletion,
       totalXp: user.totalXp,

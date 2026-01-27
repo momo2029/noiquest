@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
+import { runTestCases, StatusCode } from '../services/cppExec.js';
 
 const router = Router();
 
@@ -188,13 +189,49 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
           break;
         }
 
-        // 如果有测试用例，需要验证（目前暂时标记为需要代码执行服务）
-        // TODO: 集成代码执行服务进行实际验证
+        // 如果有测试用例，使用代码执行服务验证
         if (questionData?.testCases && questionData.testCases.length > 0) {
-          // 暂时：有测试用例但无法执行时，提示用户
-          isCorrect = false;
-          feedback = '编程题需要代码执行服务验证，该功能正在开发中';
-          correctAnswer = { message: '请等待代码执行功能上线' };
+          try {
+            const testCases = questionData.testCases.map((tc: any) => ({
+              input: tc.input || '',
+              output: tc.output || tc.expected || '',
+              isHidden: tc.isHidden || false,
+            }));
+
+            const results = await runTestCases(userCode, testCases);
+            const passedCount = results.filter(r => r.passed).length;
+            const allPassed = passedCount === results.length;
+
+            isCorrect = allPassed;
+
+            if (allPassed) {
+              feedback = '所有测试用例通过！';
+            } else {
+              // 找到第一个失败的测试用例
+              const firstFailed = results.find(r => !r.passed);
+              if (firstFailed) {
+                if (firstFailed.status.id === StatusCode.COMPILATION_ERROR) {
+                  feedback = `编译错误：${firstFailed.compileOutput || '请检查代码语法'}`;
+                } else if (firstFailed.status.id === StatusCode.TIME_LIMIT_EXCEEDED) {
+                  feedback = `测试用例 ${firstFailed.testCase} 超时`;
+                } else if (firstFailed.status.id === StatusCode.RUNTIME_ERROR_SIGSEGV) {
+                  feedback = `测试用例 ${firstFailed.testCase} 运行时错误（段错误）`;
+                } else if (firstFailed.status.id === StatusCode.WRONG_ANSWER) {
+                  feedback = `测试用例 ${firstFailed.testCase} 答案错误`;
+                } else {
+                  feedback = `通过 ${passedCount}/${results.length} 个测试用例`;
+                }
+              } else {
+                feedback = `通过 ${passedCount}/${results.length} 个测试用例`;
+              }
+            }
+
+            correctAnswer = { results, passedCount, total: results.length };
+          } catch (error) {
+            isCorrect = false;
+            feedback = '代码执行服务暂时不可用，请稍后再试';
+            correctAnswer = { error: error instanceof Error ? error.message : 'Unknown error' };
+          }
         } else {
           // 没有测试用例的编程题，检查代码是否包含基本结构
           const hasMainFunction = userCode.includes('main');

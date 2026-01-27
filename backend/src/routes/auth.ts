@@ -49,6 +49,7 @@ router.post('/register', async (req, res, next) => {
         password: hashedPassword,
         name: data.name,
         role: data.role || 'STUDENT',
+        tokenVersion: 1,
       },
       select: {
         id: true,
@@ -62,12 +63,13 @@ router.post('/register', async (req, res, next) => {
         streak: true,
         hearts: true,
         gems: true,
+        tokenVersion: true,
       },
     });
 
-    // 生成 JWT
+    // 生成 JWT（包含 tokenVersion）
     const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
+      { id: user.id, username: user.username, role: user.role, tokenVersion: user.tokenVersion },
       config.jwt.secret,
       { expiresIn: config.jwt.expiresIn } as SignOptions
     );
@@ -102,15 +104,21 @@ router.post('/login', async (req, res, next) => {
       throw new AppError('用户名或密码错误', 401);
     }
 
-    // 生成 JWT
+    // 递增 tokenVersion 实现单设备登录
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: { tokenVersion: { increment: 1 } },
+    });
+
+    // 生成 JWT（包含 tokenVersion）
     const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
+      { id: user.id, username: user.username, role: user.role, tokenVersion: updatedUser.tokenVersion },
       config.jwt.secret,
       { expiresIn: config.jwt.expiresIn } as SignOptions
     );
 
     // 返回用户信息（不包含密码）
-    const { password: _, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = updatedUser;
 
     res.json({ user: userWithoutPassword, token });
   } catch (error) {

@@ -195,6 +195,7 @@ router.post('/register', async (req, res, next) => {
         name,
         role: role || 'STUDENT',
         inviteCode: inviteCode?.toUpperCase(),
+        tokenVersion: 1,
       },
       select: {
         id: true,
@@ -209,6 +210,7 @@ router.post('/register', async (req, res, next) => {
         streak: true,
         hearts: true,
         gems: true,
+        tokenVersion: true,
       },
     });
 
@@ -218,9 +220,9 @@ router.post('/register', async (req, res, next) => {
       data: { used: true },
     });
 
-    // 生成 JWT
+    // 生成 JWT（包含 tokenVersion）
     const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
+      { id: user.id, username: user.username, role: user.role, tokenVersion: user.tokenVersion },
       config.jwt.secret,
       { expiresIn: config.jwt.expiresIn } as SignOptions
     );
@@ -276,15 +278,35 @@ router.post('/login', async (req, res, next) => {
       throw new AppError('邮箱或密码错误', 401);
     }
 
-    // 生成 JWT（不包含密码）
-    const { password: _, ...userWithoutPassword } = user;
+    // 递增 tokenVersion 实现单设备登录
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: { tokenVersion: { increment: 1 } },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        name: true,
+        role: true,
+        avatar: true,
+        level: true,
+        xp: true,
+        totalXp: true,
+        streak: true,
+        hearts: true,
+        gems: true,
+        tokenVersion: true,
+      },
+    });
+
+    // 生成 JWT（包含 tokenVersion）
     const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
+      { id: updatedUser.id, username: updatedUser.username, role: updatedUser.role, tokenVersion: updatedUser.tokenVersion },
       config.jwt.secret,
       { expiresIn: config.jwt.expiresIn } as SignOptions
     );
 
-    res.json({ user: userWithoutPassword, token });
+    res.json({ user: updatedUser, token });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return next(new AppError('输入数据格式错误', 400));

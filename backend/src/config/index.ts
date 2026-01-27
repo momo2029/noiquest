@@ -51,4 +51,10 @@ export const config = {
     user: process.env.EMAIL_USER || '',
     pass: process.env.EMAIL_PASS || '',
   },
+
+  cppExec: {
+    url: process.env.CPPEXEC || 'http://localhost:4002',
+    apiKey: process.env.CPPEXEC_KEY || '',
+    timeout: parseInt(process.env.CPPEXEC_TIMEOUT || '30000', 10),
+  },
 };

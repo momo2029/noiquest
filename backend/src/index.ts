@@ -30,6 +30,7 @@ import { heartsRouter } from './routes/hearts.js';
 import { gemsRouter } from './routes/gems.js';
 import { streakRouter } from './routes/streak.js';
 import { redeemRouter } from './routes/redeem.js';
+import { userFilesRouter } from './routes/user-files.js';
 
 const app = express();
 
@@ -101,6 +102,7 @@ app.use('/api/hearts', heartsRouter);
 app.use('/api/gems', gemsRouter);
 app.use('/api/streak', streakRouter);
 app.use('/api/redeem', redeemRouter);
+app.use('/api/user-files', userFilesRouter);
 
 // 错误处理
 app.use(errorHandler);

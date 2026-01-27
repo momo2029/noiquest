@@ -30,16 +30,22 @@ export const authenticate = async (
       id: string;
       username: string;
       role: string;
+      tokenVersion?: number;
     };
 
-    // 验证用户是否存在
+    // 验证用户是否存在并检查 tokenVersion
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
-      select: { id: true, username: true, role: true },
+      select: { id: true, username: true, role: true, tokenVersion: true },
     });
 
     if (!user) {
       throw new AppError('用户不存在', 401);
+    }
+
+    // 检查 tokenVersion 是否匹配（单设备登录验证）
+    if (decoded.tokenVersion !== undefined && decoded.tokenVersion !== user.tokenVersion) {
+      throw new AppError('登录已失效，请重新登录', 401);
     }
 
     req.user = user;

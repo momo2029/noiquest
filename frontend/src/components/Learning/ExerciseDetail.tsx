@@ -86,27 +86,26 @@ export default function ExerciseDetail({
     fetchDetail();
   }, [exercise.id]);
 
-  // 标记完成（由于 code-runner 未实现，暂时保留手动标记功能）
+  // 标记完成
   const handleComplete = async () => {
     try {
       setCompleting(true);
-      // 调用保存代码接口（如果有代码的话）
-      // 由于 code-runner 未实现，这里直接调用 submit 接口
-      // 后端会返回模拟结果
-      const result = await api.submitExercise(exercise.id, detail?.starterCode || '');
+      // 调用 submit 接口，后端会执行代码验证
+      const result = await api.submitExercise(exercise.id, detail?.userProgress?.savedCode || detail?.starterCode || '');
 
-      if (result.correct || result.isFirstCompletion !== undefined) {
+      if (result.correct) {
         setIsCompleted(true);
         setCompletionResult({
           xpEarned: result.xpEarned,
           isFirstCompletion: result.isFirstCompletion,
         });
         onComplete();
+      } else {
+        // 代码验证失败
+        alert(result.message || '代码验证未通过，请检查后重试');
       }
     } catch (error: any) {
-      // 即使后端返回错误（因为 code-runner 未实现），也标记为完成
-      setIsCompleted(true);
-      onComplete();
+      alert(error.message || '提交失败，请稍后重试');
     } finally {
       setCompleting(false);
     }
@@ -248,9 +247,9 @@ export default function ExerciseDetail({
         )}
 
         {/* 代码执行服务提示 */}
-        <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4">
-          <p className="text-yellow-400 text-sm">
-            提示：代码执行服务正在开发中，目前可以手动标记完成。
+        <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4">
+          <p className="text-blue-400 text-sm">
+            提示：点击"加载代码"后，可以在编辑器中运行和调试代码。
           </p>
         </div>
       </div>

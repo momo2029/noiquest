@@ -109,6 +109,12 @@ model User {
   // 兑换记录
   redeemRecords      RedeemRecord[]
 
+  // 单设备登录控制
+  tokenVersion  Int      @default(0)
+
+  // 用户文件
+  files         UserFile[]
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -864,6 +870,25 @@ model RedeemRecord {
 
   @@unique([userId, codeId])
   @@index([userId])
+}
+
+// ==================== 用户文件系统 ====================
+
+// 用户代码文件
+model UserFile {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String   // 文件名（必须以 .cpp 结尾）
+  content   String   @db.Text
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@index([updatedAt])
 }
 
 // ==================== 练习题库测试用例 ====================
