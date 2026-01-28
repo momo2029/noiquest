@@ -25,6 +25,7 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 SERVER="root@noiquest.com"
 REMOTE_DIR="/opt/noiquest"
 DOMAIN="noiquest.com"
+REMOTE_BLOG_DIR="/var/www/blog"
 
 echo "本地项目目录: $PROJECT_DIR"
 echo "目标服务器: $SERVER:$REMOTE_DIR"
@@ -114,6 +115,19 @@ scp "$PROJECT_DIR/backend/.env.production" "$SERVER:$REMOTE_DIR/deploy/.env"
 
 # 创建 certbot-webroot 目录
 ssh $SERVER "mkdir -p $REMOTE_DIR/deploy/certbot-webroot"
+
+# 同步博客静态文件到服务器
+echo ""
+echo -e "${YELLOW}[4.5/6] 同步博客静态文件...${NC}"
+ssh $SERVER "mkdir -p $REMOTE_BLOG_DIR"
+rsync -avz --progress \
+    --exclude '.git' \
+    --exclude 'node_modules' \
+    --exclude '.eleventy.js' \
+    --exclude 'package.json' \
+    --exclude 'package-lock.json' \
+    --exclude 'README.md' \
+    "$PROJECT_DIR/blog/" "$SERVER:$REMOTE_BLOG_DIR/"
 
 echo ""
 echo -e "${YELLOW}[5/6] 构建并启动服务...${NC}"

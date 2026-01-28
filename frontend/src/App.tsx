@@ -14,8 +14,9 @@ import ProgressTracker from './components/Learning/ProgressTracker';
 import Dashboard from './components/Teacher/Dashboard';
 import StudentList from './components/Teacher/StudentList';
 import AssignmentManager from './components/Teacher/AssignmentManager';
-import SkillTreeView from './components/SkillTree/SkillTreeView';
+import LearningCenter from './components/SkillTree/LearningCenter';
 import LessonSession from './components/SkillTree/LessonSession';
+import CourseSessionPage from './components/SkillTree/CourseSessionPage';
 import ReviewDashboard from './components/Review/ReviewDashboard';
 import ReviewSession from './components/Review/ReviewSession';
 import AdminLayout from './components/Admin/AdminLayout';
@@ -108,6 +109,8 @@ function MainApp() {
 
   // 课程学习状态
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
+  // 课时学习状态（课程系统）
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
   // 复习状态
   const [reviewType, setReviewType] = useState<'mistakes' | 'knowledge' | 'mixed' | null>(null);
@@ -310,6 +313,19 @@ function MainApp() {
     alert(`课程完成！获得 ${result.xpEarned} XP${result.perfectRun ? ' (完美通关!)' : ''}`);
   };
 
+  // 处理课时完成（课程系统）
+  const handleSessionComplete = (result: {
+    xpEarned: number;
+    perfectRun: boolean;
+    courseCompleted: boolean;
+  }) => {
+    if (result.xpEarned > 0) {
+      setCurrentStudent(prev => addXp(prev, result.xpEarned));
+    }
+    setActiveSessionId(null);
+    alert(`课时完成！获得 ${result.xpEarned} XP${result.perfectRun ? ' (完美通关!)' : ''}${result.courseCompleted ? ' 课程已完成!' : ''}`);
+  };
+
   // 处理复习完成
   const handleReviewComplete = (result: ReviewCompleteResult) => {
     if (result.xpEarned > 0) {
@@ -321,7 +337,18 @@ function MainApp() {
 
   // 渲染主内容
   const renderMainContent = () => {
-    // 课程学习会话
+    // 课时学习会话（课程系统）
+    if (activeSessionId) {
+      return (
+        <CourseSessionPage
+          sessionId={activeSessionId}
+          onComplete={handleSessionComplete}
+          onExit={() => setActiveSessionId(null)}
+        />
+      );
+    }
+
+    // 课程学习会话（知识图谱）
     if (activeLessonId) {
       return (
         <LessonSession
@@ -353,8 +380,9 @@ function MainApp() {
           );
         case 'skill-tree':
           return (
-            <SkillTreeView
-              onStartLesson={(lessonId) => setActiveLessonId(lessonId)}
+            <LearningCenter
+              onStartLesson={(lessonId: string) => setActiveLessonId(lessonId)}
+              onStartSession={(sessionId: string) => setActiveSessionId(sessionId)}
             />
           );
         case 'review':

@@ -41,7 +41,7 @@ router.get('/status', authenticate, async (req: AuthRequest, res: Response, next
     const mistakeCount = await prisma.mistakeRecord.count({
       where: {
         userId,
-        reviewed: false,
+        status: 'UNREVIEWED',
       },
     });
 
@@ -105,7 +105,7 @@ router.get('/due', authenticate, async (req: AuthRequest, res: Response, next) =
     const mistakes = await prisma.mistakeRecord.findMany({
       where: {
         userId,
-        reviewed: false,
+        status: 'UNREVIEWED',
       },
       include: {
         exercise: {
@@ -119,7 +119,7 @@ router.get('/due', authenticate, async (req: AuthRequest, res: Response, next) =
           },
         },
       },
-      orderBy: { mistakeCount: 'desc' },
+      orderBy: { wrongCount: 'desc' },
       take: Number(limit),
     });
 
@@ -172,7 +172,7 @@ router.get('/due', authenticate, async (req: AuthRequest, res: Response, next) =
       mistakeReview: mistakes.map(m => ({
         id: m.id,
         exercise: m.exercise,
-        mistakeCount: m.mistakeCount,
+        wrongCount: m.wrongCount,
         userAnswer: m.userAnswer,
         correctAnswer: m.correctAnswer,
         createdAt: m.createdAt,
@@ -195,10 +195,10 @@ router.post('/start', authenticate, async (req: AuthRequest, res: Response, next
     if (type === 'mistakes' || type === 'mixed') {
       // 获取错题
       const mistakes = await prisma.mistakeRecord.findMany({
-        where: { userId, reviewed: false },
+        where: { userId, status: 'UNREVIEWED' },
         include: { exercise: true },
         take: type === 'mistakes' ? Number(limit) : Math.floor(Number(limit) / 2),
-        orderBy: { mistakeCount: 'desc' },
+        orderBy: { wrongCount: 'desc' },
       });
 
       exercises.push(...mistakes.map(m => ({
@@ -269,15 +269,17 @@ router.post('/complete', authenticate, async (req: AuthRequest, res: Response, n
           await prisma.mistakeRecord.update({
             where: { id: result.mistakeRecordId },
             data: {
-              reviewed: true,
+              status: 'MASTERED',
               reviewedAt: new Date(),
+              correctStreak: { increment: 1 },
             },
           });
         } else {
           await prisma.mistakeRecord.update({
             where: { id: result.mistakeRecordId },
             data: {
-              mistakeCount: { increment: 1 },
+              wrongCount: { increment: 1 },
+              correctStreak: 0,
             },
           });
         }
@@ -398,7 +400,7 @@ router.get('/mistakes', authenticate, async (req: AuthRequest, res: Response, ne
 
     const where: any = { userId };
     if (reviewed !== undefined) {
-      where.reviewed = reviewed === 'true';
+      where.status = reviewed === 'true' ? 'MASTERED' : 'UNREVIEWED';
     }
 
     const mistakes = await prisma.mistakeRecord.findMany({
@@ -417,8 +419,8 @@ router.get('/mistakes', authenticate, async (req: AuthRequest, res: Response, ne
         },
       },
       orderBy: [
-        { reviewed: 'asc' },
-        { mistakeCount: 'desc' },
+        { status: 'asc' },
+        { wrongCount: 'desc' },
         { createdAt: 'desc' },
       ],
       skip: (Number(page) - 1) * Number(limit),
@@ -433,21 +435,14 @@ router.get('/mistakes', authenticate, async (req: AuthRequest, res: Response, ne
 
     const total = await prisma.mistakeRecord.count({ where });
 
-    // 获取分类统计
-    const categoryStats = await prisma.mistakeRecord.groupBy({
-      by: ['exerciseId'],
-      where: { userId },
-      _count: true,
-    });
-
     res.json({
       mistakes: filteredMistakes.map(m => ({
         id: m.id,
         exercise: m.exercise,
         userAnswer: m.userAnswer,
         correctAnswer: m.correctAnswer,
-        mistakeCount: m.mistakeCount,
-        reviewed: m.reviewed,
+        wrongCount: m.wrongCount,
+        status: m.status,
         reviewedAt: m.reviewedAt,
         createdAt: m.createdAt,
       })),
@@ -484,7 +479,7 @@ router.post('/mistakes/:mistakeId/review', authenticate, async (req: AuthRequest
     await prisma.mistakeRecord.update({
       where: { id: mistakeId },
       data: {
-        reviewed: true,
+        status: 'MASTERED',
         reviewedAt: new Date(),
       },
     });

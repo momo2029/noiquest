@@ -11,7 +11,7 @@ import {
   Trophy,
   Award,
   LineChart,
-  Network
+  GitBranch
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -24,7 +24,7 @@ export default function Sidebar({ role, currentView, onViewChange }: SidebarProp
   const studentMenuItems = [
  
     { id: 'skill-tree', icon: Map, label: '技能树', color: 'green' },
-    { id: 'knowledge-map', icon: Network, label: '知识图谱', color: 'cyan' },
+    { id: 'knowledge-map', icon: GitBranch, label: '知识图谱', color: 'cyan' },
     { id: 'editor', icon: Code, label: '代码编辑', color: 'blue' },
     { id: 'exercises', icon: BookOpen, label: '练习题库', color: 'cyan' },
     { id: 'review', icon: RefreshCw, label: '复习', color: 'orange' },

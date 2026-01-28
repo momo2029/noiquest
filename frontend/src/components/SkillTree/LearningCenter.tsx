@@ -278,149 +278,152 @@ export default function LearningCenter({ onStartLesson, onStartSession }: Learni
 
         {/* 右侧面板 */}
         <div className="w-80 bg-[#1e1e2e] border-l border-white/10 flex flex-col">
-          {/* 每日目标 */}
-          {dailyStatus && (
-            <div className="p-4 border-b border-white/10">
-              <div className="flex items-center gap-2 mb-3">
-                <Target className="text-yellow-400" size={20} />
-                <h3 className="text-white font-bold">今日目标</h3>
-              </div>
-              <div className="bg-white/5 rounded-xl p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/70 text-sm">经验值</span>
-                  <span className="text-white font-bold">
-                    {dailyStatus.xpEarned} / {dailyStatus.goalXp} XP
+          {/* 可滚动内容区 */}
+          <div className="flex-1 overflow-y-auto">
+            {/* 每日目标 */}
+            {dailyStatus && (
+              <div className="p-4 border-b border-white/10">
+                <div className="flex items-center gap-2 mb-3">
+                  <Target className="text-yellow-400" size={20} />
+                  <h3 className="text-white font-bold">今日目标</h3>
+                </div>
+                <div className="bg-white/5 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-white/70 text-sm">经验值</span>
+                    <span className="text-white font-bold">
+                      {dailyStatus.xpEarned} / {dailyStatus.goalXp} XP
+                    </span>
+                  </div>
+                  <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        dailyStatus.goalMet ? 'bg-green-500' : 'bg-yellow-500'
+                      }`}
+                      style={{ width: `${Math.min(100, dailyStatus.progress)}%` }}
+                    />
+                  </div>
+                  {dailyStatus.goalMet && (
+                    <p className="text-green-400 text-sm mt-2 flex items-center gap-1">
+                      <Trophy size={14} />
+                      目标已达成！
+                    </p>
+                  )}
+                </div>
+
+                {/* 连续天数 */}
+                <div className="flex items-center gap-2 mt-3 bg-orange-500/10 rounded-lg px-3 py-2">
+                  <Flame className="text-orange-400" size={18} />
+                  <span className="text-white/80 text-sm">连续学习</span>
+                  <span className="text-orange-400 font-bold ml-auto">
+                    {dailyStatus.streak} 天
                   </span>
                 </div>
-                <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      dailyStatus.goalMet ? 'bg-green-500' : 'bg-yellow-500'
-                    }`}
-                    style={{ width: `${Math.min(100, dailyStatus.progress)}%` }}
-                  />
+              </div>
+            )}
+
+            {/* 选中内容的详情 */}
+            {viewMode === 'course' && selectedCourse ? (
+              <CourseDetailPanel
+                course={selectedCourse}
+                onStartSession={handleStartSession}
+              />
+            ) : viewMode === 'graph' && selectedUnit ? (
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">{selectedUnit.icon}</span>
+                  <div>
+                    <h3 className="text-white font-bold">{selectedUnit.title}</h3>
+                    <p className="text-xs text-gray-500">{selectedUnit.code}</p>
+                  </div>
                 </div>
-                {dailyStatus.goalMet && (
-                  <p className="text-green-400 text-sm mt-2 flex items-center gap-1">
-                    <Trophy size={14} />
-                    目标已达成！
-                  </p>
+
+                <p className="text-sm text-gray-400 mb-4">
+                  {selectedUnit.description}
+                </p>
+
+                {selectedUnit.lessons.length > 0 ? (
+                  <div className="space-y-2">
+                    <h4 className="text-sm text-gray-500 mb-2">课程列表</h4>
+                    {selectedUnit.lessons.map((lesson) => (
+                      <LessonCard
+                        key={lesson.id}
+                        lesson={lesson}
+                        unitUnlocked={selectedUnit.unlocked}
+                        onStart={() => onStartLesson(lesson.id)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <BookOpen size={32} className="mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">课程开发中...</p>
+                  </div>
                 )}
               </div>
-
-              {/* 连续天数 */}
-              <div className="flex items-center gap-2 mt-3 bg-orange-500/10 rounded-lg px-3 py-2">
-                <Flame className="text-orange-400" size={18} />
-                <span className="text-white/80 text-sm">连续学习</span>
-                <span className="text-orange-400 font-bold ml-auto">
-                  {dailyStatus.streak} 天
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* 选中内容的详情 */}
-          {viewMode === 'course' && selectedCourse ? (
-            <CourseDetailPanel
-              course={selectedCourse}
-              onStartSession={handleStartSession}
-            />
-          ) : viewMode === 'graph' && selectedUnit ? (
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-2xl">{selectedUnit.icon}</span>
-                <div>
-                  <h3 className="text-white font-bold">{selectedUnit.title}</h3>
-                  <p className="text-xs text-gray-500">{selectedUnit.code}</p>
-                </div>
-              </div>
-
-              <p className="text-sm text-gray-400 mb-4">
-                {selectedUnit.description}
-              </p>
-
-              {selectedUnit.lessons.length > 0 ? (
-                <div className="space-y-2">
-                  <h4 className="text-sm text-gray-500 mb-2">课程列表</h4>
-                  {selectedUnit.lessons.map((lesson) => (
-                    <LessonCard
-                      key={lesson.id}
-                      lesson={lesson}
-                      unitUnlocked={selectedUnit.unlocked}
-                      onStart={() => onStartLesson(lesson.id)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <BookOpen size={32} className="mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">课程开发中...</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            /* 每日任务 */
-            <div className="flex-1 overflow-y-auto p-4">
-              <h3 className="text-white font-bold mb-3">每日任务</h3>
-              <div className="space-y-3">
-                {dailyQuests.map((quest) => (
-                  <div
-                    key={quest.id}
-                    className={`bg-white/5 rounded-xl p-3 ${
-                      quest.completed && !quest.claimed
-                        ? 'ring-2 ring-green-500'
-                        : ''
-                    }`}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="text-white font-medium text-sm">
-                          {quest.title}
-                        </p>
-                        <p className="text-white/50 text-xs">
-                          {quest.description}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-yellow-400 text-xs font-bold">
-                          +{quest.xpReward} XP
-                        </p>
-                        {quest.gemsReward > 0 && (
-                          <p className="text-blue-400 text-xs">
-                            +{quest.gemsReward} 宝石
+            ) : (
+              /* 每日任务 */
+              <div className="p-4">
+                <h3 className="text-white font-bold mb-3">每日任务</h3>
+                <div className="space-y-3">
+                  {dailyQuests.map((quest) => (
+                    <div
+                      key={quest.id}
+                      className={`bg-white/5 rounded-xl p-3 ${
+                        quest.completed && !quest.claimed
+                          ? 'ring-2 ring-green-500'
+                          : ''
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <p className="text-white font-medium text-sm">
+                            {quest.title}
                           </p>
+                          <p className="text-white/50 text-xs">
+                            {quest.description}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-yellow-400 text-xs font-bold">
+                            +{quest.xpReward} XP
+                          </p>
+                          {quest.gemsReward > 0 && (
+                            <p className="text-blue-400 text-xs">
+                              +{quest.gemsReward} 宝石
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="h-2 bg-white/10 rounded-full overflow-hidden mb-2">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            quest.completed ? 'bg-green-500' : 'bg-blue-500'
+                          }`}
+                          style={{ width: `${quest.progress}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-white/50 text-xs">
+                          {quest.currentValue} / {quest.targetValue}
+                        </span>
+                        {quest.completed && !quest.claimed && (
+                          <button
+                            onClick={() => handleClaimQuest(quest.id)}
+                            className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-lg transition-colors"
+                          >
+                            领取奖励
+                          </button>
+                        )}
+                        {quest.claimed && (
+                          <span className="text-green-400 text-xs">已领取</span>
                         )}
                       </div>
                     </div>
-                    <div className="h-2 bg-white/10 rounded-full overflow-hidden mb-2">
-                      <div
-                        className={`h-full rounded-full transition-all ${
-                          quest.completed ? 'bg-green-500' : 'bg-blue-500'
-                        }`}
-                        style={{ width: `${quest.progress}%` }}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-white/50 text-xs">
-                        {quest.currentValue} / {quest.targetValue}
-                      </span>
-                      {quest.completed && !quest.claimed && (
-                        <button
-                          onClick={() => handleClaimQuest(quest.id)}
-                          className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-lg transition-colors"
-                        >
-                          领取奖励
-                        </button>
-                      )}
-                      {quest.claimed && (
-                        <span className="text-green-400 text-xs">已领取</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

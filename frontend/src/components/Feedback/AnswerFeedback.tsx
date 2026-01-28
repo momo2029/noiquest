@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle, XCircle, ChevronRight, RotateCcw, Zap, Lightbulb } from 'lucide-react';
+import { CheckCircle, XCircle, ChevronRight, RotateCcw, Zap, Lightbulb, SkipForward } from 'lucide-react';
 
 interface AnswerFeedbackProps {
   correct: boolean;
   feedback: string;
   xpEarned: number;
   onContinue: () => void;
+  onRetry?: () => void;
+  onSkip?: () => void;
   showAIHintButton?: boolean;
   onAIHint?: () => void;
 }
 
-export default function AnswerFeedback({ correct, feedback, xpEarned, onContinue, showAIHintButton, onAIHint }: AnswerFeedbackProps) {
+export default function AnswerFeedback({ correct, feedback, xpEarned, onContinue, onRetry, onSkip, showAIHintButton, onAIHint }: AnswerFeedbackProps) {
   const [countdown, setCountdown] = useState(3);
   const [autoContinue, setAutoContinue] = useState(false);
 
@@ -99,9 +101,20 @@ export default function AnswerFeedback({ correct, feedback, xpEarned, onContinue
             </button>
           )}
 
+          {/* 答错时显示：跳过按钮 */}
+          {!correct && onSkip && (
+            <button
+              onClick={onSkip}
+              className="px-6 py-3 rounded-xl font-bold text-lg flex items-center gap-2 transition-all bg-white/20 text-white hover:bg-white/30"
+            >
+              跳过
+              <SkipForward size={20} />
+            </button>
+          )}
+
           {/* 继续/重试按钮 */}
           <button
-            onClick={onContinue}
+            onClick={correct ? onContinue : (onRetry || onContinue)}
             className={`
               px-8 py-3 rounded-xl font-bold text-lg flex items-center gap-2 transition-all
               ${correct

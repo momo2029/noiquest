@@ -332,16 +332,18 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
         update: {
           userAnswer: answer,
           correctAnswer,
-          mistakeCount: { increment: 1 },
-          reviewed: false,
+          wrongCount: { increment: 1 },
+          lastWrongAt: new Date(),
+          status: 'UNREVIEWED',
         },
         create: {
           userId,
           exerciseId,
           userAnswer: answer,
           correctAnswer,
-          mistakeCount: 1,
-          reviewed: false,
+          wrongCount: 1,
+          lastWrongAt: new Date(),
+          status: 'UNREVIEWED',
         },
       });
 

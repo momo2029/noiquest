@@ -178,7 +178,7 @@ export async function generateReviewReminders() {
     const mistakesCount = await prisma.mistakeRecord.count({
       where: {
         userId: user.id,
-        reviewed: false,
+        status: 'UNREVIEWED',
       },
     });
 
@@ -247,7 +247,7 @@ export async function checkUserReminders(userId: string) {
   const mistakesCount = await prisma.mistakeRecord.count({
     where: {
       userId,
-      reviewed: false,
+      status: 'UNREVIEWED',
     },
   });
 

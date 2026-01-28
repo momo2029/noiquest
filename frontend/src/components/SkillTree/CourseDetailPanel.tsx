@@ -44,7 +44,7 @@ export default function CourseDetailPanel({ course, onStartSession }: CourseDeta
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div>
       {/* 课程标题 */}
       <div className="p-4 border-b border-white/10">
         <div className="flex items-center gap-2 mb-2">
@@ -100,7 +100,7 @@ export default function CourseDetailPanel({ course, onStartSession }: CourseDeta
       )}
 
       {/* 课时列表 */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="p-4">
         <h4 className="text-sm font-medium text-gray-300 mb-3">📝 课时列表</h4>
         <div className="space-y-2">
           {course.sessions.map((session, index) => {
@@ -166,7 +166,7 @@ export default function CourseDetailPanel({ course, onStartSession }: CourseDeta
       </div>
 
       {/* 开始学习按钮 */}
-      <div className="p-4 border-t border-white/10">
+      <div className="p-4 pt-2">
         {!course.unlocked ? (
           <button
             disabled

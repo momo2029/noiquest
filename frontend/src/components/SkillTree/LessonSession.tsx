@@ -22,7 +22,6 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
   const [loading, setLoading] = useState(true);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackData, setFeedbackData] = useState<{ correct: boolean; feedback: string; xp: number } | null>(null);
-  const [lastAnswerCorrect, setLastAnswerCorrect] = useState(false);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [lessonTitle, setLessonTitle] = useState('');
   const [currentQuestionMistakes, setCurrentQuestionMistakes] = useState(0);
@@ -57,32 +56,25 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
         xp: result.xpEarned,
       });
       setShowFeedback(true);
-      setLastAnswerCorrect(result.correct);
 
       if (result.correct) {
         setXpEarned(prev => prev + result.xpEarned);
-        setCurrentQuestionMistakes(0); // 答对后重置当前题目错误次数
+        setCurrentQuestionMistakes(0);
       } else {
         setMistakes(prev => prev + 1);
         setHearts(prev => Math.max(0, prev - 1));
-        setCurrentQuestionMistakes(prev => prev + 1); // 增加当前题目错误次数
+        setCurrentQuestionMistakes(prev => prev + 1);
       }
     } catch (error) {
       console.error('Failed to submit answer:', error);
     }
   };
 
+  // 答对后继续下一题
   const handleContinue = async () => {
     setShowFeedback(false);
     setFeedbackData(null);
 
-    // 答错时检查是否用完生命值
-    if (!lastAnswerCorrect && hearts <= 0) {
-      onExit();
-      return;
-    }
-
-    // 无论答对答错，都进入下一题（技能树核心设计：答错不重试，直接下一题）
     // 检查是否完成所有题目
     if (currentIndex >= exercises.length - 1) {
       try {
@@ -94,7 +86,43 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
       }
     } else {
       setCurrentIndex(prev => prev + 1);
-      setCurrentQuestionMistakes(0); // 切换到下一题时重置错误次数
+      setCurrentQuestionMistakes(0);
+    }
+  };
+
+  // 答错后重试当前题
+  const handleRetry = () => {
+    setShowFeedback(false);
+    setFeedbackData(null);
+    // 检查生命值
+    if (hearts <= 0) {
+      onExit();
+      return;
+    }
+    // 保持在当前题，不重置 currentQuestionMistakes
+  };
+
+  // 答错后跳过当前题
+  const handleSkip = async () => {
+    setShowFeedback(false);
+    setFeedbackData(null);
+    // 检查生命值
+    if (hearts <= 0) {
+      onExit();
+      return;
+    }
+    // 进入下一题
+    if (currentIndex >= exercises.length - 1) {
+      try {
+        const result = await api.completeLesson(lessonId, mistakes);
+        onComplete(result);
+      } catch (error) {
+        console.error('Failed to complete lesson:', error);
+        onExit();
+      }
+    } else {
+      setCurrentIndex(prev => prev + 1);
+      setCurrentQuestionMistakes(0);
     }
   };
 
@@ -172,6 +200,8 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
           feedback={feedbackData.feedback}
           xpEarned={feedbackData.xp}
           onContinue={handleContinue}
+          onRetry={handleRetry}
+          onSkip={handleSkip}
           showAIHintButton={!feedbackData.correct && currentQuestionMistakes >= 2}
           onAIHint={() => setShowAIHint(true)}
         />
