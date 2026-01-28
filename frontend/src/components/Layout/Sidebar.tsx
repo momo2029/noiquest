@@ -10,7 +10,8 @@ import {
   RefreshCw,
   Trophy,
   Award,
-  LineChart
+  LineChart,
+  Network
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -21,7 +22,9 @@ interface SidebarProps {
 
 export default function Sidebar({ role, currentView, onViewChange }: SidebarProps) {
   const studentMenuItems = [
+ 
     { id: 'skill-tree', icon: Map, label: '技能树', color: 'green' },
+    { id: 'knowledge-map', icon: Network, label: '知识图谱', color: 'cyan' },
     { id: 'editor', icon: Code, label: '代码编辑', color: 'blue' },
     { id: 'exercises', icon: BookOpen, label: '练习题库', color: 'cyan' },
     { id: 'review', icon: RefreshCw, label: '复习', color: 'orange' },

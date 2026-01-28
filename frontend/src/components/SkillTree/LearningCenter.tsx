@@ -1,29 +1,45 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { SkillUnit, DailyQuest, DailyStatus, TierInfo, ModuleInfo, Tier } from '../../types';
+import {
+  SkillUnit,
+  DailyQuest,
+  DailyStatus,
+  TierInfo,
+  ModuleInfo,
+  Tier,
+  Course,
+  ViewMode,
+} from '../../types';
 import TierSelector from './TierSelector';
 import ModuleSidebar from './ModuleSidebar';
 import KnowledgeMap from './KnowledgeMap';
+import CoursePath from './CoursePath';
+import CourseDetailPanel from './CourseDetailPanel';
 import LessonCard from './LessonCard';
-import { Target, Flame, Trophy, BookOpen } from 'lucide-react';
+import { Target, Flame, Trophy, BookOpen, Map, LayoutList } from 'lucide-react';
 
-interface SkillTreeViewProps {
+interface LearningCenterProps {
   onStartLesson: (lessonId: string) => void;
+  onStartSession?: (sessionId: string) => void;
 }
 
-export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
+export default function LearningCenter({ onStartLesson, onStartSession }: LearningCenterProps) {
   // 数据状态
   const [tiers, setTiers] = useState<TierInfo[]>([]);
   const [modules, setModules] = useState<ModuleInfo[]>([]);
   const [skillTree, setSkillTree] = useState<SkillUnit[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [dependencies, setDependencies] = useState<{ from: string; to: string }[]>([]);
+  const [courseDependencies, setCourseDependencies] = useState<{ from: string; to: string }[]>([]);
   const [dailyStatus, setDailyStatus] = useState<DailyStatus | null>(null);
   const [dailyQuests, setDailyQuests] = useState<DailyQuest[]>([]);
 
   // UI 状态
   const [selectedTier, setSelectedTier] = useState<Tier>('CSP_J');
-  const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
+  const [selectedModuleId, setSelectedModuleId] = useState<number | null>(1); // 默认选中模块1
   const [selectedUnit, setSelectedUnit] = useState<SkillUnit | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('course'); // 默认课程视图
   const [loading, setLoading] = useState(true);
 
   // 加载梯队和每日数据
@@ -31,20 +47,23 @@ export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
     loadInitialData();
   }, []);
 
-  // 当梯队变化时，重新加载模块和技能树
+  // 当梯队变化时，重新加载模块
   useEffect(() => {
     if (selectedTier) {
       loadModules();
-      loadSkillTree();
     }
   }, [selectedTier]);
 
-  // 当模块变化时，重新加载技能树
+  // 当模块变化时，重新加载数据
   useEffect(() => {
     if (selectedTier && selectedModuleId !== undefined) {
-      loadSkillTree();
+      if (viewMode === 'course') {
+        loadCourses();
+      } else {
+        loadSkillTree();
+      }
     }
-  }, [selectedModuleId]);
+  }, [selectedModuleId, viewMode]);
 
   const loadInitialData = async () => {
     try {
@@ -63,6 +82,9 @@ export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
       if (firstUnlocked) {
         setSelectedTier(firstUnlocked.id);
       }
+
+      // 加载课程数据
+      await loadCourses();
     } catch (error) {
       console.error('Failed to load initial data:', error);
     } finally {
@@ -94,6 +116,21 @@ export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
     }
   };
 
+  const loadCourses = async () => {
+    try {
+      const params: { tier?: string; moduleId?: number } = { tier: selectedTier };
+      if (selectedModuleId !== null) {
+        params.moduleId = selectedModuleId;
+      }
+      const data = await api.getCourses(params);
+      setCourses(data.courses);
+      setCourseDependencies(data.dependencies || []);
+      setSelectedCourse(null);
+    } catch (error) {
+      console.error('Failed to load courses:', error);
+    }
+  };
+
   const handleClaimQuest = async (questId: string) => {
     try {
       await api.claimQuestReward(questId);
@@ -108,25 +145,49 @@ export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
     }
   };
 
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    setSelectedUnit(null);
+    setSelectedCourse(null);
+  };
+
+  const handleStartSession = (sessionId: string) => {
+    if (onStartSession) {
+      onStartSession(sessionId);
+    } else {
+      // 如果没有提供 onStartSession，使用 onStartLesson 作为后备
+      onStartLesson(sessionId);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center bg-gradient-to-b from-[#1a1a2e] to-[#16213e]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-white/70">加载技能树...</p>
+          <p className="text-white/70">加载学习中心...</p>
         </div>
       </div>
     );
   }
 
+  // 获取当前模块信息
+  const currentModule = modules.find(m => m.id === selectedModuleId);
+
   return (
     <div className="flex-1 flex flex-col bg-gradient-to-b from-[#1a1a2e] to-[#16213e] overflow-hidden">
-      {/* 顶部：梯队选择器 */}
+      {/* 顶部：标题 + 梯队选择器 */}
       <div className="p-4 border-b border-white/10 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-white mb-1">NOI 知识图谱</h1>
+          <h1 className="text-xl font-bold text-white mb-1">📚 学习中心</h1>
           <p className="text-sm text-gray-400">
-            共 {skillTree.length} 个知识点
+            {currentModule ? `${currentModule.icon} ${currentModule.name}` : '选择模块开始学习'}
+            {viewMode === 'course' && courses.length > 0 && (
+              <span className="ml-2">· 共 {courses.length} 节课程</span>
+            )}
+            {viewMode === 'graph' && skillTree.length > 0 && (
+              <span className="ml-2">· 共 {skillTree.length} 个知识点</span>
+            )}
           </p>
         </div>
         <TierSelector
@@ -145,13 +206,75 @@ export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
           onSelectModule={setSelectedModuleId}
         />
 
-        {/* 中间：知识点地图 */}
-        <KnowledgeMap
-          units={skillTree}
-          dependencies={dependencies}
-          selectedUnitId={selectedUnit?.id || null}
-          onSelectUnit={setSelectedUnit}
-        />
+        {/* 中间：主内容区 */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* 视图切换栏 */}
+          <div className="px-6 py-3 border-b border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {currentModule && (
+                <>
+                  <span className="text-2xl">{currentModule.icon}</span>
+                  <div>
+                    <h2 className="text-white font-medium">{currentModule.name}</h2>
+                    <p className="text-xs text-gray-500">
+                      {viewMode === 'course'
+                        ? `已完成 ${courses.filter(c => c.completed).length}/${courses.length} 节课程`
+                        : `已完成 ${currentModule.completedUnits}/${currentModule.totalUnits} 个知识点`
+                      }
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* 视图切换按钮 */}
+            <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
+              <button
+                onClick={() => handleViewModeChange('course')}
+                className={`
+                  flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all
+                  ${viewMode === 'course'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-400 hover:text-white hover:bg-white/10'
+                  }
+                `}
+              >
+                <LayoutList size={16} />
+                课程路径
+              </button>
+              <button
+                onClick={() => handleViewModeChange('graph')}
+                className={`
+                  flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all
+                  ${viewMode === 'graph'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-400 hover:text-white hover:bg-white/10'
+                  }
+                `}
+              >
+                <Map size={16} />
+                知识图谱
+              </button>
+            </div>
+          </div>
+
+          {/* 内容区域 */}
+          {viewMode === 'course' ? (
+            <CoursePath
+              courses={courses}
+              dependencies={courseDependencies}
+              selectedCourseId={selectedCourse?.id || null}
+              onSelectCourse={setSelectedCourse}
+            />
+          ) : (
+            <KnowledgeMap
+              units={skillTree}
+              dependencies={dependencies}
+              selectedUnitId={selectedUnit?.id || null}
+              onSelectUnit={setSelectedUnit}
+            />
+          )}
+        </div>
 
         {/* 右侧面板 */}
         <div className="w-80 bg-[#1e1e2e] border-l border-white/10 flex flex-col">
@@ -196,8 +319,13 @@ export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
             </div>
           )}
 
-          {/* 选中知识点的课程列表 */}
-          {selectedUnit ? (
+          {/* 选中内容的详情 */}
+          {viewMode === 'course' && selectedCourse ? (
+            <CourseDetailPanel
+              course={selectedCourse}
+              onStartSession={handleStartSession}
+            />
+          ) : viewMode === 'graph' && selectedUnit ? (
             <div className="flex-1 overflow-y-auto p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-2xl">{selectedUnit.icon}</span>

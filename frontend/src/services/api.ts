@@ -19,6 +19,11 @@ import {
   ReviewSession,
   ReviewCompleteResult,
   SystemConfig,
+  TierInfo,
+  ModuleInfo,
+  CoursesResponse,
+  Course,
+  CourseSession,
 } from '../types';
 
 const API_BASE_URL = '/api';
@@ -140,8 +145,21 @@ class ApiService {
 
   // ==================== 技能树 API ====================
 
-  async getSkillTree(): Promise<SkillTreeResponse> {
-    return this.request<SkillTreeResponse>('/skill-tree');
+  async getSkillTree(params?: { tier?: string; moduleId?: number }): Promise<SkillTreeResponse> {
+    const query = new URLSearchParams();
+    if (params?.tier) query.set('tier', params.tier);
+    if (params?.moduleId) query.set('moduleId', String(params.moduleId));
+    const queryStr = query.toString();
+    return this.request<SkillTreeResponse>(`/skill-tree${queryStr ? `?${queryStr}` : ''}`);
+  }
+
+  async getTiers(): Promise<{ tiers: TierInfo[] }> {
+    return this.request<{ tiers: TierInfo[] }>('/skill-tree/tiers');
+  }
+
+  async getModules(tier?: string): Promise<{ modules: ModuleInfo[] }> {
+    const query = tier ? `?tier=${tier}` : '';
+    return this.request<{ modules: ModuleInfo[] }>(`/skill-tree/modules${query}`);
   }
 
   async getSkillUnit(unitId: string): Promise<SkillUnit> {
@@ -160,6 +178,45 @@ class ApiService {
 
   async completeLesson(lessonId: string, mistakes: number): Promise<LessonCompleteResult> {
     return this.request<LessonCompleteResult>(`/skill-tree/lessons/${lessonId}/complete`, {
+      method: 'POST',
+      body: JSON.stringify({ mistakes }),
+    });
+  }
+
+  // ==================== 课程系统 API ====================
+
+  async getCourses(params?: { tier?: string; moduleId?: number }): Promise<CoursesResponse> {
+    const query = new URLSearchParams();
+    if (params?.tier) query.set('tier', params.tier);
+    if (params?.moduleId) query.set('moduleId', String(params.moduleId));
+    const queryStr = query.toString();
+    return this.request<CoursesResponse>(`/courses${queryStr ? `?${queryStr}` : ''}`);
+  }
+
+  async getCourse(courseId: string): Promise<Course> {
+    return this.request<Course>(`/courses/${courseId}`);
+  }
+
+  async getCourseSession(sessionId: string): Promise<CourseSession & { course: { id: string; code: string; title: string }; exercises: Exercise[] }> {
+    return this.request(`/courses/sessions/${sessionId}`);
+  }
+
+  async startCourseSession(sessionId: string): Promise<{ message: string; exercises: Exercise[] }> {
+    return this.request<{ message: string; exercises: Exercise[] }>(`/courses/sessions/${sessionId}/start`, {
+      method: 'POST',
+    });
+  }
+
+  async completeCourseSession(sessionId: string, mistakes: number): Promise<{
+    message: string;
+    xpEarned: number;
+    perfectRun: boolean;
+    courseCompleted: boolean;
+    sessionsCompleted: number;
+    totalSessions: number;
+    crownLevel: number;
+  }> {
+    return this.request(`/courses/sessions/${sessionId}/complete`, {
       method: 'POST',
       body: JSON.stringify({ mistakes }),
     });

@@ -22,6 +22,7 @@ import AdminLayout from './components/Admin/AdminLayout';
 import LeaderboardView from './components/Leaderboard/LeaderboardView';
 import AchievementsView from './components/Achievements/AchievementsView';
 import AnalyticsView from './components/Analytics/AnalyticsView';
+import KnowledgeGraphView from './components/KnowledgeGraph/KnowledgeGraphView';
 import { UserRole, Exercise, Student, Assignment, AppSettings, LessonCompleteResult, ReviewCompleteResult } from './types';
 import { exercises } from './data/exercises';
 import { api } from './services/api';
@@ -41,7 +42,7 @@ import {
 import { useUserFiles } from './hooks/useUserFiles';
 
 // 学生可用的视图
-const STUDENT_VIEWS = ['skill-tree', 'review', 'editor', 'exercises', 'progress', 'leaderboard', 'achievements', 'analytics'];
+const STUDENT_VIEWS = ['knowledge-map', 'skill-tree', 'review', 'editor', 'exercises', 'progress', 'leaderboard', 'achievements', 'analytics'];
 // 教师可用的视图
 const TEACHER_VIEWS = ['dashboard', 'students', 'assignments'];
 
@@ -80,10 +81,11 @@ function MainApp() {
   const [isRunning, setIsRunning] = useState(false);
   const [output, setOutput] = useState<string[]>([]);
   const [executionTime, setExecutionTime] = useState<number | null>(null);
+  const [stdin, setStdin] = useState('');
 
   // 视图状态 - 根据用户角色设置默认视图，支持路由记忆
   const userRole: UserRole = user?.role === 'TEACHER' ? 'teacher' : user?.role === 'ADMIN' ? 'admin' : 'student';
-  const defaultView = userRole === 'student' ? 'skill-tree' : 'dashboard';
+  const defaultView = userRole === 'student' ? 'knowledge-map' : 'dashboard';
 
   const [currentView, setCurrentViewState] = useState<string>(() => {
     const savedView = getCurrentView(defaultView);
@@ -176,7 +178,7 @@ function MainApp() {
     setOutput(prev => [...prev, '🔨 正在编译...']);
 
     try {
-      const result = await api.executeCode(code);
+      const result = await api.executeCode(code, stdin);
 
       if (result.error) {
         setOutput(prev => [...prev, `❌ 错误: ${result.error}`]);
@@ -241,7 +243,7 @@ function MainApp() {
 
     setExecutionTime(Date.now() - startTime);
     setIsRunning(false);
-  }, [activeFile]);
+  }, [activeFile, stdin]);
 
   // 键盘快捷键
   useEffect(() => {
@@ -343,6 +345,12 @@ function MainApp() {
 
     if (userRole === 'student') {
       switch (currentView) {
+        case 'knowledge-map':
+          return (
+            <KnowledgeGraphView
+              onNavigateToSkillTree={() => setCurrentView('skill-tree')}
+            />
+          );
         case 'skill-tree':
           return (
             <SkillTreeView
@@ -403,6 +411,8 @@ function MainApp() {
                   onHeightChange={setOutputHeight}
                   onClear={() => setOutput([])}
                   onClose={() => setShowOutput(false)}
+                  stdin={stdin}
+                  onStdinChange={setStdin}
                 />
               )}
             </div>

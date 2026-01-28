@@ -25,8 +25,8 @@ error_exit() {
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # 配置（请确认信息正确）
-SERVER="root@28920.com"
-DOMAIN="28920.com"
+SERVER="root@noiquest.com"
+DOMAIN="noiquest.com"
 CERTBOT_EMAIL="cobola@126.com"
 REMOTE_CERT_DIR="/tmp/noiquest-ssl"
 LOCAL_SSL_DIR="$SCRIPT_DIR/ssl"
@@ -52,7 +52,7 @@ ssh "$SERVER" << "EOF_SSH"
 
     # 手动定义远程需要的变量（避免本地传递解析异常）
     REMOTE_CERT_DIR="/tmp/noiquest-ssl"
-    DOMAIN="28920.com"
+    DOMAIN="noiquest.com"
     CERTBOT_EMAIL="cobola@126.com"
 
     # 清理旧的临时目录

@@ -203,21 +203,62 @@ export interface AppSettings {
 
 // ==================== 多邻国模式新增类型 ====================
 
-// 技能单元
+// 梯队类型
+export type Tier = 'CSP_J' | 'CSP_S' | 'PROVINCIAL' | 'IOI';
+
+// 梯队信息
+export interface TierInfo {
+  id: Tier;
+  name: string;
+  color: string;
+  order: number;
+  totalUnits: number;
+  completedUnits: number;
+  completionRate: number;
+  unlocked: boolean;
+  unlockRequirement?: string | null;
+}
+
+// 模块信息
+export interface ModuleInfo {
+  id: number;
+  name: string;
+  icon: string;
+  color: string;
+  orderIndex: number;
+  totalUnits: number;
+  completedUnits: number;
+  completionRate: number;
+}
+
+// 知识点前置依赖
+export interface KnowledgePrerequisite {
+  id: string;
+  code: string;
+  title: string;
+}
+
+// 技能单元（知识点）
 export interface SkillUnit {
   id: string;
+  code: string;
   title: string;
   description: string;
   icon: string;
   color: string;
+  tier: Tier;
+  moduleId: number;
+  moduleName: string;
+  moduleIcon: string;
+  coreLevel: number;
   orderIndex: number;
-  requiredXp: number;
-  prerequisiteId?: string;
-  prerequisite?: { id: string; title: string };
+  prerequisites: KnowledgePrerequisite[];
+  dependents: KnowledgePrerequisite[];
   lessons: Lesson[];
   unlocked: boolean;
   completed: boolean;
   lessonsCompleted: number;
+  totalLessons: number;
   crownLevel: number;
 }
 
@@ -236,8 +277,20 @@ export interface Lesson {
 
 // 技能树响应
 export interface SkillTreeResponse {
+  tier?: TierInfo | null;
   skillTree: SkillUnit[];
+  dependencies?: { from: string; to: string }[];
   userTotalXp: number;
+}
+
+// 梯队列表响应
+export interface TiersResponse {
+  tiers: TierInfo[];
+}
+
+// 模块列表响应
+export interface ModulesResponse {
+  modules: ModuleInfo[];
 }
 
 // 课程会话
@@ -387,3 +440,73 @@ export interface SystemConfig {
   maintenanceMode: string;
   announcement: string;
 }
+
+// ==================== 课程系统类型 ====================
+
+// 课程关联的知识点
+export interface CourseUnit {
+  id: string;
+  code: string;
+  title: string;
+  description?: string;
+  coreLevel?: number;
+}
+
+// 课时
+export interface CourseSession {
+  id: string;
+  title: string;
+  description?: string;
+  orderIndex: number;
+  xpReward: number;
+  completed: boolean;
+  perfectRun: boolean;
+  exercises?: Exercise[];
+}
+
+// 课程前置依赖
+export interface CoursePrerequisite {
+  id: string;
+  code: string;
+  title: string;
+}
+
+// 课程
+export interface Course {
+  id: string;
+  code: string;
+  title: string;
+  description?: string;
+  objectives: string[];
+  orderIndex: number;
+  tier: Tier;
+  moduleId: number;
+  moduleName?: string;
+  moduleIcon?: string;
+  units: CourseUnit[];
+  sessions: CourseSession[];
+  unlocked: boolean;
+  completed: boolean;
+  sessionsCompleted: number;
+  totalSessions: number;
+  crownLevel: number;
+  totalXpEarned?: number;
+  prerequisites: CoursePrerequisite[];
+}
+
+// 课程列表响应
+export interface CoursesResponse {
+  tier?: {
+    id: string;
+    name: string;
+    color: string;
+    totalCourses: number;
+    completedCourses: number;
+    completionRate: number;
+  } | null;
+  courses: Course[];
+  dependencies: { from: string; to: string }[];
+}
+
+// 视图模式
+export type ViewMode = 'course' | 'graph';

@@ -22,9 +22,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # 配置
-SERVER="root@28920.com"
+SERVER="root@noiquest.com"
 REMOTE_DIR="/opt/noiquest"
-DOMAIN="28920.com"
+DOMAIN="noiquest.com"
 
 echo "本地项目目录: $PROJECT_DIR"
 echo "目标服务器: $SERVER:$REMOTE_DIR"

@@ -31,6 +31,7 @@ import { gemsRouter } from './routes/gems.js';
 import { streakRouter } from './routes/streak.js';
 import { redeemRouter } from './routes/redeem.js';
 import { userFilesRouter } from './routes/user-files.js';
+import { coursesRouter } from './routes/courses.js';
 
 const app = express();
 
@@ -103,6 +104,7 @@ app.use('/api/gems', gemsRouter);
 app.use('/api/streak', streakRouter);
 app.use('/api/redeem', redeemRouter);
 app.use('/api/user-files', userFilesRouter);
+app.use('/api/courses', coursesRouter);
 
 // 错误处理
 app.use(errorHandler);

@@ -1,5 +1,5 @@
-import { useRef, useEffect } from 'react';
-import { Terminal, Trash2, X, ChevronUp, ChevronDown, Clock } from 'lucide-react';
+import { useRef, useEffect, useState } from 'react';
+import { Terminal, Trash2, X, ChevronUp, ChevronDown, Clock, Keyboard } from 'lucide-react';
 
 interface OutputPanelProps {
   output: string[];
@@ -9,6 +9,8 @@ interface OutputPanelProps {
   onHeightChange: (height: number) => void;
   onClear: () => void;
   onClose: () => void;
+  stdin: string;
+  onStdinChange: (value: string) => void;
 }
 
 export default function OutputPanel({
@@ -18,10 +20,13 @@ export default function OutputPanel({
   height,
   onHeightChange,
   onClear,
-  onClose
+  onClose,
+  stdin,
+  onStdinChange
 }: OutputPanelProps) {
   const outputRef = useRef<HTMLDivElement>(null);
   const resizeRef = useRef<HTMLDivElement>(null);
+  const [showInput, setShowInput] = useState(false);
 
   // 自动滚动到底部
   useEffect(() => {
@@ -117,6 +122,18 @@ export default function OutputPanel({
 
         <div className="flex items-center gap-1">
           <button
+            onClick={() => setShowInput(!showInput)}
+            className={`p-1 rounded flex items-center gap-1 text-xs ${
+              showInput
+                ? 'text-green-400 bg-green-900/30'
+                : 'text-gray-500 hover:text-white hover:bg-gray-700'
+            }`}
+            title="程序输入（cin 读取的数据）"
+          >
+            <Keyboard size={14} />
+            <span>输入</span>
+          </button>
+          <button
             onClick={onClear}
             className="p-1 text-gray-500 hover:text-white hover:bg-gray-700 rounded"
             title="清空输出"
@@ -139,6 +156,23 @@ export default function OutputPanel({
           </button>
         </div>
       </div>
+
+      {/* 输入区域 - 用于 cin 读取数据 */}
+      {showInput && (
+        <div className="border-b border-[#3c3c3c] bg-[#1a1a1a]">
+          <div className="px-3 py-2">
+            <div className="text-xs text-gray-500 mb-1">
+              📥 程序输入（cin 会从这里读取数据，每行一个输入）
+            </div>
+            <textarea
+              value={stdin}
+              onChange={(e) => onStdinChange(e.target.value)}
+              placeholder="在这里输入程序需要的数据，例如：&#10;5&#10;1 2 3 4 5"
+              className="w-full h-20 bg-[#252526] text-gray-300 text-sm font-mono p-2 rounded border border-[#3c3c3c] focus:border-blue-500 focus:outline-none resize-none"
+            />
+          </div>
+        </div>
+      )}
 
       {/* 输出内容 */}
       <div

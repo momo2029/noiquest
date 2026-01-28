@@ -963,11 +963,11 @@ async function main() {
   const hashedPassword = await bcrypt.hash('666999', 12);
 
   await prisma.user.upsert({
-    where: { username: 'teacher@28920.com' },
+    where: { username: 'teacher@noiquest.com' },
     update: {},
     create: {
-      username: 'teacher@28920.com',
-      email: 'teacher@28920.com',
+      username: 'teacher@noiquest.com',
+      email: 'teacher@noiquest.com',
       password: hashedPassword,
       name: '张老师',
       role: 'TEACHER',
@@ -976,11 +976,11 @@ async function main() {
   });
 
   await prisma.user.upsert({
-    where: { username: 'student@28920.com' },
+    where: { username: 'student@noiquest.com' },
     update: {},
     create: {
-      username: 'student@28920.com',
-      email: 'student@28920.com',
+      username: 'student@noiquest.com',
+      email: 'student@noiquest.com',
       password: hashedPassword,
       name: '小明',
       role: 'STUDENT',
@@ -990,11 +990,11 @@ async function main() {
 
   // 创建管理员账户
   await prisma.user.upsert({
-    where: { username: 'admin@28920.com' },
+    where: { username: 'admin@noiquest.com' },
     update: {},
     create: {
-      username: 'admin@28920.com',
-      email: 'admin@28920.com',
+      username: 'admin@noiquest.com',
+      email: 'admin@noiquest.com',
       password: hashedPassword,
       name: '系统管理员',
       role: 'ADMIN',

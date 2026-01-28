@@ -31,6 +31,14 @@ enum QuestionType {
   BUG_FIX         // 改错题
 }
 
+// 梯队枚举
+enum Tier {
+  CSP_J      // 入门篇
+  CSP_S      // 进阶篇
+  PROVINCIAL // 省选/NOI
+  IOI        // 大师篇
+}
+
 // 每日目标等级枚举
 enum DailyGoalLevel {
   CASUAL     // 10 XP
@@ -106,6 +114,13 @@ model User {
   // 复习提醒
   reviewReminders    ReviewReminder[]
 
+  // 梯队进度
+  tierProgress       UserTierProgress[]
+
+  // 课程进度
+  courseProgress     UserCourseProgress[]
+  sessionProgress    UserSessionProgress[]
+
   // 兑换记录
   redeemRecords      RedeemRecord[]
 
@@ -175,6 +190,7 @@ model Exercise {
   knowledgePoints ExerciseKnowledgePoint[]
   statistics  ExerciseStatistics?
   testCases   TestCase[]   // 测试用例（练习题库编程题）
+  sessionExercises SessionExercise[]  // 课时关联
 
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -364,7 +380,165 @@ model SystemConfig {
 
 // ==================== 多邻国模式新增模型 ====================
 
-// 技能单元
+// 知识点模块
+model Module {
+  id          Int         @id
+  name        String      // "编程语言基础"
+  icon        String      @default("📚")
+  color       String      @default("#3b82f6")
+  orderIndex  Int         @default(0)
+
+  skillUnits  SkillUnit[]
+  courses     Course[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// 课程（一个课程包含多个课时，关联多个知识点）
+model Course {
+  id          String   @id @default(uuid())
+  code        String   @unique              // 课程编号 "M1-L01"
+  title       String                        // "C++入门与变量"
+  description String?
+  objectives  String[]                      // 学习目标数组
+  orderIndex  Int      @default(0)
+  tier        Tier     @default(CSP_J)      // 所属梯队
+  moduleId    Int                           // 所属模块
+  isPublished Boolean  @default(true)
+
+  // 关联
+  module       Module            @relation(fields: [moduleId], references: [id])
+  units        CourseUnit[]      // 包含的知识点
+  sessions     CourseSession[]   // 包含的课时
+  userProgress UserCourseProgress[]
+
+  // 课程依赖（前置课程）
+  prerequisites     CoursePrerequisite[] @relation("CoursePrerequisites")
+  dependentCourses  CoursePrerequisite[] @relation("CourseDependents")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([moduleId])
+  @@index([tier])
+  @@index([orderIndex])
+  @@index([isPublished])
+}
+
+// 课程-知识点关联表
+model CourseUnit {
+  id        String    @id @default(uuid())
+  courseId  String
+  unitId    String
+
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  unit      SkillUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, unitId])
+  @@index([courseId])
+  @@index([unitId])
+}
+
+// 课程前置依赖关系表
+model CoursePrerequisite {
+  id             String  @id @default(uuid())
+  courseId       String
+  prerequisiteId String
+
+  course         Course  @relation("CoursePrerequisites", fields: [courseId], references: [id], onDelete: Cascade)
+  prerequisite   Course  @relation("CourseDependents", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, prerequisiteId])
+  @@index([courseId])
+  @@index([prerequisiteId])
+}
+
+// 课时（原Lesson概念，现在属于Course）
+model CourseSession {
+  id          String   @id @default(uuid())
+  title       String                        // "算术运算符"
+  description String?
+  orderIndex  Int      @default(0)
+  courseId    String                        // 所属课程
+  xpReward    Int      @default(10)
+  isPublished Boolean  @default(true)
+
+  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  exercises    SessionExercise[]
+  userProgress UserSessionProgress[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([courseId])
+  @@index([orderIndex])
+  @@index([isPublished])
+}
+
+// 课时-练习题关联表
+model SessionExercise {
+  id          String        @id @default(uuid())
+  sessionId   String
+  exerciseId  String
+  orderIndex  Int           @default(0)
+
+  session     CourseSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exercise    Exercise      @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, exerciseId])
+  @@index([sessionId])
+  @@index([exerciseId])
+}
+
+// 用户课程进度
+model UserCourseProgress {
+  id                String   @id @default(uuid())
+  userId            String
+  courseId          String
+  unlocked          Boolean  @default(false)
+  completed         Boolean  @default(false)
+  sessionsCompleted Int      @default(0)
+  crownLevel        Int      @default(0)  // 0-3 皇冠等级
+  totalXpEarned     Int      @default(0)
+  startedAt         DateTime?
+  completedAt       DateTime?
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+}
+
+// 用户课时进度
+model UserSessionProgress {
+  id              String        @id @default(uuid())
+  userId          String
+  sessionId       String
+  completed       Boolean       @default(false)
+  mistakes        Int           @default(0)
+  perfectRun      Boolean       @default(false)
+  completedCount  Int           @default(0)
+  xpEarned        Int           @default(0)
+  lastCompletedAt DateTime?
+
+  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session CourseSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, sessionId])
+  @@index([userId])
+  @@index([sessionId])
+}
+
+// 技能单元（知识点）
 model SkillUnit {
   id             String   @id @default(uuid())
   title          String
@@ -373,11 +547,27 @@ model SkillUnit {
   color          String   @default("from-blue-400 to-blue-600")
   orderIndex     Int      @default(0)
   requiredXp     Int      @default(0)
-  prerequisiteId String?
   isPublished    Boolean  @default(true)
 
+  // 知识点编号与分类
+  code           String?  @unique  // 知识点编号 "1-01"
+  tier           Tier     @default(CSP_J)
+  moduleId       Int?
+  coreLevel      Int      @default(3)  // 核心度 1-5
+
+  // 兼容旧的单一前置依赖
+  prerequisiteId String?
   prerequisite   SkillUnit?  @relation("UnitPrerequisite", fields: [prerequisiteId], references: [id])
   dependents     SkillUnit[] @relation("UnitPrerequisite")
+
+  // 多前置依赖
+  prerequisites  SkillUnitPrerequisite[] @relation("UnitPrerequisites")
+  dependentUnits SkillUnitPrerequisite[] @relation("UnitDependents")
+
+  // 课程关联
+  courses        CourseUnit[]
+
+  module         Module?     @relation(fields: [moduleId], references: [id])
   lessons        Lesson[]
   exercises      Exercise[]
   userProgress   UserUnitProgress[]
@@ -388,6 +578,44 @@ model SkillUnit {
   @@index([orderIndex])
   @@index([prerequisiteId])
   @@index([isPublished])
+  @@index([tier])
+  @@index([moduleId])
+  @@index([code])
+}
+
+// 知识点前置依赖关系表（多对多）
+model SkillUnitPrerequisite {
+  id             String    @id @default(uuid())
+  unitId         String
+  prerequisiteId String
+
+  unit           SkillUnit @relation("UnitPrerequisites", fields: [unitId], references: [id], onDelete: Cascade)
+  prerequisite   SkillUnit @relation("UnitDependents", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([unitId, prerequisiteId])
+  @@index([unitId])
+  @@index([prerequisiteId])
+}
+
+// 用户梯队进度
+model UserTierProgress {
+  id                String    @id @default(uuid())
+  userId            String
+  tier              Tier
+  unlocked          Boolean   @default(false)
+  unitsCompleted    Int       @default(0)
+  totalUnits        Int       @default(0)
+  completionRate    Float     @default(0)  // 0-100
+  unlockedAt        DateTime?
+
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([userId, tier])
+  @@index([userId])
+  @@index([tier])
 }
 
 // 课程
