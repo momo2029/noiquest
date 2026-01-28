@@ -61,6 +61,7 @@ rsync -avz --progress \
     --exclude 'package.json' \
     --exclude 'package-lock.json' \
     --exclude 'README.md' \
+    --exclude 'src/' \
     "$PROJECT_DIR/blog/" "$SERVER:$REMOTE_BLOG_DIR/"
 
 echo ""
