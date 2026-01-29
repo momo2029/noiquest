@@ -157,6 +157,24 @@ class ApiService {
     return this.request<{ tiers: TierInfo[] }>('/skill-tree/tiers');
   }
 
+  // 公开 API（不需要登录）
+  async getPublicTiers(): Promise<{ tiers: TierInfo[] }> {
+    return this.request<{ tiers: TierInfo[] }>('/skill-tree/public/tiers');
+  }
+
+  async getPublicModules(tier?: string): Promise<{ modules: ModuleInfo[] }> {
+    const query = tier ? `?tier=${tier}` : '';
+    return this.request<{ modules: ModuleInfo[] }>(`/skill-tree/public/modules${query}`);
+  }
+
+  async getPublicSkillTree(params?: { tier?: string; moduleId?: number }): Promise<SkillTreeResponse> {
+    const query = new URLSearchParams();
+    if (params?.tier) query.set('tier', params.tier);
+    if (params?.moduleId) query.set('moduleId', String(params.moduleId));
+    const queryStr = query.toString();
+    return this.request<SkillTreeResponse>(`/skill-tree/public${queryStr ? `?${queryStr}` : ''}`);
+  }
+
   async getModules(tier?: string): Promise<{ modules: ModuleInfo[] }> {
     const query = tier ? `?tier=${tier}` : '';
     return this.request<{ modules: ModuleInfo[] }>(`/skill-tree/modules${query}`);
@@ -822,6 +840,18 @@ class ApiService {
     return this.request('/hearts/purchase', {
       method: 'POST',
       body: JSON.stringify({ type }),
+    });
+  }
+
+  async consumeHeart(amount: number = 1): Promise<{
+    hearts: number;
+    maxHearts: number;
+    nextRecoveryIn: number | null;
+    canContinue: boolean;
+  }> {
+    return this.request('/hearts/consume', {
+      method: 'POST',
+      body: JSON.stringify({ amount }),
     });
   }
 

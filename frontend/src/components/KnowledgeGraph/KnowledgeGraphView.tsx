@@ -10,9 +10,11 @@ import { GitBranch, Filter } from 'lucide-react';
 
 interface KnowledgeGraphViewProps {
   onNavigateToSkillTree: () => void;
+  isPublic?: boolean;
+  onLoginRequired?: () => void;
 }
 
-export default function KnowledgeGraphView({ onNavigateToSkillTree }: KnowledgeGraphViewProps) {
+export default function KnowledgeGraphView({ onNavigateToSkillTree, isPublic = false, onLoginRequired }: KnowledgeGraphViewProps) {
   // 数据状态
   const [allTiers, setAllTiers] = useState<TierInfo[]>([]);
   const [allModules, setAllModules] = useState<ModuleInfo[]>([]);
@@ -36,18 +38,29 @@ export default function KnowledgeGraphView({ onNavigateToSkillTree }: KnowledgeG
     try {
       setLoading(true);
 
-      // 获取所有梯队信息
-      const tiersData = await api.getTiers();
-      setAllTiers(tiersData.tiers);
+      if (isPublic) {
+        // 公开模式：调用不需要登录的 API
+        const tiersData = await api.getPublicTiers();
+        setAllTiers(tiersData.tiers);
 
-      // 获取所有模块（不传 tier 参数获取全部）
-      const modulesData = await api.getModules();
-      setAllModules(modulesData.modules);
+        const modulesData = await api.getPublicModules();
+        setAllModules(modulesData.modules);
 
-      // 获取所有知识点（不传参数获取全部）
-      const skillTreeData = await api.getSkillTree();
-      setAllUnits(skillTreeData.skillTree);
-      setAllDependencies(skillTreeData.dependencies || []);
+        const skillTreeData = await api.getPublicSkillTree();
+        setAllUnits(skillTreeData.skillTree);
+        setAllDependencies(skillTreeData.dependencies || []);
+      } else {
+        // 登录模式：调用需要认证的 API
+        const tiersData = await api.getTiers();
+        setAllTiers(tiersData.tiers);
+
+        const modulesData = await api.getModules();
+        setAllModules(modulesData.modules);
+
+        const skillTreeData = await api.getSkillTree();
+        setAllUnits(skillTreeData.skillTree);
+        setAllDependencies(skillTreeData.dependencies || []);
+      }
     } catch (error) {
       console.error('Failed to load knowledge graph data:', error);
     } finally {
@@ -189,7 +202,7 @@ export default function KnowledgeGraphView({ onNavigateToSkillTree }: KnowledgeG
           {selectedUnit ? (
             <KnowledgeDetail
               unit={selectedUnit}
-              onNavigateToSkillTree={onNavigateToSkillTree}
+              onNavigateToSkillTree={isPublic && onLoginRequired ? onLoginRequired : onNavigateToSkillTree}
             />
           ) : (
             <StatisticsPanel

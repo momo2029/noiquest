@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import prisma from '../config/database.js';
-import { authenticate, AuthRequest } from '../middleware/auth.js';
+import { authenticate, optionalAuthenticate, AuthRequest } from '../middleware/auth.js';
 import { Tier } from '@prisma/client';
 
 const router = Router();
@@ -12,6 +12,208 @@ const TIER_CONFIG = {
   PROVINCIAL: { name: '省选/NOI', color: '#a855f7', order: 3, unlockRate: 80 },
   IOI: { name: '大师篇', color: '#ef4444', order: 4, unlockRate: 80 },
 };
+
+// ==================== 公开 API（不需要登录） ====================
+
+// 公开获取所有梯队（不含用户进度）
+router.get('/public/tiers', async (req, res, next) => {
+  try {
+    // 获取每个梯队的知识点数量
+    const tierCounts = await prisma.skillUnit.groupBy({
+      by: ['tier'],
+      _count: { id: true },
+      where: { isPublished: true },
+    });
+
+    // 构建梯队列表（不含用户进度）
+    const tiers = Object.entries(TIER_CONFIG).map(([tierId, config]) => {
+      const totalUnits = tierCounts.find(t => t.tier === tierId)?._count.id || 0;
+
+      return {
+        id: tierId,
+        name: config.name,
+        color: config.color,
+        order: config.order,
+        totalUnits,
+        completedUnits: 0,
+        completionRate: 0,
+        unlocked: tierId === 'CSP_J', // 只有第一个梯队默认解锁
+        unlockRequirement: config.unlockRate > 0 ? `完成上一梯队 ${config.unlockRate}%` : null,
+      };
+    });
+
+    res.json({ tiers });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 公开获取所有模块（不含用户进度）
+router.get('/public/modules', async (req, res, next) => {
+  try {
+    const { tier } = req.query;
+
+    // 获取模块列表
+    const modules = await prisma.module.findMany({
+      orderBy: { orderIndex: 'asc' },
+    });
+
+    // 获取每个模块在指定梯队的知识点数量
+    const whereClause: any = { isPublished: true };
+    if (tier) {
+      whereClause.tier = tier as Tier;
+    }
+
+    const unitCounts = await prisma.skillUnit.groupBy({
+      by: ['moduleId'],
+      _count: { id: true },
+      where: whereClause,
+    });
+
+    const modulesWithCounts = modules.map(mod => {
+      const total = unitCounts.find(u => u.moduleId === mod.id)?._count.id || 0;
+
+      return {
+        ...mod,
+        totalUnits: total,
+        completedUnits: 0,
+        completionRate: 0,
+      };
+    });
+
+    res.json({ modules: modulesWithCounts });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 公开获取技能树结构（不含用户进度）
+router.get('/public', async (req, res, next) => {
+  try {
+    const { tier, moduleId } = req.query;
+
+    // 构建查询条件
+    const whereClause: any = { isPublished: true };
+    if (tier) {
+      whereClause.tier = tier as Tier;
+    }
+    if (moduleId) {
+      whereClause.moduleId = parseInt(moduleId as string);
+    }
+
+    // 获取技能单元
+    const units = await prisma.skillUnit.findMany({
+      where: whereClause,
+      orderBy: { orderIndex: 'asc' },
+      include: {
+        lessons: {
+          where: { isPublished: true },
+          orderBy: { orderIndex: 'asc' },
+          include: {
+            exercises: {
+              select: { id: true, title: true, type: true, xp: true },
+            },
+          },
+        },
+        module: true,
+        prerequisites: {
+          include: {
+            prerequisite: {
+              select: { id: true, code: true, title: true },
+            },
+          },
+        },
+        dependentUnits: {
+          include: {
+            unit: {
+              select: { id: true, code: true, title: true },
+            },
+          },
+        },
+      },
+    });
+
+    // 构建依赖关系图
+    const dependencies: { from: string; to: string }[] = [];
+
+    // 构建技能树（不含用户进度）
+    const skillTree = units.map(unit => {
+      // 添加依赖关系
+      unit.prerequisites.forEach(prereq => {
+        dependencies.push({
+          from: prereq.prerequisite.code!,
+          to: unit.code!,
+        });
+      });
+
+      const lessonsWithoutProgress = unit.lessons.map(lesson => ({
+        ...lesson,
+        completed: false,
+        mistakes: 0,
+        perfectRun: false,
+      }));
+
+      // 第一个没有前置条件的单元默认解锁
+      const isUnlocked = unit.prerequisites.length === 0;
+
+      return {
+        id: unit.id,
+        code: unit.code,
+        title: unit.title,
+        description: unit.description,
+        icon: unit.icon,
+        color: unit.color,
+        tier: unit.tier,
+        moduleId: unit.moduleId,
+        moduleName: unit.module?.name,
+        moduleIcon: unit.module?.icon,
+        coreLevel: unit.coreLevel,
+        orderIndex: unit.orderIndex,
+        lessons: lessonsWithoutProgress,
+        unlocked: isUnlocked,
+        completed: false,
+        lessonsCompleted: 0,
+        totalLessons: unit.lessons.length,
+        crownLevel: 0,
+        prerequisites: unit.prerequisites.map(p => ({
+          id: p.prerequisite.id,
+          code: p.prerequisite.code,
+          title: p.prerequisite.title,
+        })),
+        dependents: unit.dependentUnits.map(d => ({
+          id: d.unit.id,
+          code: d.unit.code,
+          title: d.unit.title,
+        })),
+      };
+    });
+
+    // 获取当前梯队信息
+    let currentTier = null;
+    if (tier) {
+      const tierConfig = TIER_CONFIG[tier as keyof typeof TIER_CONFIG];
+      currentTier = {
+        id: tier,
+        name: tierConfig.name,
+        color: tierConfig.color,
+        totalUnits: skillTree.length,
+        completedUnits: 0,
+        completionRate: 0,
+      };
+    }
+
+    res.json({
+      tier: currentTier,
+      skillTree,
+      dependencies,
+      userTotalXp: 0,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ==================== 需要登录的 API ====================
 
 // 获取所有梯队状态
 router.get('/tiers', authenticate, async (req: AuthRequest, res: Response, next) => {

@@ -5,6 +5,7 @@ import EmailRegister from './components/Auth/EmailRegister';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import CodeEditor from './components/Editor/CodeEditor';
+import PublicCodeEditor from './components/Editor/PublicCodeEditor';
 import FileExplorer from './components/Editor/FileExplorer';
 import OutputPanel from './components/Editor/OutputPanel';
 import AIChat from './components/AI/AIChat';
@@ -46,6 +47,8 @@ import { useUserFiles } from './hooks/useUserFiles';
 const STUDENT_VIEWS = ['knowledge-map', 'skill-tree', 'review', 'editor', 'exercises', 'progress', 'leaderboard', 'achievements', 'analytics'];
 // 教师可用的视图
 const TEACHER_VIEWS = ['dashboard', 'students', 'assignments'];
+// 公开可访问的视图（不需要登录）
+const PUBLIC_VIEWS = ['knowledge-map', 'editor'];
 
 function MainApp() {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
@@ -509,6 +512,88 @@ function MainApp() {
             <span className="text-3xl">🐿️</span>
           </div>
           <p className="text-white">加载中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 未登录但访问公开视图
+  if (!isAuthenticated && PUBLIC_VIEWS.includes(currentView)) {
+    return (
+      <div className="h-screen flex flex-col bg-[#131f24] text-white overflow-hidden">
+        {/* 简化的顶部栏 */}
+        <div className="h-14 bg-[#1a2a31] border-b border-gray-700 flex items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+              <span className="text-xl">🐿️</span>
+            </div>
+            <span className="font-bold text-lg">NOIQuest</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setAuthView('login')}
+              className="px-4 py-2 text-sm text-white/70 hover:text-white transition-colors"
+            >
+              登录
+            </button>
+            <button
+              onClick={() => {
+                setAuthView('register');
+                setCurrentView('login-required');
+              }}
+              className="px-4 py-2 text-sm bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
+            >
+              注册
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-1 flex overflow-hidden">
+          {/* 简化的侧边栏 */}
+          <div className="w-16 bg-[#1a2a31] border-r border-gray-700 flex flex-col items-center py-4 gap-2">
+            <button
+              onClick={() => setCurrentView('knowledge-map')}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
+                currentView === 'knowledge-map' ? 'bg-green-500/20 text-green-400' : 'text-gray-400 hover:bg-white/5'
+              }`}
+              title="知识图谱"
+            >
+              <span className="text-xl">🗺️</span>
+            </button>
+            <button
+              onClick={() => setCurrentView('editor')}
+              className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${
+                currentView === 'editor' ? 'bg-green-500/20 text-green-400' : 'text-gray-400 hover:bg-white/5'
+              }`}
+              title="代码编辑器"
+            >
+              <span className="text-xl">💻</span>
+            </button>
+          </div>
+
+          {/* 主内容区 */}
+          <main className="flex-1 flex overflow-hidden">
+            {currentView === 'knowledge-map' ? (
+              <KnowledgeGraphView
+                onNavigateToSkillTree={() => {
+                  setAuthView('login');
+                  setCurrentView('login-required');
+                }}
+                isPublic={true}
+                onLoginRequired={() => {
+                  setAuthView('login');
+                  setCurrentView('login-required');
+                }}
+              />
+            ) : (
+              <PublicCodeEditor
+                onLoginRequired={() => {
+                  setAuthView('login');
+                  setCurrentView('login-required');
+                }}
+              />
+            )}
+          </main>
         </div>
       </div>
     );

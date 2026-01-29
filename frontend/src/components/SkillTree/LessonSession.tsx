@@ -34,6 +34,10 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
   const startLesson = async () => {
     try {
       setLoading(true);
+      // 获取真实心数
+      const heartsStatus = await api.getHeartsStatus();
+      setHearts(heartsStatus.hearts);
+
       const lesson = await api.getLesson(lessonId);
       setLessonTitle(lesson.title);
       const { exercises: lessonExercises } = await api.startLesson(lessonId);
@@ -62,8 +66,15 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
         setCurrentQuestionMistakes(0);
       } else {
         setMistakes(prev => prev + 1);
-        setHearts(prev => Math.max(0, prev - 1));
         setCurrentQuestionMistakes(prev => prev + 1);
+        // 调用后端扣心
+        try {
+          const heartResult = await api.consumeHeart(1);
+          setHearts(heartResult.hearts);
+        } catch (error) {
+          console.error('Failed to consume heart:', error);
+          setHearts(prev => Math.max(0, prev - 1));
+        }
       }
     } catch (error) {
       console.error('Failed to submit answer:', error);

@@ -71,3 +71,42 @@ export const requireRole = (...roles: string[]) => {
     next();
   };
 };
+
+// 可选认证：有 token 就验证，没有也放行
+export const optionalAuthenticate = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      // 没有 token，直接放行
+      return next();
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    const decoded = jwt.verify(token, config.jwt.secret) as {
+      id: string;
+      username: string;
+      role: string;
+      tokenVersion?: number;
+    };
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: { id: true, username: true, role: true, tokenVersion: true },
+    });
+
+    if (user && (decoded.tokenVersion === undefined || decoded.tokenVersion === user.tokenVersion)) {
+      req.user = user;
+    }
+
+    next();
+  } catch (error) {
+    // token 无效也放行，只是不设置 user
+    next();
+  }
+};

@@ -1,0 +1,146 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="furMain" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#D2691E"/>
+      <stop offset="100%" style="stop-color:#8B4513"/>
+    </linearGradient>
+    <linearGradient id="furLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F4A460"/>
+      <stop offset="100%" style="stop-color:#DEB887"/>
+    </linearGradient>
+    <linearGradient id="tail" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D2691E"/>
+      <stop offset="50%" style="stop-color:#CD853F"/>
+      <stop offset="100%" style="stop-color:#8B4513"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#ff8c00;stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="100" cy="100" r="150" fill="url(#glow)" opacity="0.5"/>
+  <circle cx="1100" cy="530" r="200" fill="url(#glow)" opacity="0.3"/>
+
+  <!-- Squirrel Group - centered at x=320 -->
+  <g transform="translate(320, 80)">
+
+    <!-- Big fluffy tail -->
+    <path d="M60,180
+             Q180,100 200,50
+             Q220,0 180,-30
+             Q140,-50 100,-30
+             Q60,0 80,60
+             Q100,120 60,180"
+          fill="url(#tail)"/>
+    <!-- Tail fluff details -->
+    <path d="M100,150 Q150,100 160,60 Q170,30 140,10"
+          stroke="#F4A460" stroke-width="8" fill="none" opacity="0.6"/>
+    <path d="M80,130 Q120,90 130,50"
+          stroke="#FFE4B5" stroke-width="5" fill="none" opacity="0.4"/>
+
+    <!-- Back leg -->
+    <ellipse cx="20" cy="340" rx="35" ry="25" fill="#8B4513"/>
+    <ellipse cx="-5" cy="360" rx="20" ry="12" fill="#654321"/>
+
+    <!-- Body -->
+    <ellipse cx="0" cy="250" rx="70" ry="100" fill="url(#furMain)"/>
+
+    <!-- Belly -->
+    <ellipse cx="-10" cy="270" rx="45" ry="70" fill="url(#furLight)"/>
+
+    <!-- Front leg/arm holding acorn -->
+    <ellipse cx="-50" cy="280" rx="20" ry="35" fill="url(#furMain)"/>
+
+    <!-- Acorn (representing code/learning) -->
+    <ellipse cx="-60" cy="320" rx="22" ry="28" fill="#8B4513"/>
+    <path d="M-82,300 Q-60,285 -38,300 L-38,310 Q-60,300 -82,310 Z" fill="#654321"/>
+    <rect x="-63" y="285" width="6" height="10" fill="#4a3520" rx="2"/>
+    <!-- Code symbol on acorn -->
+    <text x="-60" y="328" font-family="monospace" font-size="16" fill="#ffd700" text-anchor="middle">&lt;/&gt;</text>
+
+    <!-- Head -->
+    <ellipse cx="-20" cy="140" rx="60" ry="55" fill="url(#furMain)"/>
+
+    <!-- Ears -->
+    <ellipse cx="-60" cy="85" rx="18" ry="28" fill="#D2691E"/>
+    <ellipse cx="-60" cy="90" rx="10" ry="18" fill="#F4A460"/>
+    <ellipse cx="15" cy="90" rx="18" ry="28" fill="#D2691E"/>
+    <ellipse cx="15" cy="95" rx="10" ry="18" fill="#F4A460"/>
+
+    <!-- Ear tufts -->
+    <path d="M-65,60 Q-60,50 -55,60" stroke="#8B4513" stroke-width="4" fill="none"/>
+    <path d="M10,65 Q15,55 20,65" stroke="#8B4513" stroke-width="4" fill="none"/>
+
+    <!-- Face -->
+    <ellipse cx="-25" cy="155" rx="40" ry="35" fill="url(#furLight)"/>
+
+    <!-- Eyes -->
+    <ellipse cx="-45" cy="135" rx="18" ry="20" fill="#1a1a2e"/>
+    <ellipse cx="-5" cy="135" rx="18" ry="20" fill="#1a1a2e"/>
+
+    <!-- Eye shine -->
+    <circle cx="-50" cy="128" r="6" fill="white"/>
+    <circle cx="-10" cy="128" r="6" fill="white"/>
+    <circle cx="-42" cy="138" r="3" fill="white" opacity="0.5"/>
+    <circle cx="-2" cy="138" r="3" fill="white" opacity="0.5"/>
+
+    <!-- Cute nose -->
+    <ellipse cx="-25" cy="165" rx="8" ry="6" fill="#2d1810"/>
+
+    <!-- Smile -->
+    <path d="M-40,178 Q-25,190 -10,178" stroke="#5d3a1a" stroke-width="3" fill="none"/>
+
+    <!-- Cheeks -->
+    <circle cx="-55" cy="160" r="10" fill="#FFB6C1" opacity="0.4"/>
+    <circle cx="5" cy="160" r="10" fill="#FFB6C1" opacity="0.4"/>
+
+    <!-- Whiskers -->
+    <line x1="-60" y1="165" x2="-85" y2="158" stroke="#8B4513" stroke-width="1.5"/>
+    <line x1="-60" y1="170" x2="-88" y2="172" stroke="#8B4513" stroke-width="1.5"/>
+    <line x1="10" y1="165" x2="35" y2="158" stroke="#8B4513" stroke-width="1.5"/>
+    <line x1="10" y1="170" x2="38" y2="172" stroke="#8B4513" stroke-width="1.5"/>
+
+    <!-- Front paw -->
+    <ellipse cx="-55" cy="315" rx="15" ry="10" fill="#654321"/>
+
+    <!-- Graduation cap -->
+    <g transform="translate(-20, 70) rotate(-15)">
+      <rect x="-45" y="-15" width="90" height="8" fill="#1a1a2e"/>
+      <polygon points="0,-15 -55,5 0,25 55,5" fill="#2d2d44"/>
+      <line x1="45" y1="5" x2="60" y2="35" stroke="#ffd700" stroke-width="3"/>
+      <circle cx="60" cy="40" r="6" fill="#ffd700"/>
+    </g>
+  </g>
+
+  <!-- Text -->
+  <text x="680" y="220" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white">NOIQuest</text>
+
+  <!-- Subtitle with accent -->
+  <text x="680" y="300" font-family="Arial, sans-serif" font-size="36" fill="#a0a0a0">信息学奥赛 C++ 训练营</text>
+
+  <!-- Divider line -->
+  <line x1="680" y1="340" x2="1100" y2="340" stroke="#ffd700" stroke-width="2" opacity="0.5"/>
+
+  <!-- Tagline -->
+  <text x="680" y="400" font-family="Arial, sans-serif" font-size="28" fill="#ffd700">从零基础到 CSP-J / CSP-S / NOI</text>
+
+  <!-- Features with icons -->
+  <g font-family="Arial, sans-serif" font-size="22" fill="#b0b0b0">
+    <text x="680" y="480">🎮 游戏化学习</text>
+    <text x="900" y="480">🌳 技能树进阶</text>
+    <text x="680" y="530">🧠 智能复习</text>
+    <text x="900" y="530">💻 实时编程</text>
+  </g>
+
+  <!-- Bottom accent -->
+  <rect x="0" y="620" width="1200" height="10" fill="url(#glow)"/>
+</svg>
