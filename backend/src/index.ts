@@ -19,24 +19,9 @@ import { questionsRouter } from './routes/questions.js';
 import { dailyRouter } from './routes/daily.js';
 import { reviewRouter } from './routes/review.js';
 import { adminRouter } from './routes/admin.js';
-import { inviteRouter } from './routes/invite.js';
 import { adminContentRouter } from './routes/admin-content.js';
-import { leaderboardRouter } from './routes/leaderboard.js';
-import { achievementsRouter } from './routes/achievements.js';
-import { analyticsRouter } from './routes/analytics.js';
-import { adminStatisticsRouter } from './routes/admin-statistics.js';
-import { remindersRouter } from './routes/reminders.js';
-import { heartsRouter } from './routes/hearts.js';
-import { gemsRouter } from './routes/gems.js';
-import { streakRouter } from './routes/streak.js';
-import { redeemRouter } from './routes/redeem.js';
-import { userFilesRouter } from './routes/user-files.js';
-import { coursesRouter } from './routes/courses.js';
 
 const app = express();
-
-// 信任代理（用于处理 X-Forwarded-For 头部）
-app.set('trust proxy', true);
 
 // 安全中间件
 app.use(helmet());
@@ -53,22 +38,11 @@ app.use(compression());
 // 解析 JSON
 app.use(express.json({ limit: '10mb' }));
 
-// 调试中间件 - 记录所有请求
-if (config.debug) {
-  app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-    console.log('  Query:', req.query);
-    console.log('  Body:', req.body);
-    next();
-  });
-}
-
 // 速率限制
 const limiter = rateLimit({
   windowMs: config.rateLimit.windowMs,
   max: config.rateLimit.max,
   message: { error: '请求过于频繁，请稍后再试' },
-  validate: { trustProxy: false },
 });
 app.use(limiter);
 
@@ -93,18 +67,6 @@ app.use('/api/daily', dailyRouter);
 app.use('/api/review', reviewRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/admin/content', adminContentRouter);
-app.use('/api/invite', inviteRouter);
-app.use('/api/leaderboard', leaderboardRouter);
-app.use('/api/achievements', achievementsRouter);
-app.use('/api/analytics', analyticsRouter);
-app.use('/api/admin/statistics', adminStatisticsRouter);
-app.use('/api/reminders', remindersRouter);
-app.use('/api/hearts', heartsRouter);
-app.use('/api/gems', gemsRouter);
-app.use('/api/streak', streakRouter);
-app.use('/api/redeem', redeemRouter);
-app.use('/api/user-files', userFilesRouter);
-app.use('/api/courses', coursesRouter);
 
 // 错误处理
 app.use(errorHandler);

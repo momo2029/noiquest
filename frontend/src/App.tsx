@@ -93,6 +93,10 @@ function MainApp() {
 
   const [currentView, setCurrentViewState] = useState<string>(() => {
     const savedView = getCurrentView(defaultView);
+    // 未登录时只允许公开视图
+    if (!isAuthenticated) {
+      return PUBLIC_VIEWS.includes(savedView) ? savedView : 'knowledge-map';
+    }
     // 验证保存的视图对当前角色是否有效
     if (userRole === 'student' && STUDENT_VIEWS.includes(savedView)) {
       return savedView;
@@ -528,6 +532,7 @@ function MainApp() {
               <span className="text-xl">🐿️</span>
             </div>
             <span className="font-bold text-lg">NOIQuest</span>
+            <span style={{ fontSize: '0.8em' }}>代码敲得6，同学都喊<span style={{ color: '#ff6b6b', fontWeight: 'bold' }}>6</span><span style={{ color: '#4ade80', fontWeight: 'bold' }}>6</span><span style={{ color: '#facc15', fontWeight: 'bold' }}>6</span>～</span>
           </div>
           <div className="flex items-center gap-2">
             <button
