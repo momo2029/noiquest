@@ -88,13 +88,13 @@ function MainApp() {
 
   // 视图状态 - 根据用户角色设置默认视图，支持路由记忆
   const userRole: UserRole = user?.role === 'TEACHER' ? 'teacher' : user?.role === 'ADMIN' ? 'admin' : 'student';
-  const defaultView = userRole === 'student' ? 'knowledge-map' : 'dashboard';
+  const defaultView = userRole === 'student' ? 'skill-tree' : 'dashboard';
 
   const [currentView, setCurrentViewState] = useState<string>(() => {
     const savedView = getCurrentView(defaultView);
     // 未登录时只允许公开视图
     if (!isAuthenticated) {
-      return PUBLIC_VIEWS.includes(savedView) ? savedView : 'knowledge-map';
+      return PUBLIC_VIEWS.includes(savedView) ? savedView : 'skill-tree';
     }
     // 验证保存的视图对当前角色是否有效
     if (userRole === 'student' && STUDENT_VIEWS.includes(savedView)) {
