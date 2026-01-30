@@ -12,14 +12,6 @@ router.get('/:exerciseId', authenticate, async (req: AuthRequest, res: Response,
 
     const exercise = await prisma.exercise.findUnique({
       where: { id: exerciseId },
-      include: {
-        unit: {
-          select: { id: true, title: true, icon: true },
-        },
-        lesson: {
-          select: { id: true, title: true },
-        },
-      },
     });
 
     if (!exercise) {
@@ -49,7 +41,7 @@ router.get('/:exerciseId', authenticate, async (req: AuthRequest, res: Response,
 router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: Response, next) => {
   try {
     const { exerciseId } = req.params;
-    const { answer, lessonId } = req.body;
+    const { answer, sessionId } = req.body;
     const userId = req.user!.id;
 
     const exercise = await prisma.exercise.findUnique({
@@ -74,14 +66,19 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
         let allCorrect = true;
         const blankResults: Record<string, { correct: boolean; expected: string }> = {};
 
-        for (const blank of blanks) {
-          const userAnswer = userAnswers[blank.id]?.trim();
+        // 支持两种格式：
+        // 1. 新格式：blanks 没有 id，使用索引作为 key
+        // 2. 旧格式：blanks 有 id 字段
+        for (let i = 0; i < blanks.length; i++) {
+          const blank = blanks[i];
+          const key = blank.id ?? String(i);
+          const userAnswer = userAnswers[key]?.trim();
           const alternatives = blank.alternatives || [blank.answer];
           const correct = alternatives.some((alt: string) =>
             alt.toLowerCase() === userAnswer?.toLowerCase()
           );
 
-          blankResults[blank.id] = {
+          blankResults[key] = {
             correct,
             expected: blank.answer,
           };
@@ -97,13 +94,24 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
 
       case 'CODE_ORDER': {
         const questionData = exercise.questionData as any;
-        const correctOrder = questionData?.lines?.map((l: any) => l.id).sort((a: string, b: string) => {
-          const lineA = questionData.lines.find((l: any) => l.id === a);
-          const lineB = questionData.lines.find((l: any) => l.id === b);
-          return lineA.order - lineB.order;
-        });
-
         const userOrder = answer as string[];
+
+        // 支持两种数据格式：
+        // 1. 新格式：lines 是字符串数组，correctOrder 是正确顺序的索引数组
+        // 2. 旧格式：lines 是对象数组 [{ id, code, order }]
+        let correctOrder: string[];
+        if (Array.isArray(questionData?.correctOrder)) {
+          // 新格式
+          correctOrder = questionData.correctOrder.map((i: number) => String(i));
+        } else {
+          // 旧格式
+          correctOrder = questionData?.lines?.map((l: any) => l.id).sort((a: string, b: string) => {
+            const lineA = questionData.lines.find((l: any) => l.id === a);
+            const lineB = questionData.lines.find((l: any) => l.id === b);
+            return lineA.order - lineB.order;
+          });
+        }
+
         isCorrect = JSON.stringify(correctOrder) === JSON.stringify(userOrder);
         correctAnswer = correctOrder;
         feedback = isCorrect ? '代码顺序正确！' : '代码顺序不正确，请重新排列。';
@@ -112,9 +120,20 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
 
       case 'MULTIPLE_CHOICE': {
         const questionData = exercise.questionData as any;
-        const correctOption = questionData?.options?.find((o: any) => o.correct);
-        isCorrect = answer === correctOption?.id;
-        correctAnswer = correctOption?.id;
+        // 支持两种数据格式：
+        // 1. 新格式：options 是字符串数组，correctIndex 是正确答案索引
+        // 2. 旧格式：options 是对象数组 [{ id, text, correct }]
+        if (typeof questionData?.correctIndex === 'number') {
+          // 新格式
+          const userIndex = parseInt(answer as string, 10);
+          isCorrect = userIndex === questionData.correctIndex;
+          correctAnswer = String(questionData.correctIndex);
+        } else {
+          // 旧格式
+          const correctOption = questionData?.options?.find((o: any) => o.correct);
+          isCorrect = answer === correctOption?.id;
+          correctAnswer = correctOption?.id;
+        }
         feedback = isCorrect
           ? '回答正确！'
           : `回答错误。${questionData?.explanation || ''}`;
@@ -146,26 +165,42 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
 
       case 'BUG_FIX': {
         const questionData = exercise.questionData as any;
-        const bugs = questionData?.bugs || [];
         const userFixes = answer as Record<number, string>;
 
-        let allCorrect = true;
-        const bugResults: Record<number, { correct: boolean; expected: string }> = {};
+        // 支持两种数据格式：
+        // 1. 新格式：bugLine 是单个行号，correctCode 是正确代码
+        // 2. 旧格式：bugs 是数组 [{ line, fix, hint }]
+        if (typeof questionData?.bugLine === 'number') {
+          // 新格式
+          const bugLine = questionData.bugLine;
+          const correctLines = questionData.correctCode?.split('\n') || [];
+          const expectedFix = correctLines[bugLine - 1]?.trim();
+          const userFix = userFixes[bugLine]?.trim();
 
-        for (const bug of bugs) {
-          const userFix = userFixes[bug.line]?.trim();
-          const correct = userFix === bug.fix.trim();
+          isCorrect = userFix === expectedFix;
+          correctAnswer = { [bugLine]: { correct: isCorrect, expected: expectedFix } };
+        } else {
+          // 旧格式
+          const bugs = questionData?.bugs || [];
+          let allCorrect = true;
+          const bugResults: Record<number, { correct: boolean; expected: string }> = {};
 
-          bugResults[bug.line] = {
-            correct,
-            expected: bug.fix,
-          };
+          for (const bug of bugs) {
+            const userFix = userFixes[bug.line]?.trim();
+            const correct = userFix === bug.fix.trim();
 
-          if (!correct) allCorrect = false;
+            bugResults[bug.line] = {
+              correct,
+              expected: bug.fix,
+            };
+
+            if (!correct) allCorrect = false;
+          }
+
+          isCorrect = allCorrect;
+          correctAnswer = bugResults;
         }
 
-        isCorrect = allCorrect;
-        correctAnswer = bugResults;
         feedback = isCorrect ? '所有错误都修复正确！' : '部分修复不正确，请检查。';
         break;
       }
@@ -347,10 +382,10 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
         },
       });
 
-      // 更新课程错误计数
-      if (lessonId) {
-        await prisma.userLessonProgress.updateMany({
-          where: { userId, lessonId },
+      // 更新课时错误计数
+      if (sessionId) {
+        await prisma.userSessionProgress.updateMany({
+          where: { userId, sessionId },
           data: { mistakes: { increment: 1 } },
         });
       }

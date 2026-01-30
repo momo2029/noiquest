@@ -100,7 +100,7 @@ export default function GraphVisualization({
                 const isLocked = !unit.unlocked;
                 const isCompleted = unit.completed;
                 const isSelected = unit.id === selectedUnitId;
-                const hasProgress = unit.lessonsCompleted > 0;
+                const hasProgress = unit.sessionsCompleted > 0;
 
                 return (
                   <button
@@ -166,7 +166,7 @@ export default function GraphVisualization({
                     </div>
 
                     {/* 进度指示器 */}
-                    {!isLocked && unit.totalLessons > 0 && (
+                    {!isLocked && unit.totalSessions > 0 && (
                       <div className="mt-2">
                         <div className="h-1 bg-white/10 rounded-full overflow-hidden">
                           <div
@@ -174,7 +174,7 @@ export default function GraphVisualization({
                               isCompleted ? 'bg-green-500' : 'bg-blue-500'
                             }`}
                             style={{
-                              width: `${Math.round((unit.lessonsCompleted / unit.totalLessons) * 100)}%`,
+                              width: `${Math.round((unit.sessionsCompleted / unit.totalSessions) * 100)}%`,
                             }}
                           />
                         </div>

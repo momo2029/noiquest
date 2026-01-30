@@ -20,6 +20,18 @@ import { dailyRouter } from './routes/daily.js';
 import { reviewRouter } from './routes/review.js';
 import { adminRouter } from './routes/admin.js';
 import { adminContentRouter } from './routes/admin-content.js';
+import { coursesRouter } from './routes/courses.js';
+import { userFilesRouter } from './routes/user-files.js';
+import { heartsRouter } from './routes/hearts.js';
+import { gemsRouter } from './routes/gems.js';
+import { streakRouter } from './routes/streak.js';
+import { achievementsRouter } from './routes/achievements.js';
+import { leaderboardRouter } from './routes/leaderboard.js';
+import { inviteRouter } from './routes/invite.js';
+import { redeemRouter } from './routes/redeem.js';
+import { remindersRouter } from './routes/reminders.js';
+import { analyticsRouter } from './routes/analytics.js';
+import { adminStatisticsRouter } from './routes/admin-statistics.js';
 
 const app = express();
 
@@ -67,6 +79,18 @@ app.use('/api/daily', dailyRouter);
 app.use('/api/review', reviewRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/admin/content', adminContentRouter);
+app.use('/api/courses', coursesRouter);
+app.use('/api/user-files', userFilesRouter);
+app.use('/api/hearts', heartsRouter);
+app.use('/api/gems', gemsRouter);
+app.use('/api/streak', streakRouter);
+app.use('/api/achievements', achievementsRouter);
+app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/invite', inviteRouter);
+app.use('/api/redeem', redeemRouter);
+app.use('/api/reminders', remindersRouter);
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/admin/statistics', adminStatisticsRouter);
 
 // 错误处理
 app.use(errorHandler);

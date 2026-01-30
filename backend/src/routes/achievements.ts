@@ -14,8 +14,8 @@ const conditionCheckers: Record<string, ConditionChecker> = {
     });
     return count >= value;
   },
-  lessonsCompleted: async (userId, value) => {
-    const count = await prisma.userLessonProgress.count({
+  sessionsCompleted: async (userId, value) => {
+    const count = await prisma.userSessionProgress.count({
       where: { userId, completed: true },
     });
     return count >= value;
@@ -41,8 +41,8 @@ const conditionCheckers: Record<string, ConditionChecker> = {
     });
     return (user?.totalXp || 0) >= value;
   },
-  perfectLessons: async (userId, value) => {
-    const count = await prisma.userLessonProgress.count({
+  perfectSessions: async (userId, value) => {
+    const count = await prisma.userSessionProgress.count({
       where: { userId, perfectRun: true },
     });
     return count >= value;
@@ -92,8 +92,8 @@ async function calculateProgress(userId: string, condition: { type: string; valu
       });
       return Math.min(count, value);
     }
-    case 'lessonsCompleted': {
-      const count = await prisma.userLessonProgress.count({
+    case 'sessionsCompleted': {
+      const count = await prisma.userSessionProgress.count({
         where: { userId, completed: true },
       });
       return Math.min(count, value);
@@ -112,8 +112,8 @@ async function calculateProgress(userId: string, condition: { type: string; valu
       });
       return Math.min(user?.level || 0, value);
     }
-    case 'perfectLessons': {
-      const count = await prisma.userLessonProgress.count({
+    case 'perfectSessions': {
+      const count = await prisma.userSessionProgress.count({
         where: { userId, perfectRun: true },
       });
       return Math.min(count, value);

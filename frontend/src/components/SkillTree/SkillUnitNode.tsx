@@ -10,9 +10,9 @@ interface SkillUnitNodeProps {
 
 export default function SkillUnitNode({ unit, index, isSelected, onClick }: SkillUnitNodeProps) {
   const isLocked = !unit.unlocked;
-  const totalLessons = unit.lessons.length;
-  const completedLessons = unit.lessons.filter(l => l.completed).length;
-  const progress = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+  const totalSessions = unit.totalSessions;
+  const completedSessions = unit.sessionsCompleted;
+  const progress = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
 
   // 皇冠颜色
   const crownColors = ['text-gray-400', 'text-yellow-600', 'text-yellow-500', 'text-yellow-400', 'text-yellow-300', 'text-yellow-200'];
@@ -55,7 +55,7 @@ export default function SkillUnitNode({ unit, index, isSelected, onClick }: Skil
           {/* 进度条 */}
           <div className="mt-3">
             <div className="flex items-center justify-between text-xs text-white/70 mb-1">
-              <span>{completedLessons} / {totalLessons} 课程</span>
+              <span>{completedSessions} / {totalSessions} 课时</span>
               {unit.completed && <CheckCircle size={14} className="text-green-300" />}
             </div>
             <div className="h-2 bg-black/20 rounded-full overflow-hidden">

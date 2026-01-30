@@ -4,14 +4,14 @@ import { SkillUnit, DailyQuest, DailyStatus, TierInfo, ModuleInfo, Tier } from '
 import TierSelector from './TierSelector';
 import ModuleSidebar from './ModuleSidebar';
 import KnowledgeMap from './KnowledgeMap';
-import LessonCard from './LessonCard';
+import SessionCard from './SessionCard';
 import { Target, Flame, Trophy, BookOpen } from 'lucide-react';
 
 interface SkillTreeViewProps {
-  onStartLesson: (lessonId: string) => void;
+  onStartSession: (sessionId: string) => void;
 }
 
-export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
+export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
   // 数据状态
   const [tiers, setTiers] = useState<TierInfo[]>([]);
   const [modules, setModules] = useState<ModuleInfo[]>([]);
@@ -211,16 +211,29 @@ export default function SkillTreeView({ onStartLesson }: SkillTreeViewProps) {
                 {selectedUnit.description}
               </p>
 
-              {selectedUnit.lessons.length > 0 ? (
+              {selectedUnit.courses && selectedUnit.courses.length > 0 ? (
                 <div className="space-y-2">
-                  <h4 className="text-sm text-gray-500 mb-2">课程列表</h4>
-                  {selectedUnit.lessons.map((lesson) => (
-                    <LessonCard
-                      key={lesson.id}
-                      lesson={lesson}
-                      unitUnlocked={selectedUnit.unlocked}
-                      onStart={() => onStartLesson(lesson.id)}
-                    />
+                  <h4 className="text-sm text-gray-500 mb-2">关联课程</h4>
+                  {selectedUnit.courses.map((course) => (
+                    <div
+                      key={course.id}
+                      className="bg-white/5 rounded-lg p-3 hover:bg-white/10 cursor-pointer transition-colors"
+                    >
+                      <p className="text-white font-medium text-sm">{course.title}</p>
+                      <p className="text-gray-500 text-xs">{course.code}</p>
+                      {course.sessions && course.sessions.length > 0 && (
+                        <div className="mt-2 space-y-1">
+                          {course.sessions.map((session) => (
+                            <SessionCard
+                              key={session.id}
+                              session={session}
+                              courseUnlocked={course.unlocked}
+                              onStart={() => onStartSession(session.id)}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               ) : (

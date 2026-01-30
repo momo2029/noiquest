@@ -2,6 +2,21 @@ import { PrismaClient, Tier } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { modules, allKnowledgePoints } from './data';
 import { module1Courses } from './data/courses-module1';
+import { exercisesM1L01 } from './data/exercises-M1-L01';
+import { exercisesM1L02 } from './data/exercises-M1-L02';
+import { exercisesM1L03 } from './data/exercises-M1-L03';
+import { exercisesM1L04 } from './data/exercises-M1-L04';
+import { exercisesM1L05 } from './data/exercises-M1-L05';
+import { exercisesM1L06 } from './data/exercises-M1-L06';
+import { exercisesM1L07 } from './data/exercises-M1-L07';
+import { exercisesM1L08 } from './data/exercises-M1-L08';
+import { exercisesM1L09 } from './data/exercises-M1-L09';
+import { exercisesM1L10 } from './data/exercises-M1-L10';
+import { exercisesM1L11 } from './data/exercises-M1-L11';
+import { exercisesM1L12 } from './data/exercises-M1-L12';
+import { exercisesM1L13 } from './data/exercises-M1-L13';
+import { exercisesM1L14 } from './data/exercises-M1-L14';
+import { exercisesM1L15 } from './data/exercises-M1-L15';
 
 const prisma = new PrismaClient();
 
@@ -20,7 +35,6 @@ async function seedSkillTreeV2() {
   await prisma.submission.deleteMany();
   await prisma.mistakeRecord.deleteMany();
   await prisma.knowledgeMastery.deleteMany();
-  await prisma.userLessonProgress.deleteMany();
   await prisma.userUnitProgress.deleteMany();
   await prisma.userTierProgress.deleteMany();
   await prisma.userDailySettings.deleteMany();
@@ -37,11 +51,6 @@ async function seedSkillTreeV2() {
 
   // 删除技能树相关数据
   await prisma.skillUnitPrerequisite.deleteMany();
-  await prisma.exercise.updateMany({
-    where: { source: 'SKILL_TREE' },
-    data: { unitId: null, lessonId: null },
-  });
-  await prisma.lesson.deleteMany();
   await prisma.skillUnit.deleteMany();
   console.log('   技能树数据已清空');
 
@@ -54,6 +63,13 @@ async function seedSkillTreeV2() {
   await prisma.courseUnit.deleteMany();
   await prisma.course.deleteMany();
   console.log('   课程数据已清空');
+
+  // 删除练习题相关数据
+  await prisma.testCase.deleteMany();
+  await prisma.exerciseStatistics.deleteMany();
+  await prisma.exerciseKnowledgePoint.deleteMany();
+  await prisma.exercise.deleteMany();
+  console.log('   练习题数据已清空');
 
   // 删除模块
   await prisma.module.deleteMany();
@@ -132,25 +148,7 @@ async function seedSkillTreeV2() {
   }
   console.log(`   共创建 ${depCount} 条依赖关系`);
 
-  // 5. 为每个知识点创建一个默认课程（占位）
-  console.log('\n5. 创建默认课程...');
-  for (const kp of allKnowledgePoints) {
-    const unitId = codeToIdMap.get(kp.code);
-    if (!unitId) continue;
-
-    await prisma.lesson.create({
-      data: {
-        title: `${kp.title} - 入门`,
-        description: `学习 ${kp.title} 的基础知识`,
-        unitId,
-        orderIndex: 1,
-        isPublished: true,
-      },
-    });
-  }
-  console.log(`   共创建 ${allKnowledgePoints.length} 个默认课程`);
-
-  // 6. 创建模块1的课程体系
+  // 5. 创建模块1的课程体系
   console.log('\n6. 创建模块1课程体系...');
   const courseCodeToIdMap = new Map<string, string>();
 
@@ -219,7 +217,7 @@ async function seedSkillTreeV2() {
   }
   console.log(`   共创建 ${module1Courses.length} 个课程`);
 
-  // 7. 创建测试用户
+  // 6. 创建测试用户
   console.log('\n6. 创建测试用户...');
   const hashedPassword = await bcrypt.hash('666999', 12);
 
@@ -260,6 +258,114 @@ async function seedSkillTreeV2() {
     },
   });
   console.log('   测试用户已创建');
+
+  // 7. 导入练习题
+  console.log('\n7. 导入练习题...');
+  const allExercisesData = [
+    exercisesM1L01,
+    exercisesM1L02,
+    exercisesM1L03,
+    exercisesM1L04,
+    exercisesM1L05,
+    exercisesM1L06,
+    exercisesM1L07,
+    exercisesM1L08,
+    exercisesM1L09,
+    exercisesM1L10,
+    exercisesM1L11,
+    exercisesM1L12,
+    exercisesM1L13,
+    exercisesM1L14,
+    exercisesM1L15,
+  ];
+
+  // 获取课程和课时映射
+  const courseMap = new Map<string, string>();
+  const courses = await prisma.course.findMany();
+  courses.forEach(c => courseMap.set(c.code, c.id));
+
+  const sessionMap = new Map<string, string>();
+  const sessions = await prisma.courseSession.findMany();
+  sessions.forEach(s => sessionMap.set(`${s.courseId}-${s.orderIndex}`, s.id));
+
+  let exerciseCount = 0;
+  let sessionExerciseCount = 0;
+
+  for (const exerciseData of allExercisesData) {
+    const courseId = courseMap.get(exerciseData.courseCode);
+    if (!courseId) {
+      console.warn(`   警告: 找不到课程 ${exerciseData.courseCode}`);
+      continue;
+    }
+
+    for (const sessionData of exerciseData.sessions) {
+      const sessionId = sessionMap.get(`${courseId}-${sessionData.sessionIndex + 1}`);
+      if (!sessionId) {
+        console.warn(`   警告: 找不到课程 ${exerciseData.courseCode} 的课时 ${sessionData.sessionIndex}`);
+        continue;
+      }
+
+      for (let i = 0; i < sessionData.exercises.length; i++) {
+        const ex = sessionData.exercises[i];
+        
+        // 移除字符串中的 null 字符（\u0000）
+        const sanitizeString = (str: string | undefined): string => {
+          return str ? str.replace(/\u0000/g, '') : '';
+        };
+        
+        const sanitizeObject = (obj: any): any => {
+          if (typeof obj === 'string') {
+            return sanitizeString(obj);
+          } else if (Array.isArray(obj)) {
+            return obj.map(item => sanitizeObject(item));
+          } else if (obj && typeof obj === 'object') {
+            const sanitized: any = {};
+            for (const key in obj) {
+              if (obj.hasOwnProperty(key)) {
+                sanitized[key] = sanitizeObject(obj[key]);
+              }
+            }
+            return sanitized;
+          }
+          return obj;
+        };
+        
+        const sanitizedQuestionData = sanitizeObject(ex.questionData);
+        const sanitizedStarterCode = sanitizeString(ex.type === 'CODING' ? ((ex as any).starterCode || (ex.questionData as any)?.starterCode) : '');
+        
+        const exercise = await prisma.exercise.create({
+          data: {
+            title: sanitizeString(ex.title),
+            description: sanitizeString(ex.description),
+            difficulty: ex.difficulty as any,
+            category: (exerciseData as any).knowledgePointCode || (exerciseData as any).knowledgePointCodes?.[0] || '',
+            xp: ex.xp,
+            type: ex.type as any,
+            questionData: sanitizedQuestionData as any,
+            source: 'EXERCISE_LIBRARY',
+            orderIndex: i + 1,
+            isPublished: true,
+            starterCode: sanitizedStarterCode,
+          },
+        });
+        exerciseCount++;
+
+        // 关联到课时
+        await prisma.sessionExercise.create({
+          data: {
+            sessionId,
+            exerciseId: exercise.id,
+            orderIndex: i + 1,
+          },
+        });
+        sessionExerciseCount++;
+      }
+    }
+    console.log(`   已导入 ${exerciseData.courseCode} 的练习题`);
+  }
+
+  console.log(`   共创建 ${exerciseCount} 道练习题`);
+  console.log(`   共关联 ${sessionExerciseCount} 条课时-练习题关系`);
 
   // 8. 统计信息
   console.log('\n========== 导入完成 ==========');

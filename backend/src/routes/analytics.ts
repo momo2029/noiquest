@@ -28,7 +28,7 @@ router.get('/daily', authenticate, async (req: AuthRequest, res: Response, next)
         correctCount: 0,
         correctRate: 0,
         xpEarned: 0,
-        lessonsCompleted: 0,
+        sessionsCompleted: 0,
         reviewsCompleted: 0,
       });
       return;
@@ -42,7 +42,7 @@ router.get('/daily', authenticate, async (req: AuthRequest, res: Response, next)
       correctCount: stats.correctCount,
       correctRate: stats.exercisesCount > 0 ? Math.round((stats.correctCount / stats.exercisesCount) * 100) : 0,
       xpEarned: stats.xpEarned,
-      lessonsCompleted: stats.lessonsCompleted,
+      sessionsCompleted: stats.lessonsCompleted,
       reviewsCompleted: stats.reviewsCompleted,
     });
   } catch (error) {
@@ -79,7 +79,7 @@ router.get('/weekly', authenticate, async (req: AuthRequest, res: Response, next
       totalExercises: 0,
       totalCorrect: 0,
       xpEarned: 0,
-      lessonsCompleted: 0,
+      sessionsCompleted: 0,
       reviewsCompleted: 0,
       streakDays: 0,
     };
@@ -98,7 +98,7 @@ router.get('/weekly', authenticate, async (req: AuthRequest, res: Response, next
         summary.totalExercises += stat.exercisesCount;
         summary.totalCorrect += stat.correctCount;
         summary.xpEarned += stat.xpEarned;
-        summary.lessonsCompleted += stat.lessonsCompleted;
+        summary.sessionsCompleted += stat.lessonsCompleted;
         summary.reviewsCompleted += stat.reviewsCompleted;
         if (stat.exercisesCount > 0) summary.streakDays++;
 

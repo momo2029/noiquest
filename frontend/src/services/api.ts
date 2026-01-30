@@ -6,10 +6,9 @@ import {
   PhoneAuthResponse,
   SkillTreeResponse,
   SkillUnit,
-  Lesson,
   Exercise,
   AnswerResult,
-  LessonCompleteResult,
+  SessionCompleteResult,
   DailyStatus,
   DailyQuest,
   DailyGoalLevel,
@@ -184,18 +183,18 @@ class ApiService {
     return this.request<SkillUnit>(`/skill-tree/units/${unitId}`);
   }
 
-  async getLesson(lessonId: string): Promise<Lesson> {
-    return this.request<Lesson>(`/skill-tree/lessons/${lessonId}`);
+  async getSession(sessionId: string): Promise<CourseSession & { course: { id: string; code: string; title: string }; exercises: Exercise[] }> {
+    return this.request(`/skill-tree/sessions/${sessionId}`);
   }
 
-  async startLesson(lessonId: string): Promise<{ message: string; exercises: Exercise[] }> {
-    return this.request<{ message: string; exercises: Exercise[] }>(`/skill-tree/lessons/${lessonId}/start`, {
+  async startSession(sessionId: string): Promise<{ message: string; exercises: Exercise[] }> {
+    return this.request<{ message: string; exercises: Exercise[] }>(`/skill-tree/sessions/${sessionId}/start`, {
       method: 'POST',
     });
   }
 
-  async completeLesson(lessonId: string, mistakes: number): Promise<LessonCompleteResult> {
-    return this.request<LessonCompleteResult>(`/skill-tree/lessons/${lessonId}/complete`, {
+  async completeSession(sessionId: string, mistakes: number): Promise<SessionCompleteResult> {
+    return this.request<SessionCompleteResult>(`/skill-tree/sessions/${sessionId}/complete`, {
       method: 'POST',
       body: JSON.stringify({ mistakes }),
     });
@@ -246,10 +245,10 @@ class ApiService {
     return this.request<Exercise & { userProgress: any }>(`/questions/${exerciseId}`);
   }
 
-  async submitAnswer(exerciseId: string, answer: any, lessonId?: string): Promise<AnswerResult> {
+  async submitAnswer(exerciseId: string, answer: any, sessionId?: string): Promise<AnswerResult> {
     return this.request<AnswerResult>(`/questions/${exerciseId}/answer`, {
       method: 'POST',
-      body: JSON.stringify({ answer, lessonId }),
+      body: JSON.stringify({ answer, sessionId }),
     });
   }
 
@@ -423,7 +422,10 @@ class ApiService {
     icon?: string;
     color?: string;
     requiredXp?: number;
-    prerequisiteId?: string;
+    moduleId?: number;
+    tier?: string;
+    code?: string;
+    coreLevel?: number;
   }): Promise<any> {
     return this.request('/admin/content/skill-units', {
       method: 'POST',
@@ -437,7 +439,10 @@ class ApiService {
     icon?: string;
     color?: string;
     requiredXp?: number;
-    prerequisiteId?: string;
+    moduleId?: number;
+    tier?: string;
+    code?: string;
+    coreLevel?: number;
     isPublished?: boolean;
   }): Promise<any> {
     return this.request(`/admin/content/skill-units/${id}`, {
@@ -460,52 +465,116 @@ class ApiService {
   }
 
   // 课程
-  async getContentLessons(unitId?: string): Promise<any> {
-    const query = unitId ? `?unitId=${unitId}` : '';
-    return this.request(`/admin/content/lessons${query}`);
+  async getContentCourses(moduleId?: number): Promise<any> {
+    const query = moduleId ? `?moduleId=${moduleId}` : '';
+    return this.request(`/admin/content/courses${query}`);
   }
 
-  async createContentLesson(data: {
+  async getContentCourse(id: string): Promise<any> {
+    return this.request(`/admin/content/courses/${id}`);
+  }
+
+  async createContentCourse(data: {
+    code: string;
     title: string;
     description?: string;
-    unitId: string;
+    objectives?: string[];
+    tier?: string;
+    moduleId: number;
+    unitIds?: string[];
+    isPublished?: boolean;
   }): Promise<any> {
-    return this.request('/admin/content/lessons', {
+    return this.request('/admin/content/courses', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  async updateContentLesson(id: string, data: {
+  async updateContentCourse(id: string, data: {
+    code?: string;
     title?: string;
     description?: string;
-    unitId?: string;
+    objectives?: string[];
+    tier?: string;
+    moduleId?: number;
+    unitIds?: string[];
     isPublished?: boolean;
   }): Promise<any> {
-    return this.request(`/admin/content/lessons/${id}`, {
+    return this.request(`/admin/content/courses/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   }
 
-  async deleteContentLesson(id: string): Promise<any> {
-    return this.request(`/admin/content/lessons/${id}`, {
+  async deleteContentCourse(id: string): Promise<any> {
+    return this.request(`/admin/content/courses/${id}`, {
       method: 'DELETE',
     });
   }
 
+  // 课时
+  async createContentSession(courseId: string, data: {
+    title: string;
+    description?: string;
+    xpReward?: number;
+    isPublished?: boolean;
+  }): Promise<any> {
+    return this.request(`/admin/content/courses/${courseId}/sessions`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateContentSession(id: string, data: {
+    title?: string;
+    description?: string;
+    xpReward?: number;
+    isPublished?: boolean;
+  }): Promise<any> {
+    return this.request(`/admin/content/sessions/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteContentSession(id: string): Promise<any> {
+    return this.request(`/admin/content/sessions/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async addSessionExercise(sessionId: string, exerciseId: string): Promise<any> {
+    return this.request(`/admin/content/sessions/${sessionId}/exercises`, {
+      method: 'POST',
+      body: JSON.stringify({ exerciseId }),
+    });
+  }
+
+  async removeSessionExercise(sessionId: string, exerciseId: string): Promise<any> {
+    return this.request(`/admin/content/sessions/${sessionId}/exercises/${exerciseId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // 模块
+  async getContentModules(): Promise<any> {
+    return this.request('/admin/content/modules');
+  }
+
   // 题目
   async getContentExercises(params?: {
-    unitId?: string;
-    lessonId?: string;
+    courseId?: string;
+    sessionId?: string;
     type?: string;
+    knowledgePointId?: string;
     page?: number;
     limit?: number;
   }): Promise<any> {
     const query = new URLSearchParams();
-    if (params?.unitId) query.set('unitId', params.unitId);
-    if (params?.lessonId) query.set('lessonId', params.lessonId);
+    if (params?.courseId) query.set('courseId', params.courseId);
+    if (params?.sessionId) query.set('sessionId', params.sessionId);
     if (params?.type) query.set('type', params.type);
+    if (params?.knowledgePointId) query.set('knowledgePointId', params.knowledgePointId);
     if (params?.page) query.set('page', String(params.page));
     if (params?.limit) query.set('limit', String(params.limit));
     return this.request(`/admin/content/exercises?${query.toString()}`);
@@ -722,7 +791,7 @@ class ApiService {
     correctCount: number;
     correctRate: number;
     xpEarned: number;
-    lessonsCompleted: number;
+    sessionsCompleted: number;
     reviewsCompleted: number;
   }> {
     const query = date ? `?date=${date}` : '';
@@ -737,7 +806,7 @@ class ApiService {
       totalCorrect: number;
       correctRate: number;
       xpEarned: number;
-      lessonsCompleted: number;
+      sessionsCompleted: number;
       reviewsCompleted: number;
       streakDays: number;
     };

@@ -10,9 +10,9 @@ interface KnowledgeNodeProps {
 export default function KnowledgeNode({ unit, isSelected, onClick }: KnowledgeNodeProps) {
   const isLocked = !unit.unlocked;
   const isCompleted = unit.completed;
-  const hasProgress = unit.lessonsCompleted > 0;
-  const progress = unit.totalLessons
-    ? Math.round((unit.lessonsCompleted / unit.totalLessons) * 100)
+  const hasProgress = unit.sessionsCompleted > 0;
+  const progress = unit.totalSessions
+    ? Math.round((unit.sessionsCompleted / unit.totalSessions) * 100)
     : 0;
 
   // 根据核心度显示星星
@@ -88,11 +88,11 @@ export default function KnowledgeNode({ unit, isSelected, onClick }: KnowledgeNo
       </div>
 
       {/* 进度条 */}
-      {!isLocked && unit.totalLessons && unit.totalLessons > 0 && (
+      {!isLocked && unit.totalSessions && unit.totalSessions > 0 && (
         <div className="mt-3">
           <div className="flex items-center justify-between text-xs mb-1">
             <span className="text-gray-500">
-              {unit.lessonsCompleted}/{unit.totalLessons} 课程
+              {unit.sessionsCompleted}/{unit.totalSessions} 课时
             </span>
             {isCompleted && unit.crownLevel > 0 && (
               <span className="text-yellow-400 flex items-center gap-1">

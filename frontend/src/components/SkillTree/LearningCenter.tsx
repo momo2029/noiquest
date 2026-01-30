@@ -15,15 +15,13 @@ import ModuleSidebar from './ModuleSidebar';
 import KnowledgeMap from './KnowledgeMap';
 import CoursePath from './CoursePath';
 import CourseDetailPanel from './CourseDetailPanel';
-import LessonCard from './LessonCard';
 import { Target, Flame, Trophy, BookOpen, Map, LayoutList } from 'lucide-react';
 
 interface LearningCenterProps {
-  onStartLesson: (lessonId: string) => void;
-  onStartSession?: (sessionId: string) => void;
+  onStartSession: (sessionId: string) => void;
 }
 
-export default function LearningCenter({ onStartLesson, onStartSession }: LearningCenterProps) {
+export default function LearningCenter({ onStartSession }: LearningCenterProps) {
   // 数据状态
   const [tiers, setTiers] = useState<TierInfo[]>([]);
   const [modules, setModules] = useState<ModuleInfo[]>([]);
@@ -152,12 +150,7 @@ export default function LearningCenter({ onStartLesson, onStartSession }: Learni
   };
 
   const handleStartSession = (sessionId: string) => {
-    if (onStartSession) {
-      onStartSession(sessionId);
-    } else {
-      // 如果没有提供 onStartSession，使用 onStartLesson 作为后备
-      onStartLesson(sessionId);
-    }
+    onStartSession(sessionId);
   };
 
   if (loading) {
@@ -341,16 +334,18 @@ export default function LearningCenter({ onStartLesson, onStartSession }: Learni
                   {selectedUnit.description}
                 </p>
 
-                {selectedUnit.lessons.length > 0 ? (
+                {selectedUnit.courses && selectedUnit.courses.length > 0 ? (
                   <div className="space-y-2">
-                    <h4 className="text-sm text-gray-500 mb-2">课程列表</h4>
-                    {selectedUnit.lessons.map((lesson) => (
-                      <LessonCard
-                        key={lesson.id}
-                        lesson={lesson}
-                        unitUnlocked={selectedUnit.unlocked}
-                        onStart={() => onStartLesson(lesson.id)}
-                      />
+                    <h4 className="text-sm text-gray-500 mb-2">关联课程</h4>
+                    {selectedUnit.courses.map((course) => (
+                      <div
+                        key={course.id}
+                        className="bg-white/5 rounded-lg p-3 hover:bg-white/10 cursor-pointer transition-colors"
+                        onClick={() => setSelectedCourse(course)}
+                      >
+                        <p className="text-white font-medium text-sm">{course.title}</p>
+                        <p className="text-gray-500 text-xs">{course.code}</p>
+                      </div>
                     ))}
                   </div>
                 ) : (

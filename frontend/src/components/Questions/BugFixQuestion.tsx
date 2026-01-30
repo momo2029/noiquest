@@ -1,6 +1,15 @@
 import { useState } from 'react';
-import { Exercise, BugFixData } from '../../types';
+import { Exercise } from '../../types';
 import { Send, AlertTriangle, Lightbulb } from 'lucide-react';
+
+// 后端实际的数据格式
+interface BackendBugFixData {
+  buggyCode: string;
+  correctCode: string;
+  bugLine: number;
+  bugDescription?: string;
+  explanation?: string;
+}
 
 interface BugFixQuestionProps {
   exercise: Exercise;
@@ -9,25 +18,28 @@ interface BugFixQuestionProps {
 }
 
 export default function BugFixQuestion({ exercise, onSubmit, disabled }: BugFixQuestionProps) {
-  const data = exercise.questionData as BugFixData;
+  const data = exercise.questionData as unknown as BackendBugFixData;
   const [fixes, setFixes] = useState<Record<number, string>>({});
-  const [showHints, setShowHints] = useState<Record<number, boolean>>({});
+  const [showHint, setShowHint] = useState(false);
 
-  if (!data) return null;
+  if (!data || !data.buggyCode) return null;
 
   const lines = data.buggyCode.split('\n');
-  const bugLines = new Set(data.bugs.map(b => b.line));
+  const bugLine = data.bugLine;
 
   const handleFixChange = (line: number, value: string) => {
     setFixes(prev => ({ ...prev, [line]: value }));
   };
 
-  const toggleHint = (line: number) => {
-    setShowHints(prev => ({ ...prev, [line]: !prev[line] }));
-  };
-
   const handleSubmit = () => {
     onSubmit(fixes);
+  };
+
+  // 获取正确代码中对应行的内容作为提示
+  const getCorrectLine = () => {
+    if (!data.correctCode) return null;
+    const correctLines = data.correctCode.split('\n');
+    return correctLines[bugLine - 1];
   };
 
   return (
@@ -38,29 +50,35 @@ export default function BugFixQuestion({ exercise, onSubmit, disabled }: BugFixQ
         <span className="text-sm">找出并修复代码中的错误</span>
       </div>
 
+      {/* 错误描述 */}
+      {data.bugDescription && (
+        <div className="text-white/60 text-sm mb-4">
+          提示：{data.bugDescription}
+        </div>
+      )}
+
       {/* 代码区域 */}
       <div className="bg-[#1e1e1e] rounded-xl p-4 font-mono text-sm mb-6">
         {lines.map((line, index) => {
           const lineNum = index + 1;
-          const hasBug = bugLines.has(lineNum);
-          const bug = data.bugs.find(b => b.line === lineNum);
+          const hasBug = lineNum === bugLine;
 
           return (
             <div key={index} className="group">
               <div className={`flex items-start gap-2 py-1 ${hasBug ? 'bg-red-500/10 -mx-4 px-4' : ''}`}>
                 {/* 行号 */}
-                <span className={`w-8 text-right select-none ${hasBug ? 'text-red-400' : 'text-gray-500'}`}>
+                <span className={`w-8 text-right select-none flex-shrink-0 ${hasBug ? 'text-red-400' : 'text-gray-500'}`}>
                   {lineNum}
                 </span>
 
                 {/* 代码内容 */}
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   {hasBug ? (
                     <div className="space-y-2">
                       {/* 原始错误代码 */}
                       <div className="flex items-center gap-2">
                         <code className="text-red-400 line-through opacity-70">{line}</code>
-                        <AlertTriangle size={14} className="text-red-400" />
+                        <AlertTriangle size={14} className="text-red-400 flex-shrink-0" />
                       </div>
 
                       {/* 修复输入框 */}
@@ -74,25 +92,25 @@ export default function BugFixQuestion({ exercise, onSubmit, disabled }: BugFixQ
                       />
 
                       {/* 提示按钮 */}
-                      {bug?.hint && (
+                      {getCorrectLine() && (
                         <div>
                           <button
-                            onClick={() => toggleHint(lineNum)}
+                            onClick={() => setShowHint(!showHint)}
                             className="flex items-center gap-1 text-yellow-400 text-xs hover:text-yellow-300"
                           >
                             <Lightbulb size={12} />
-                            {showHints[lineNum] ? '隐藏提示' : '显示提示'}
+                            {showHint ? '隐藏提示' : '显示提示'}
                           </button>
-                          {showHints[lineNum] && (
+                          {showHint && (
                             <p className="text-yellow-400/70 text-xs mt-1 pl-4">
-                              💡 {bug.hint}
+                              💡 正确代码: <code>{getCorrectLine()}</code>
                             </p>
                           )}
                         </div>
                       )}
                     </div>
                   ) : (
-                    <code className="text-gray-300">{line}</code>
+                    <code className="text-gray-300 whitespace-pre">{line}</code>
                   )}
                 </div>
               </div>
@@ -104,7 +122,7 @@ export default function BugFixQuestion({ exercise, onSubmit, disabled }: BugFixQ
       {/* 提交按钮 */}
       <button
         onClick={handleSubmit}
-        disabled={disabled || Object.keys(fixes).length < data.bugs.length}
+        disabled={disabled || !fixes[bugLine]}
         className="w-full py-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
       >
         <Send size={20} />

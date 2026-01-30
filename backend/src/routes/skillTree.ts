@@ -106,12 +106,15 @@ router.get('/public', async (req, res, next) => {
       where: whereClause,
       orderBy: { orderIndex: 'asc' },
       include: {
-        lessons: {
-          where: { isPublished: true },
-          orderBy: { orderIndex: 'asc' },
+        courses: {
           include: {
-            exercises: {
-              select: { id: true, title: true, type: true, xp: true },
+            course: {
+              include: {
+                sessions: {
+                  where: { isPublished: true },
+                  orderBy: { orderIndex: 'asc' },
+                },
+              },
             },
           },
         },
@@ -146,15 +149,19 @@ router.get('/public', async (req, res, next) => {
         });
       });
 
-      const lessonsWithoutProgress = unit.lessons.map(lesson => ({
-        ...lesson,
-        completed: false,
-        mistakes: 0,
-        perfectRun: false,
-      }));
-
       // 第一个没有前置条件的单元默认解锁
       const isUnlocked = unit.prerequisites.length === 0;
+
+      // 获取关联的课程和课时
+      const courses = unit.courses.map(cu => ({
+        ...cu.course,
+        sessions: cu.course.sessions.map(session => ({
+          ...session,
+          completed: false,
+          mistakes: 0,
+          perfectRun: false,
+        })),
+      }));
 
       return {
         id: unit.id,
@@ -169,11 +176,11 @@ router.get('/public', async (req, res, next) => {
         moduleIcon: unit.module?.icon,
         coreLevel: unit.coreLevel,
         orderIndex: unit.orderIndex,
-        lessons: lessonsWithoutProgress,
+        courses,
         unlocked: isUnlocked,
         completed: false,
-        lessonsCompleted: 0,
-        totalLessons: unit.lessons.length,
+        sessionsCompleted: 0,
+        totalSessions: courses.reduce((sum, c) => sum + c.sessions.length, 0),
         crownLevel: 0,
         prerequisites: unit.prerequisites.map(p => ({
           id: p.prerequisite.id,
@@ -348,12 +355,15 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response, next) => {
       where: whereClause,
       orderBy: { orderIndex: 'asc' },
       include: {
-        lessons: {
-          where: { isPublished: true },
-          orderBy: { orderIndex: 'asc' },
+        courses: {
           include: {
-            exercises: {
-              select: { id: true, title: true, type: true, xp: true },
+            course: {
+              include: {
+                sessions: {
+                  where: { isPublished: true },
+                  orderBy: { orderIndex: 'asc' },
+                },
+              },
             },
           },
         },
@@ -380,7 +390,7 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response, next) => {
       where: { userId },
     });
 
-    const userLessonProgress = await prisma.userLessonProgress.findMany({
+    const userSessionProgress = await prisma.userSessionProgress.findMany({
       where: { userId },
     });
 
@@ -413,15 +423,25 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response, next) => {
         });
       });
 
-      const lessonsWithProgress = unit.lessons.map(lesson => {
-        const lessonProgress = userLessonProgress.find(p => p.lessonId === lesson.id);
-        return {
-          ...lesson,
-          completed: lessonProgress?.completed || false,
-          mistakes: lessonProgress?.mistakes || 0,
-          perfectRun: lessonProgress?.perfectRun || false,
-        };
-      });
+      // 获取关联的课程和课时（带进度）
+      const courses = unit.courses.map(cu => ({
+        ...cu.course,
+        sessions: cu.course.sessions.map(session => {
+          const sessionProgress = userSessionProgress.find(p => p.sessionId === session.id);
+          return {
+            ...session,
+            completed: sessionProgress?.completed || false,
+            mistakes: sessionProgress?.mistakes || 0,
+            perfectRun: sessionProgress?.perfectRun || false,
+          };
+        }),
+      }));
+
+      const totalSessions = courses.reduce((sum, c) => sum + c.sessions.length, 0);
+      const completedSessions = courses.reduce(
+        (sum, c) => sum + c.sessions.filter(s => s.completed).length,
+        0
+      );
 
       return {
         id: unit.id,
@@ -436,11 +456,11 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response, next) => {
         moduleIcon: unit.module?.icon,
         coreLevel: unit.coreLevel,
         orderIndex: unit.orderIndex,
-        lessons: lessonsWithProgress,
+        courses,
         unlocked: isUnlocked,
         completed: unitProgress?.completed || false,
-        lessonsCompleted: unitProgress?.lessonsCompleted || 0,
-        totalLessons: unit.lessons.length,
+        sessionsCompleted: completedSessions,
+        totalSessions,
         crownLevel: unitProgress?.crownLevel || 0,
         prerequisites: unit.prerequisites.map(p => ({
           id: p.prerequisite.id,
@@ -491,19 +511,31 @@ router.get('/units/:unitId', authenticate, async (req: AuthRequest, res: Respons
     const unit = await prisma.skillUnit.findUnique({
       where: { id: unitId },
       include: {
-        lessons: {
-          where: { isPublished: true },
-          orderBy: { orderIndex: 'asc' },
+        courses: {
           include: {
-            exercises: {
-              orderBy: { orderIndex: 'asc' },
-              select: {
-                id: true,
-                title: true,
-                description: true,
-                type: true,
-                xp: true,
-                difficulty: true,
+            course: {
+              include: {
+                sessions: {
+                  where: { isPublished: true },
+                  orderBy: { orderIndex: 'asc' },
+                  include: {
+                    exercises: {
+                      orderBy: { orderIndex: 'asc' },
+                      include: {
+                        exercise: {
+                          select: {
+                            id: true,
+                            title: true,
+                            description: true,
+                            type: true,
+                            xp: true,
+                            difficulty: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
               },
             },
           },
@@ -528,31 +560,48 @@ router.get('/units/:unitId', authenticate, async (req: AuthRequest, res: Respons
       where: { userId_unitId: { userId, unitId } },
     });
 
-    const lessonProgressList = await prisma.userLessonProgress.findMany({
+    // 获取所有课时ID
+    const allSessionIds = unit.courses.flatMap(cu =>
+      cu.course.sessions.map(s => s.id)
+    );
+
+    const sessionProgressList = await prisma.userSessionProgress.findMany({
       where: {
         userId,
-        lessonId: { in: unit.lessons.map(l => l.id) },
+        sessionId: { in: allSessionIds },
       },
     });
 
-    const lessonsWithProgress = unit.lessons.map(lesson => {
-      const progress = lessonProgressList.find(p => p.lessonId === lesson.id);
-      return {
-        ...lesson,
-        completed: progress?.completed || false,
-        mistakes: progress?.mistakes || 0,
-        perfectRun: progress?.perfectRun || false,
-      };
-    });
+    // 构建带进度的课程数据
+    const coursesWithProgress = unit.courses.map(cu => ({
+      ...cu.course,
+      sessions: cu.course.sessions.map(session => {
+        const progress = sessionProgressList.find(p => p.sessionId === session.id);
+        return {
+          ...session,
+          exercises: session.exercises.map(se => se.exercise),
+          completed: progress?.completed || false,
+          mistakes: progress?.mistakes || 0,
+          perfectRun: progress?.perfectRun || false,
+        };
+      }),
+    }));
+
+    const totalSessions = coursesWithProgress.reduce((sum, c) => sum + c.sessions.length, 0);
+    const completedSessions = coursesWithProgress.reduce(
+      (sum, c) => sum + c.sessions.filter(s => s.completed).length,
+      0
+    );
 
     res.json({
       ...unit,
       moduleName: unit.module?.name,
       moduleIcon: unit.module?.icon,
-      lessons: lessonsWithProgress,
+      courses: coursesWithProgress,
       unlocked: unitProgress?.unlocked || false,
       completed: unitProgress?.completed || false,
-      lessonsCompleted: unitProgress?.lessonsCompleted || 0,
+      sessionsCompleted: completedSessions,
+      totalSessions,
       crownLevel: unitProgress?.crownLevel || 0,
       prerequisites: unit.prerequisites.map(p => ({
         id: p.prerequisite.id,
@@ -565,199 +614,237 @@ router.get('/units/:unitId', authenticate, async (req: AuthRequest, res: Respons
   }
 });
 
-// 获取课程详情
-router.get('/lessons/:lessonId', authenticate, async (req: AuthRequest, res: Response, next) => {
+// 获取课时详情
+router.get('/sessions/:sessionId', authenticate, async (req: AuthRequest, res: Response, next) => {
   try {
-    const { lessonId } = req.params;
+    const { sessionId } = req.params;
     const userId = req.user!.id;
 
-    const lesson = await prisma.lesson.findUnique({
-      where: { id: lessonId },
+    const session = await prisma.courseSession.findUnique({
+      where: { id: sessionId },
       include: {
-        unit: {
-          select: { id: true, title: true, icon: true, code: true },
+        course: {
+          select: { id: true, code: true, title: true, moduleId: true },
         },
         exercises: {
           orderBy: { orderIndex: 'asc' },
+          include: {
+            exercise: true,
+          },
         },
       },
     });
 
-    if (!lesson) {
-      return res.status(404).json({ error: '课程不存在' });
+    if (!session) {
+      return res.status(404).json({ error: '课时不存在' });
     }
 
-    // 获取用户课程进度
-    const lessonProgress = await prisma.userLessonProgress.findUnique({
-      where: { userId_lessonId: { userId, lessonId } },
+    // 获取用户课时进度
+    const sessionProgress = await prisma.userSessionProgress.findUnique({
+      where: { userId_sessionId: { userId, sessionId } },
     });
 
     // 获取用户练习进度
+    const exerciseIds = session.exercises.map(e => e.exerciseId);
     const exerciseProgress = await prisma.exerciseProgress.findMany({
       where: {
         userId,
-        exerciseId: { in: lesson.exercises.map(e => e.id) },
+        exerciseId: { in: exerciseIds },
       },
     });
 
-    const exercisesWithProgress = lesson.exercises.map(exercise => {
-      const progress = exerciseProgress.find(p => p.exerciseId === exercise.id);
+    const exercisesWithProgress = session.exercises.map(se => {
+      const progress = exerciseProgress.find(p => p.exerciseId === se.exerciseId);
       return {
-        ...exercise,
+        ...se.exercise,
         completed: progress?.completed || false,
       };
     });
 
     res.json({
-      ...lesson,
+      ...session,
       exercises: exercisesWithProgress,
-      completed: lessonProgress?.completed || false,
-      mistakes: lessonProgress?.mistakes || 0,
-      perfectRun: lessonProgress?.perfectRun || false,
+      completed: sessionProgress?.completed || false,
+      mistakes: sessionProgress?.mistakes || 0,
+      perfectRun: sessionProgress?.perfectRun || false,
     });
   } catch (error) {
     next(error);
   }
 });
 
-// 开始课程
-router.post('/lessons/:lessonId/start', authenticate, async (req: AuthRequest, res: Response, next) => {
+// 开始课时
+router.post('/sessions/:sessionId/start', authenticate, async (req: AuthRequest, res: Response, next) => {
   try {
-    const { lessonId } = req.params;
+    const { sessionId } = req.params;
     const userId = req.user!.id;
 
-    const lesson = await prisma.lesson.findUnique({
-      where: { id: lessonId },
+    const session = await prisma.courseSession.findUnique({
+      where: { id: sessionId },
       include: {
+        course: {
+          include: {
+            units: true,
+          },
+        },
         exercises: {
           orderBy: { orderIndex: 'asc' },
+          include: {
+            exercise: true,
+          },
         },
       },
     });
 
-    if (!lesson) {
-      return res.status(404).json({ error: '课程不存在' });
+    if (!session) {
+      return res.status(404).json({ error: '课时不存在' });
     }
 
-    // 创建或更新课程进度
-    await prisma.userLessonProgress.upsert({
-      where: { userId_lessonId: { userId, lessonId } },
+    // 创建或更新课时进度
+    await prisma.userSessionProgress.upsert({
+      where: { userId_sessionId: { userId, sessionId } },
       update: { mistakes: 0 },
       create: {
         userId,
-        lessonId,
+        sessionId,
         completed: false,
         mistakes: 0,
         perfectRun: false,
       },
     });
 
-    // 确保单元进度存在
-    await prisma.userUnitProgress.upsert({
-      where: { userId_unitId: { userId, unitId: lesson.unitId } },
+    // 确保课程进度存在
+    await prisma.userCourseProgress.upsert({
+      where: { userId_courseId: { userId, courseId: session.courseId } },
       update: { unlocked: true },
       create: {
         userId,
-        unitId: lesson.unitId,
+        courseId: session.courseId,
         unlocked: true,
         completed: false,
-        lessonsCompleted: 0,
+        sessionsCompleted: 0,
         crownLevel: 0,
       },
     });
 
+    // 确保关联的知识单元进度存在
+    for (const cu of session.course.units) {
+      await prisma.userUnitProgress.upsert({
+        where: { userId_unitId: { userId, unitId: cu.unitId } },
+        update: { unlocked: true },
+        create: {
+          userId,
+          unitId: cu.unitId,
+          unlocked: true,
+          completed: false,
+          crownLevel: 0,
+        },
+      });
+    }
+
     res.json({
-      message: '课程已开始',
-      exercises: lesson.exercises,
+      message: '课时已开始',
+      exercises: session.exercises.map(se => se.exercise),
     });
   } catch (error) {
     next(error);
   }
 });
 
-// 完成课程
-router.post('/lessons/:lessonId/complete', authenticate, async (req: AuthRequest, res: Response, next) => {
+// 完成课时
+router.post('/sessions/:sessionId/complete', authenticate, async (req: AuthRequest, res: Response, next) => {
   try {
-    const { lessonId } = req.params;
+    const { sessionId } = req.params;
     const { mistakes = 0 } = req.body;
     const userId = req.user!.id;
 
-    const lesson = await prisma.lesson.findUnique({
-      where: { id: lessonId },
+    const session = await prisma.courseSession.findUnique({
+      where: { id: sessionId },
       include: {
-        unit: true,
-        exercises: true,
+        course: {
+          include: {
+            units: true,
+            sessions: { where: { isPublished: true } },
+          },
+        },
+        exercises: {
+          include: { exercise: true },
+        },
       },
     });
 
-    if (!lesson) {
-      return res.status(404).json({ error: '课程不存在' });
+    if (!session) {
+      return res.status(404).json({ error: '课时不存在' });
     }
 
     const perfectRun = mistakes === 0;
 
-    // 更新课程进度
-    await prisma.userLessonProgress.upsert({
-      where: { userId_lessonId: { userId, lessonId } },
+    // 更新课时进度
+    await prisma.userSessionProgress.upsert({
+      where: { userId_sessionId: { userId, sessionId } },
       update: {
         completed: true,
         mistakes,
         perfectRun,
+        completedCount: { increment: 1 },
+        lastCompletedAt: new Date(),
       },
       create: {
         userId,
-        lessonId,
+        sessionId,
         completed: true,
         mistakes,
         perfectRun,
+        completedCount: 1,
+        lastCompletedAt: new Date(),
       },
     });
 
-    // 计算单元完成的课程数
-    const completedLessons = await prisma.userLessonProgress.count({
+    // 计算课程完成的课时数
+    const completedSessions = await prisma.userSessionProgress.count({
       where: {
         userId,
-        lesson: { unitId: lesson.unitId },
+        session: { courseId: session.courseId },
         completed: true,
       },
     });
 
-    const totalLessons = await prisma.lesson.count({
-      where: { unitId: lesson.unitId, isPublished: true },
-    });
+    const totalSessions = session.course.sessions.length;
+    const courseCompleted = completedSessions >= totalSessions;
 
-    const unitCompleted = completedLessons >= totalLessons;
-
-    // 更新单元进度
-    const unitProgress = await prisma.userUnitProgress.upsert({
-      where: { userId_unitId: { userId, unitId: lesson.unitId } },
+    // 更新课程进度
+    const courseProgress = await prisma.userCourseProgress.upsert({
+      where: { userId_courseId: { userId, courseId: session.courseId } },
       update: {
-        lessonsCompleted: completedLessons,
-        completed: unitCompleted,
-        crownLevel: unitCompleted ? { increment: 1 } : undefined,
+        sessionsCompleted: completedSessions,
+        completed: courseCompleted,
+        crownLevel: courseCompleted ? { increment: 1 } : undefined,
+        completedAt: courseCompleted ? new Date() : undefined,
       },
       create: {
         userId,
-        unitId: lesson.unitId,
+        courseId: session.courseId,
         unlocked: true,
-        completed: unitCompleted,
-        lessonsCompleted: completedLessons,
-        crownLevel: unitCompleted ? 1 : 0,
+        completed: courseCompleted,
+        sessionsCompleted: completedSessions,
+        crownLevel: courseCompleted ? 1 : 0,
+        completedAt: courseCompleted ? new Date() : undefined,
       },
     });
 
     // 计算获得的 XP
+    const exerciseIds = session.exercises.map(e => e.exerciseId);
     const completedExercises = await prisma.exerciseProgress.findMany({
       where: {
         userId,
-        exerciseId: { in: lesson.exercises.map(e => e.id) },
+        exerciseId: { in: exerciseIds },
         completed: true,
       },
     });
 
     const xpEarned = completedExercises.reduce((sum, progress) => {
-      const exercise = lesson.exercises.find(e => e.id === progress.exerciseId);
-      return sum + (exercise?.xp || 0);
+      const exercise = session.exercises.find(e => e.exerciseId === progress.exerciseId);
+      return sum + (exercise?.exercise.xp || 0);
     }, 0);
 
     // 完美通关奖励
@@ -787,71 +874,102 @@ router.post('/lessons/:lessonId/complete', authenticate, async (req: AuthRequest
       });
     }
 
-    // 解锁依赖当前单元的知识点
-    if (unitCompleted) {
-      // 获取所有依赖当前单元的知识点，并包含它们的所有前置条件
-      const dependentUnits = await prisma.skillUnitPrerequisite.findMany({
-        where: { prerequisiteId: lesson.unitId },
-        include: {
-          unit: {
-            include: {
-              prerequisites: true,
-            },
-          },
-        },
-      });
-
-      // 获取所有相关前置条件的完成状态（一次性查询）
-      const allPrereqIds = new Set<string>();
-      dependentUnits.forEach(dep => {
-        dep.unit.prerequisites.forEach(prereq => {
-          allPrereqIds.add(prereq.prerequisiteId);
+    // 如果课程完成，更新关联的知识单元进度
+    if (courseCompleted) {
+      for (const cu of session.course.units) {
+        // 检查该知识单元关联的所有课程是否都完成
+        const unitCourses = await prisma.courseUnit.findMany({
+          where: { unitId: cu.unitId },
+          include: { course: true },
         });
-      });
 
-      const completedPrereqs = await prisma.userUnitProgress.findMany({
-        where: {
-          userId,
-          unitId: { in: Array.from(allPrereqIds) },
-          completed: true,
-        },
-        select: { unitId: true },
-      });
-
-      const completedPrereqSet = new Set(completedPrereqs.map(p => p.unitId));
-
-      // 批量处理解锁
-      for (const dep of dependentUnits) {
-        const allPrereqsCompleted = dep.unit.prerequisites.every(
-          prereq => completedPrereqSet.has(prereq.prerequisiteId)
+        const allCoursesCompleted = await Promise.all(
+          unitCourses.map(async uc => {
+            const progress = await prisma.userCourseProgress.findUnique({
+              where: { userId_courseId: { userId, courseId: uc.courseId } },
+            });
+            return progress?.completed || false;
+          })
         );
 
-        if (allPrereqsCompleted) {
-          await prisma.userUnitProgress.upsert({
-            where: { userId_unitId: { userId, unitId: dep.unitId } },
-            update: { unlocked: true },
-            create: {
-              userId,
-              unitId: dep.unitId,
-              unlocked: true,
-              completed: false,
-              lessonsCompleted: 0,
-              crownLevel: 0,
+        const unitCompleted = allCoursesCompleted.every(c => c);
+
+        await prisma.userUnitProgress.upsert({
+          where: { userId_unitId: { userId, unitId: cu.unitId } },
+          update: {
+            completed: unitCompleted,
+            crownLevel: unitCompleted ? { increment: 1 } : undefined,
+          },
+          create: {
+            userId,
+            unitId: cu.unitId,
+            unlocked: true,
+            completed: unitCompleted,
+            crownLevel: unitCompleted ? 1 : 0,
+          },
+        });
+
+        // 如果知识单元完成，解锁依赖它的知识单元
+        if (unitCompleted) {
+          const dependentUnits = await prisma.skillUnitPrerequisite.findMany({
+            where: { prerequisiteId: cu.unitId },
+            include: {
+              unit: {
+                include: { prerequisites: true },
+              },
             },
           });
+
+          const allPrereqIds = new Set<string>();
+          dependentUnits.forEach(dep => {
+            dep.unit.prerequisites.forEach(prereq => {
+              allPrereqIds.add(prereq.prerequisiteId);
+            });
+          });
+
+          const completedPrereqs = await prisma.userUnitProgress.findMany({
+            where: {
+              userId,
+              unitId: { in: Array.from(allPrereqIds) },
+              completed: true,
+            },
+            select: { unitId: true },
+          });
+
+          const completedPrereqSet = new Set(completedPrereqs.map(p => p.unitId));
+
+          for (const dep of dependentUnits) {
+            const allPrereqsCompleted = dep.unit.prerequisites.every(
+              prereq => completedPrereqSet.has(prereq.prerequisiteId)
+            );
+
+            if (allPrereqsCompleted) {
+              await prisma.userUnitProgress.upsert({
+                where: { userId_unitId: { userId, unitId: dep.unitId } },
+                update: { unlocked: true },
+                create: {
+                  userId,
+                  unitId: dep.unitId,
+                  unlocked: true,
+                  completed: false,
+                  crownLevel: 0,
+                },
+              });
+            }
+          }
         }
       }
     }
 
     res.json({
-      message: '课程完成',
+      message: '课时完成',
       xpEarned: xpEarned + bonusXp,
       bonusXp,
       perfectRun,
-      unitCompleted,
-      lessonsCompleted: completedLessons,
-      totalLessons,
-      crownLevel: unitProgress.crownLevel,
+      courseCompleted,
+      sessionsCompleted: completedSessions,
+      totalSessions,
+      crownLevel: courseProgress.crownLevel,
     });
   } catch (error) {
     next(error);

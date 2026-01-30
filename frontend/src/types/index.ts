@@ -70,8 +70,6 @@ export interface Exercise {
   xp: number;
   type?: QuestionType;
   questionData?: QuestionData;
-  unitId?: string;
-  lessonId?: string;
 }
 
 // 题目数据类型
@@ -254,25 +252,12 @@ export interface SkillUnit {
   orderIndex: number;
   prerequisites: KnowledgePrerequisite[];
   dependents: KnowledgePrerequisite[];
-  lessons: Lesson[];
+  courses: Course[];
   unlocked: boolean;
   completed: boolean;
-  lessonsCompleted: number;
-  totalLessons: number;
+  sessionsCompleted: number;
+  totalSessions: number;
   crownLevel: number;
-}
-
-// 课程
-export interface Lesson {
-  id: string;
-  title: string;
-  description?: string;
-  orderIndex: number;
-  unitId: string;
-  exercises: Exercise[];
-  completed: boolean;
-  mistakes: number;
-  perfectRun: boolean;
 }
 
 // 技能树响应
@@ -293,9 +278,9 @@ export interface ModulesResponse {
   modules: ModuleInfo[];
 }
 
-// 课程会话
-export interface LessonSession {
-  lessonId: string;
+// 课时会话
+export interface SessionSession {
+  sessionId: string;
   exercises: Exercise[];
   currentIndex: number;
   mistakes: number;
@@ -311,15 +296,15 @@ export interface AnswerResult {
   xpEarned: number;
 }
 
-// 课程完成结果
-export interface LessonCompleteResult {
+// 课时完成结果
+export interface SessionCompleteResult {
   message: string;
   xpEarned: number;
   bonusXp: number;
   perfectRun: boolean;
-  unitCompleted: boolean;
-  lessonsCompleted: number;
-  totalLessons: number;
+  courseCompleted: boolean;
+  sessionsCompleted: number;
+  totalSessions: number;
   crownLevel: number;
 }
 
@@ -461,6 +446,7 @@ export interface CourseSession {
   xpReward: number;
   completed: boolean;
   perfectRun: boolean;
+  mistakes?: number;
   exercises?: Exercise[];
 }
 
@@ -500,6 +486,7 @@ export interface CoursesResponse {
     id: string;
     name: string;
     color: string;
+    order?: number;
     totalCourses: number;
     completedCourses: number;
     completionRate: number;

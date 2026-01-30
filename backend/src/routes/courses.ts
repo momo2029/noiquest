@@ -13,6 +13,81 @@ const TIER_CONFIG = {
   IOI: { name: '大师篇', color: '#ef4444', order: 4, unlockRate: 80 },
 };
 
+// 梯队顺序
+const TIER_ORDER: Tier[] = ['CSP_J', 'CSP_S', 'PROVINCIAL', 'IOI'];
+
+// 更新用户梯队进度并检查是否解锁下一梯队
+async function updateTierProgress(userId: string, tier: Tier) {
+  // 获取当前梯队的所有课程
+  const totalCourses = await prisma.course.count({
+    where: { tier, isPublished: true },
+  });
+
+  // 获取用户在当前梯队完成的课程数
+  const completedCourses = await prisma.userCourseProgress.count({
+    where: {
+      userId,
+      completed: true,
+      course: { tier },
+    },
+  });
+
+  const completionRate = totalCourses > 0 ? (completedCourses / totalCourses) * 100 : 0;
+
+  // 更新当前梯队进度
+  await prisma.userTierProgress.upsert({
+    where: { userId_tier: { userId, tier } },
+    update: {
+      unitsCompleted: completedCourses,
+      totalUnits: totalCourses,
+      completionRate,
+    },
+    create: {
+      userId,
+      tier,
+      unlocked: true,
+      unitsCompleted: completedCourses,
+      totalUnits: totalCourses,
+      completionRate,
+    },
+  });
+
+  // 检查是否应该解锁下一梯队
+  const currentTierIndex = TIER_ORDER.indexOf(tier);
+  if (currentTierIndex < TIER_ORDER.length - 1) {
+    const nextTier = TIER_ORDER[currentTierIndex + 1];
+    const nextTierConfig = TIER_CONFIG[nextTier];
+
+    // 如果当前梯队完成率达到解锁要求
+    if (completionRate >= nextTierConfig.unlockRate) {
+      // 检查下一梯队是否已解锁
+      const nextTierProgress = await prisma.userTierProgress.findUnique({
+        where: { userId_tier: { userId, tier: nextTier } },
+      });
+
+      if (!nextTierProgress?.unlocked) {
+        // 解锁下一梯队
+        await prisma.userTierProgress.upsert({
+          where: { userId_tier: { userId, tier: nextTier } },
+          update: {
+            unlocked: true,
+            unlockedAt: new Date(),
+          },
+          create: {
+            userId,
+            tier: nextTier,
+            unlocked: true,
+            unlockedAt: new Date(),
+            unitsCompleted: 0,
+            totalUnits: 0,
+            completionRate: 0,
+          },
+        });
+      }
+    }
+  }
+}
+
 // 获取模块的课程列表
 router.get('/', authenticate, async (req: AuthRequest, res: Response, next) => {
   try {
@@ -73,15 +148,14 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response, next) => {
     const coursesWithProgress = courses.map(course => {
       const courseProgress = userCourseProgress.find(p => p.courseId === course.id);
 
-      // 检查是否解锁：所有前置课程都已完成
-      const allPrereqsCompleted = course.prerequisites.length === 0 ||
-        course.prerequisites.every(prereq =>
-          userCourseProgress.some(p => p.courseId === prereq.prerequisiteId && p.completed)
-        );
+      // 检查是否解锁：没有前置课程 或 所有前置课程都已完成
+      const hasNoPrerequisites = course.prerequisites.length === 0;
+      const allPrereqsCompleted = course.prerequisites.every(prereq =>
+        userCourseProgress.some(p => p.courseId === prereq.prerequisiteId && p.completed)
+      );
 
-      // 第一个课程默认解锁
-      const isFirstCourse = course.orderIndex === 1;
-      const isUnlocked = isFirstCourse || allPrereqsCompleted;
+      // 没有前置课程的课程默认解锁，或者所有前置课程都已完成
+      const isUnlocked = hasNoPrerequisites || allPrereqsCompleted;
 
       // 添加依赖关系
       course.prerequisites.forEach(prereq => {
@@ -220,18 +294,21 @@ router.get('/:courseId', authenticate, async (req: AuthRequest, res: Response, n
       },
     });
 
-    // 检查是否解锁
-    const allPrereqsCompleted = course.prerequisites.length === 0 ||
-      (await prisma.userCourseProgress.findMany({
+    // 检查是否解锁：没有前置课程 或 所有前置课程都已完成
+    const hasNoPrerequisites = course.prerequisites.length === 0;
+    let allPrereqsCompleted = true;
+    if (!hasNoPrerequisites) {
+      const completedPrereqs = await prisma.userCourseProgress.findMany({
         where: {
           userId,
           courseId: { in: course.prerequisites.map(p => p.prerequisiteId) },
           completed: true,
         },
-      })).length === course.prerequisites.length;
+      });
+      allPrereqsCompleted = completedPrereqs.length === course.prerequisites.length;
+    }
 
-    const isFirstCourse = course.orderIndex === 1;
-    const isUnlocked = isFirstCourse || allPrereqsCompleted;
+    const isUnlocked = hasNoPrerequisites || allPrereqsCompleted;
 
     const sessionsWithProgress = course.sessions.map(session => {
       const progress = sessionProgressList.find(p => p.sessionId === session.id);
@@ -410,6 +487,21 @@ router.post('/sessions/:sessionId/complete', authenticate, async (req: AuthReque
     const totalSessions = session.course.sessions.length;
     const courseCompleted = completedSessions >= totalSessions;
 
+    // 获取当前课程进度（用于判断是否首次完成）
+    const existingProgress = await prisma.userCourseProgress.findUnique({
+      where: { userId_courseId: { userId, courseId: session.courseId } },
+    });
+
+    // 计算皇冠等级：只有首次完成课程时才增加，最多为3
+    let newCrownLevel = existingProgress?.crownLevel || 0;
+    if (courseCompleted && !existingProgress?.completed) {
+      // 首次完成课程，皇冠等级设为1
+      newCrownLevel = 1;
+    } else if (courseCompleted && existingProgress?.completed && perfectRun && newCrownLevel < 3) {
+      // 重复完成且完美通关，皇冠等级+1（最多3）
+      newCrownLevel = Math.min(newCrownLevel + 1, 3);
+    }
+
     // 更新课程进度
     const courseProgress = await prisma.userCourseProgress.upsert({
       where: { userId_courseId: { userId, courseId: session.courseId } },
@@ -417,8 +509,8 @@ router.post('/sessions/:sessionId/complete', authenticate, async (req: AuthReque
         sessionsCompleted: completedSessions,
         completed: courseCompleted,
         totalXpEarned: { increment: xpEarned },
-        crownLevel: courseCompleted ? { increment: 1 } : undefined,
-        completedAt: courseCompleted ? new Date() : undefined,
+        crownLevel: newCrownLevel,
+        completedAt: courseCompleted && !existingProgress?.completed ? new Date() : existingProgress?.completedAt,
       },
       create: {
         userId,
@@ -494,6 +586,9 @@ router.post('/sessions/:sessionId/complete', authenticate, async (req: AuthReque
           });
         }
       }
+
+      // 更新梯队进度并检查是否解锁下一梯队
+      await updateTierProgress(userId, session.course.tier);
     }
 
     res.json({

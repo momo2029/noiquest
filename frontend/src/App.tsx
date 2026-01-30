@@ -17,7 +17,6 @@ import StudentList from './components/Teacher/StudentList';
 import AssignmentManager from './components/Teacher/AssignmentManager';
 import LearningCenter from './components/SkillTree/LearningCenter';
 import LessonSession from './components/SkillTree/LessonSession';
-import CourseSessionPage from './components/SkillTree/CourseSessionPage';
 import ReviewDashboard from './components/Review/ReviewDashboard';
 import ReviewSession from './components/Review/ReviewSession';
 import AdminLayout from './components/Admin/AdminLayout';
@@ -25,7 +24,7 @@ import LeaderboardView from './components/Leaderboard/LeaderboardView';
 import AchievementsView from './components/Achievements/AchievementsView';
 import AnalyticsView from './components/Analytics/AnalyticsView';
 import KnowledgeGraphView from './components/KnowledgeGraph/KnowledgeGraphView';
-import { UserRole, Exercise, Student, Assignment, AppSettings, LessonCompleteResult, ReviewCompleteResult } from './types';
+import { UserRole, Exercise, Student, Assignment, AppSettings, SessionCompleteResult, ReviewCompleteResult } from './types';
 import { exercises } from './data/exercises';
 import { api } from './services/api';
 import {
@@ -114,9 +113,7 @@ function MainApp() {
 
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
-  // 课程学习状态
-  const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
-  // 课时学习状态（课程系统）
+  // 课时学习状态
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
   // 复习状态
@@ -309,23 +306,8 @@ function MainApp() {
     .filter(p => p.completed)
     .map(p => p.exerciseId);
 
-  // 处理课程完成
-  const handleLessonComplete = (result: LessonCompleteResult) => {
-    // 更新学生经验值
-    if (result.xpEarned > 0) {
-      setCurrentStudent(prev => addXp(prev, result.xpEarned));
-    }
-    setActiveLessonId(null);
-    // 可以显示完成弹窗
-    alert(`课程完成！获得 ${result.xpEarned} XP${result.perfectRun ? ' (完美通关!)' : ''}`);
-  };
-
-  // 处理课时完成（课程系统）
-  const handleSessionComplete = (result: {
-    xpEarned: number;
-    perfectRun: boolean;
-    courseCompleted: boolean;
-  }) => {
+  // 处理课时完成
+  const handleSessionComplete = (result: SessionCompleteResult) => {
     if (result.xpEarned > 0) {
       setCurrentStudent(prev => addXp(prev, result.xpEarned));
     }
@@ -344,24 +326,13 @@ function MainApp() {
 
   // 渲染主内容
   const renderMainContent = () => {
-    // 课时学习会话（课程系统）
+    // 课时学习会话
     if (activeSessionId) {
       return (
-        <CourseSessionPage
-          sessionId={activeSessionId}
+        <LessonSession
+          lessonId={activeSessionId}
           onComplete={handleSessionComplete}
           onExit={() => setActiveSessionId(null)}
-        />
-      );
-    }
-
-    // 课程学习会话（知识图谱）
-    if (activeLessonId) {
-      return (
-        <LessonSession
-          lessonId={activeLessonId}
-          onComplete={handleLessonComplete}
-          onExit={() => setActiveLessonId(null)}
         />
       );
     }
@@ -388,7 +359,6 @@ function MainApp() {
         case 'skill-tree':
           return (
             <LearningCenter
-              onStartLesson={(lessonId: string) => setActiveLessonId(lessonId)}
               onStartSession={(sessionId: string) => setActiveSessionId(sessionId)}
             />
           );

@@ -5,11 +5,12 @@ import { authenticate, AuthRequest } from '../middleware/auth.js';
 const router = Router();
 
 // XP 目标值映射
+// 基于数据分析：平均每题14XP，每课时约10题，完成一个课时约155XP
 const GOAL_XP_MAP = {
-  CASUAL: 10,
-  REGULAR: 20,
-  SERIOUS: 30,
-  INTENSE: 50,
+  CASUAL: 50,    // 约 3-4 道题，轻松学习
+  REGULAR: 100,  // 约 7-8 道题，约半个课时
+  SERIOUS: 200,  // 约 1 个完整课时
+  INTENSE: 350,  // 约 2 个课时，高强度学习
 };
 
 // 获取每日状态

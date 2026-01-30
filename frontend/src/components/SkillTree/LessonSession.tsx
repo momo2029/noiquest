@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Exercise, LessonCompleteResult } from '../../types';
+import { Exercise, SessionCompleteResult } from '../../types';
 import QuestionRenderer from '../Questions/QuestionRenderer';
 import AnswerFeedback from '../Feedback/AnswerFeedback';
 import LevelUpModal from '../Feedback/LevelUpModal';
@@ -9,7 +9,7 @@ import { X, Heart, Zap } from 'lucide-react';
 
 interface LessonSessionProps {
   lessonId: string;
-  onComplete: (result: LessonCompleteResult) => void;
+  onComplete: (result: SessionCompleteResult) => void;
   onExit: () => void;
 }
 
@@ -23,27 +23,30 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackData, setFeedbackData] = useState<{ correct: boolean; feedback: string; xp: number } | null>(null);
   const [showLevelUp, setShowLevelUp] = useState(false);
-  const [lessonTitle, setLessonTitle] = useState('');
+  const [sessionTitle, setSessionTitle] = useState('');
   const [currentQuestionMistakes, setCurrentQuestionMistakes] = useState(0);
   const [showAIHint, setShowAIHint] = useState(false);
 
-  useEffect(() => {
-    startLesson();
-  }, [lessonId]);
+  // lessonId is actually sessionId now
+  const sessionId = lessonId;
 
-  const startLesson = async () => {
+  useEffect(() => {
+    startSession();
+  }, [sessionId]);
+
+  const startSession = async () => {
     try {
       setLoading(true);
       // 获取真实心数
       const heartsStatus = await api.getHeartsStatus();
       setHearts(heartsStatus.hearts);
 
-      const lesson = await api.getLesson(lessonId);
-      setLessonTitle(lesson.title);
-      const { exercises: lessonExercises } = await api.startLesson(lessonId);
-      setExercises(lessonExercises);
+      const session = await api.getSession(sessionId);
+      setSessionTitle(session.title);
+      const { exercises: sessionExercises } = await api.startSession(sessionId);
+      setExercises(sessionExercises);
     } catch (error) {
-      console.error('Failed to start lesson:', error);
+      console.error('Failed to start session:', error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +55,7 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
   const handleAnswer = async (answer: any) => {
     const currentExercise = exercises[currentIndex];
     try {
-      const result = await api.submitAnswer(currentExercise.id, answer, lessonId);
+      const result = await api.submitAnswer(currentExercise.id, answer, sessionId);
 
       setFeedbackData({
         correct: result.correct,
@@ -89,10 +92,10 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
     // 检查是否完成所有题目
     if (currentIndex >= exercises.length - 1) {
       try {
-        const result = await api.completeLesson(lessonId, mistakes);
+        const result = await api.completeSession(sessionId, mistakes);
         onComplete(result);
       } catch (error) {
-        console.error('Failed to complete lesson:', error);
+        console.error('Failed to complete session:', error);
         onExit();
       }
     } else {
@@ -125,10 +128,10 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
     // 进入下一题
     if (currentIndex >= exercises.length - 1) {
       try {
-        const result = await api.completeLesson(lessonId, mistakes);
+        const result = await api.completeSession(sessionId, mistakes);
         onComplete(result);
       } catch (error) {
-        console.error('Failed to complete lesson:', error);
+        console.error('Failed to complete session:', error);
         onExit();
       }
     } else {
@@ -185,9 +188,9 @@ export default function LessonSession({ lessonId, onComplete, onExit }: LessonSe
         </div>
       </div>
 
-      {/* 课程标题 */}
+      {/* 课时标题 */}
       <div className="text-center py-4">
-        <h2 className="text-white/70 text-sm">{lessonTitle}</h2>
+        <h2 className="text-white/70 text-sm">{sessionTitle}</h2>
         <p className="text-white/50 text-xs">第 {currentIndex + 1} / {exercises.length} 题</p>
       </div>
 

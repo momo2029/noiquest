@@ -105,7 +105,9 @@ export default function CourseDetailPanel({ course, onStartSession }: CourseDeta
         <div className="space-y-2">
           {course.sessions.map((session, index) => {
             const isCurrentSession = currentSession?.id === session.id;
-            const isLocked = !course.unlocked || (index > 0 && !course.sessions[index - 1].completed);
+            // 课时锁定逻辑：课程未解锁，或者前面有未完成的课时
+            const hasPreviousIncomplete = index > 0 && course.sessions.slice(0, index).some(s => !s.completed);
+            const isLocked = !course.unlocked || hasPreviousIncomplete;
             const canStart = course.unlocked && !isLocked;
 
             return (

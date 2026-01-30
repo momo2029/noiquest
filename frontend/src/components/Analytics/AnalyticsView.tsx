@@ -10,7 +10,7 @@ interface WeeklyData {
     totalCorrect: number;
     correctRate: number;
     xpEarned: number;
-    lessonsCompleted: number;
+    sessionsCompleted: number;
     reviewsCompleted: number;
     streakDays: number;
   };

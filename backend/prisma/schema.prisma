@@ -96,7 +96,6 @@ model User {
 
   // 多邻国模式关联
   unitProgress    UserUnitProgress[]
-  lessonProgress  UserLessonProgress[]
   dailySettings   UserDailySettings?
   dailyQuests     UserDailyQuest[]
   dailyXpRecords  DailyXpRecord[]
@@ -176,16 +175,10 @@ model Exercise {
   // 题目来源区分
   source       String       @default("SKILL_TREE")  // SKILL_TREE | EXERCISE_LIBRARY
 
-  // 技能树关联（仅 source=SKILL_TREE 时有值）
-  unitId       String?
-  lessonId     String?
-
   // 关联
   progress    ExerciseProgress[]
   submissions Submission[]
   homeworkExercises HomeworkExercise[]
-  unit        SkillUnit?   @relation(fields: [unitId], references: [id])
-  lesson      Lesson?      @relation(fields: [lessonId], references: [id])
   mistakeRecords MistakeRecord[]
   knowledgePoints ExerciseKnowledgePoint[]
   statistics  ExerciseStatistics?
@@ -197,8 +190,6 @@ model Exercise {
 
   @@index([category])
   @@index([difficulty])
-  @@index([unitId])
-  @@index([lessonId])
   @@index([type])
   @@index([isPublished])
   @@index([source])
@@ -555,11 +546,6 @@ model SkillUnit {
   moduleId       Int?
   coreLevel      Int      @default(3)  // 核心度 1-5
 
-  // 兼容旧的单一前置依赖
-  prerequisiteId String?
-  prerequisite   SkillUnit?  @relation("UnitPrerequisite", fields: [prerequisiteId], references: [id])
-  dependents     SkillUnit[] @relation("UnitPrerequisite")
-
   // 多前置依赖
   prerequisites  SkillUnitPrerequisite[] @relation("UnitPrerequisites")
   dependentUnits SkillUnitPrerequisite[] @relation("UnitDependents")
@@ -568,15 +554,12 @@ model SkillUnit {
   courses        CourseUnit[]
 
   module         Module?     @relation(fields: [moduleId], references: [id])
-  lessons        Lesson[]
-  exercises      Exercise[]
   userProgress   UserUnitProgress[]
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   @@index([orderIndex])
-  @@index([prerequisiteId])
   @@index([isPublished])
   @@index([tier])
   @@index([moduleId])
@@ -618,27 +601,6 @@ model UserTierProgress {
   @@index([tier])
 }
 
-// 课程
-model Lesson {
-  id           String     @id @default(uuid())
-  title        String
-  description  String?
-  orderIndex   Int        @default(0)
-  unitId       String
-  isPublished  Boolean    @default(true)
-
-  unit         SkillUnit  @relation(fields: [unitId], references: [id], onDelete: Cascade)
-  exercises    Exercise[]
-  userProgress UserLessonProgress[]
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@index([unitId])
-  @@index([orderIndex])
-  @@index([isPublished])
-}
-
 // 用户单元进度
 model UserUnitProgress {
   id               String    @id @default(uuid())
@@ -646,7 +608,6 @@ model UserUnitProgress {
   unitId           String
   unlocked         Boolean   @default(false)
   completed        Boolean   @default(false)
-  lessonsCompleted Int       @default(0)
   crownLevel       Int       @default(0)  // 0-3 皇冠等级
   perfectCount     Int       @default(0)  // 完美通关次数
 
@@ -659,29 +620,6 @@ model UserUnitProgress {
   @@unique([userId, unitId])
   @@index([userId])
   @@index([unitId])
-}
-
-// 用户课程进度
-model UserLessonProgress {
-  id              String    @id @default(uuid())
-  userId          String
-  lessonId        String
-  completed       Boolean   @default(false)
-  mistakes        Int       @default(0)
-  perfectRun      Boolean   @default(false)
-  completedCount  Int       @default(0)   // 完成次数（区分首次/重做）
-  xpEarned        Int       @default(0)   // 累计获得XP
-  lastCompletedAt DateTime?               // 最后完成时间
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, lessonId])
-  @@index([userId])
-  @@index([lessonId])
 }
 
 // 用户每日设置
@@ -785,9 +723,8 @@ model MistakeRecord {
   id            String        @id @default(uuid())
   userId        String
   exerciseId    String
-  lessonId      String?                            // 所属课程
-  unitId        String?                            // 所属单元
-  source        String        @default("SKILL_TREE")  // SKILL_TREE | EXERCISE_LIBRARY | REVIEW
+  sessionId     String?                            // 所属课时
+  source        String        @default("COURSE")  // COURSE | EXERCISE_LIBRARY | REVIEW
   status        MistakeStatus @default(UNREVIEWED) // 错题状态
   wrongCount    Int           @default(1)          // 错误次数
   correctStreak Int           @default(0)          // 连续答对次数（达到2次变为MASTERED）
@@ -807,7 +744,7 @@ model MistakeRecord {
   @@unique([userId, exerciseId])
   @@index([userId])
   @@index([userId, status])
-  @@index([userId, lessonId])
+  @@index([userId, sessionId])
   @@index([source])
 }
 

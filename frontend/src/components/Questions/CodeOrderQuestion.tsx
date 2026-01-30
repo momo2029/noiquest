@@ -1,6 +1,13 @@
 import { useState } from 'react';
-import { Exercise, CodeOrderData } from '../../types';
+import { Exercise } from '../../types';
 import { GripVertical, Send } from 'lucide-react';
+
+// 后端实际的数据格式
+interface BackendCodeOrderData {
+  lines: string[];
+  correctOrder: number[];
+  explanation?: string;
+}
 
 interface CodeOrderQuestionProps {
   exercise: Exercise;
@@ -9,10 +16,11 @@ interface CodeOrderQuestionProps {
 }
 
 export default function CodeOrderQuestion({ exercise, onSubmit, disabled }: CodeOrderQuestionProps) {
-  const data = exercise.questionData as CodeOrderData;
-  const [orderedLines, setOrderedLines] = useState<{ id: string; code: string }[]>(() => {
-    // 随机打乱顺序
-    const lines = [...(data?.lines || [])];
+  const data = exercise.questionData as unknown as BackendCodeOrderData;
+  const [orderedLines, setOrderedLines] = useState<{ id: number; code: string }[]>(() => {
+    if (!data?.lines) return [];
+    // 将字符串数组转换为带索引的对象数组，然后随机打乱
+    const lines = data.lines.map((code, index) => ({ id: index, code }));
     for (let i = lines.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [lines[i], lines[j]] = [lines[j], lines[i]];
@@ -21,7 +29,7 @@ export default function CodeOrderQuestion({ exercise, onSubmit, disabled }: Code
   });
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-  if (!data) return null;
+  if (!data || !data.lines) return null;
 
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
@@ -53,14 +61,12 @@ export default function CodeOrderQuestion({ exercise, onSubmit, disabled }: Code
   };
 
   const handleSubmit = () => {
-    onSubmit(orderedLines.map(line => line.id));
+    // 提交当前排列的原始索引顺序
+    onSubmit(orderedLines.map(line => String(line.id)));
   };
 
   return (
     <div>
-      {/* 说明 */}
-      <p className="text-white/60 text-sm mb-4">{data.description}</p>
-
       {/* 代码行列表 */}
       <div className="space-y-2 mb-6">
         {orderedLines.map((line, index) => (

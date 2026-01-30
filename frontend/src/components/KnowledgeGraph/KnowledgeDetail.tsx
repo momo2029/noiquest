@@ -12,8 +12,8 @@ export default function KnowledgeDetail({
 }: KnowledgeDetailProps) {
   const isLocked = !unit.unlocked;
   const isCompleted = unit.completed;
-  const progress = unit.totalLessons
-    ? Math.round((unit.lessonsCompleted / unit.totalLessons) * 100)
+  const progress = unit.totalSessions
+    ? Math.round((unit.sessionsCompleted / unit.totalSessions) * 100)
     : 0;
 
   return (
@@ -78,12 +78,12 @@ export default function KnowledgeDetail({
       </div>
 
       {/* 学习进度 */}
-      {!isLocked && unit.totalLessons > 0 && (
+      {!isLocked && unit.totalSessions > 0 && (
         <div className="bg-white/5 rounded-xl p-4 mb-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-white/70 text-sm">学习进度</span>
             <span className="text-white font-bold">
-              {unit.lessonsCompleted} / {unit.totalLessons} 课程
+              {unit.sessionsCompleted} / {unit.totalSessions} 课时
             </span>
           </div>
           <div className="h-2 bg-white/10 rounded-full overflow-hidden">

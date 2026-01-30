@@ -16,11 +16,13 @@ router.get('/skill-units', async (req: AuthRequest, res: Response, next) => {
     const units = await prisma.skillUnit.findMany({
       orderBy: { orderIndex: 'asc' },
       include: {
-        lessons: {
-          orderBy: { orderIndex: 'asc' },
-          select: { id: true, title: true, orderIndex: true, isPublished: true }
+        module: { select: { id: true, name: true, icon: true } },
+        courses: {
+          include: {
+            course: { select: { id: true, code: true, title: true } }
+          }
         },
-        _count: { select: { exercises: true, lessons: true } }
+        _count: { select: { courses: true } }
       }
     });
     res.json(units);
@@ -32,7 +34,7 @@ router.get('/skill-units', async (req: AuthRequest, res: Response, next) => {
 // 创建技能单元
 router.post('/skill-units', async (req: AuthRequest, res: Response, next) => {
   try {
-    const { title, description, icon, color, requiredXp, prerequisiteId } = req.body;
+    const { title, description, icon, color, requiredXp, moduleId, tier, code, coreLevel } = req.body;
 
     if (!title || !description) {
       throw new AppError('标题和描述不能为空', 400);
@@ -49,7 +51,10 @@ router.post('/skill-units', async (req: AuthRequest, res: Response, next) => {
         icon: icon || '📚',
         color: color || 'from-blue-400 to-blue-600',
         requiredXp: requiredXp || 0,
-        prerequisiteId,
+        moduleId,
+        tier,
+        code,
+        coreLevel,
         orderIndex
       }
     });
@@ -64,7 +69,7 @@ router.post('/skill-units', async (req: AuthRequest, res: Response, next) => {
 router.put('/skill-units/:id', async (req: AuthRequest, res: Response, next) => {
   try {
     const { id } = req.params;
-    const { title, description, icon, color, requiredXp, prerequisiteId, isPublished } = req.body;
+    const { title, description, icon, color, requiredXp, moduleId, tier, code, coreLevel, isPublished } = req.body;
 
     const unit = await prisma.skillUnit.update({
       where: { id },
@@ -74,7 +79,10 @@ router.put('/skill-units/:id', async (req: AuthRequest, res: Response, next) => 
         ...(icon !== undefined && { icon }),
         ...(color !== undefined && { color }),
         ...(requiredXp !== undefined && { requiredXp }),
-        ...(prerequisiteId !== undefined && { prerequisiteId }),
+        ...(moduleId !== undefined && { moduleId }),
+        ...(tier !== undefined && { tier }),
+        ...(code !== undefined && { code }),
+        ...(coreLevel !== undefined && { coreLevel }),
         ...(isPublished !== undefined && { isPublished })
       }
     });
@@ -125,79 +133,157 @@ router.put('/skill-units/reorder', async (req: AuthRequest, res: Response, next)
 // ==================== 课程管理 ====================
 
 // 获取课程列表
-router.get('/lessons', async (req: AuthRequest, res: Response, next) => {
+router.get('/courses', async (req: AuthRequest, res: Response, next) => {
   try {
-    const { unitId } = req.query;
+    const { moduleId } = req.query;
 
-    const lessons = await prisma.lesson.findMany({
-      where: unitId ? { unitId: unitId as string } : undefined,
-      orderBy: [{ unitId: 'asc' }, { orderIndex: 'asc' }],
+    const courses = await prisma.course.findMany({
+      where: moduleId ? { moduleId: Number(moduleId) } : undefined,
+      orderBy: [{ moduleId: 'asc' }, { orderIndex: 'asc' }],
       include: {
-        unit: { select: { id: true, title: true } },
-        _count: { select: { exercises: true } }
+        module: { select: { id: true, name: true, icon: true } },
+        units: {
+          include: { unit: { select: { id: true, title: true, code: true } } }
+        },
+        sessions: {
+          orderBy: { orderIndex: 'asc' },
+          select: { id: true, title: true, orderIndex: true, xpReward: true, isPublished: true }
+        },
+        _count: { select: { sessions: true, units: true } }
       }
     });
 
-    res.json(lessons);
+    res.json(courses);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 获取单个课程详情
+router.get('/courses/:id', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { id } = req.params;
+
+    const course = await prisma.course.findUnique({
+      where: { id },
+      include: {
+        module: { select: { id: true, name: true, icon: true } },
+        units: {
+          include: { unit: { select: { id: true, title: true, code: true } } }
+        },
+        sessions: {
+          orderBy: { orderIndex: 'asc' },
+          include: {
+            exercises: {
+              orderBy: { orderIndex: 'asc' },
+              include: { exercise: { select: { id: true, title: true, type: true, difficulty: true } } }
+            }
+          }
+        }
+      }
+    });
+
+    if (!course) {
+      throw new AppError('课程不存在', 404);
+    }
+
+    res.json(course);
   } catch (error) {
     next(error);
   }
 });
 
 // 创建课程
-router.post('/lessons', async (req: AuthRequest, res: Response, next) => {
+router.post('/courses', async (req: AuthRequest, res: Response, next) => {
   try {
-    const { title, description, unitId } = req.body;
+    const { code, title, description, objectives, tier, moduleId, unitIds, isPublished } = req.body;
 
-    if (!title || !unitId) {
-      throw new AppError('标题和所属单元不能为空', 400);
+    if (!code || !title || !moduleId) {
+      throw new AppError('课程编号、标题和所属模块不能为空', 400);
     }
 
-    // 获取该单元下最大 orderIndex
-    const maxOrder = await prisma.lesson.aggregate({
-      where: { unitId },
+    // 获取该模块下最大 orderIndex
+    const maxOrder = await prisma.course.aggregate({
+      where: { moduleId },
       _max: { orderIndex: true }
     });
     const orderIndex = (maxOrder._max.orderIndex || 0) + 1;
 
-    const lesson = await prisma.lesson.create({
-      data: { title, description, unitId, orderIndex }
+    const course = await prisma.course.create({
+      data: {
+        code,
+        title,
+        description,
+        objectives: objectives || [],
+        tier: tier || 'CSP_J',
+        moduleId,
+        orderIndex,
+        isPublished: isPublished ?? true,
+        units: unitIds?.length ? {
+          create: unitIds.map((unitId: string) => ({ unitId }))
+        } : undefined
+      },
+      include: {
+        units: { include: { unit: { select: { id: true, title: true, code: true } } } }
+      }
     });
 
-    res.status(201).json(lesson);
+    res.status(201).json(course);
   } catch (error) {
     next(error);
   }
 });
 
 // 更新课程
-router.put('/lessons/:id', async (req: AuthRequest, res: Response, next) => {
+router.put('/courses/:id', async (req: AuthRequest, res: Response, next) => {
   try {
     const { id } = req.params;
-    const { title, description, unitId, isPublished } = req.body;
+    const { code, title, description, objectives, tier, moduleId, unitIds, isPublished } = req.body;
 
-    const lesson = await prisma.lesson.update({
+    // 如果更新知识单元关联，先删除旧的
+    if (unitIds !== undefined) {
+      await prisma.courseUnit.deleteMany({ where: { courseId: id } });
+    }
+
+    const course = await prisma.course.update({
       where: { id },
       data: {
+        ...(code !== undefined && { code }),
         ...(title !== undefined && { title }),
         ...(description !== undefined && { description }),
-        ...(unitId !== undefined && { unitId }),
-        ...(isPublished !== undefined && { isPublished })
+        ...(objectives !== undefined && { objectives }),
+        ...(tier !== undefined && { tier }),
+        ...(moduleId !== undefined && { moduleId }),
+        ...(isPublished !== undefined && { isPublished }),
+        ...(unitIds !== undefined && {
+          units: {
+            create: unitIds.map((unitId: string) => ({ unitId }))
+          }
+        })
+      },
+      include: {
+        units: { include: { unit: { select: { id: true, title: true, code: true } } } }
       }
     });
 
-    res.json(lesson);
+    res.json(course);
   } catch (error) {
     next(error);
   }
 });
 
 // 删除课程
-router.delete('/lessons/:id', async (req: AuthRequest, res: Response, next) => {
+router.delete('/courses/:id', async (req: AuthRequest, res: Response, next) => {
   try {
     const { id } = req.params;
 
-    await prisma.lesson.delete({ where: { id } });
+    // 检查是否有课时
+    const sessionsCount = await prisma.courseSession.count({ where: { courseId: id } });
+    if (sessionsCount > 0) {
+      throw new AppError('该课程下还有课时，请先删除课时', 400);
+    }
+
+    await prisma.course.delete({ where: { id } });
 
     res.json({ message: '删除成功' });
   } catch (error) {
@@ -205,25 +291,130 @@ router.delete('/lessons/:id', async (req: AuthRequest, res: Response, next) => {
   }
 });
 
-// 课程排序
-router.put('/lessons/reorder', async (req: AuthRequest, res: Response, next) => {
-  try {
-    const { orders } = req.body;
+// ==================== 课时管理 ====================
 
-    if (!Array.isArray(orders)) {
-      throw new AppError('orders 必须是数组', 400);
+// 创建课时
+router.post('/courses/:courseId/sessions', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { courseId } = req.params;
+    const { title, description, xpReward, isPublished } = req.body;
+
+    if (!title) {
+      throw new AppError('课时标题不能为空', 400);
     }
 
-    await prisma.$transaction(
-      orders.map(({ id, orderIndex }) =>
-        prisma.lesson.update({
-          where: { id },
-          data: { orderIndex }
-        })
-      )
-    );
+    // 获取该课程下最大 orderIndex
+    const maxOrder = await prisma.courseSession.aggregate({
+      where: { courseId },
+      _max: { orderIndex: true }
+    });
+    const orderIndex = (maxOrder._max.orderIndex || 0) + 1;
 
-    res.json({ message: '排序成功' });
+    const session = await prisma.courseSession.create({
+      data: {
+        title,
+        description,
+        courseId,
+        xpReward: xpReward || 10,
+        orderIndex,
+        isPublished: isPublished ?? true
+      }
+    });
+
+    res.status(201).json(session);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 更新课时
+router.put('/sessions/:id', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { id } = req.params;
+    const { title, description, xpReward, isPublished } = req.body;
+
+    const session = await prisma.courseSession.update({
+      where: { id },
+      data: {
+        ...(title !== undefined && { title }),
+        ...(description !== undefined && { description }),
+        ...(xpReward !== undefined && { xpReward }),
+        ...(isPublished !== undefined && { isPublished })
+      }
+    });
+
+    res.json(session);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 删除课时
+router.delete('/sessions/:id', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { id } = req.params;
+
+    await prisma.courseSession.delete({ where: { id } });
+
+    res.json({ message: '删除成功' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 关联题目到课时
+router.post('/sessions/:sessionId/exercises', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { sessionId } = req.params;
+    const { exerciseId } = req.body;
+
+    if (!exerciseId) {
+      throw new AppError('题目ID不能为空', 400);
+    }
+
+    // 获取最大 orderIndex
+    const maxOrder = await prisma.sessionExercise.aggregate({
+      where: { sessionId },
+      _max: { orderIndex: true }
+    });
+    const orderIndex = (maxOrder._max.orderIndex || 0) + 1;
+
+    const sessionExercise = await prisma.sessionExercise.create({
+      data: { sessionId, exerciseId, orderIndex },
+      include: { exercise: { select: { id: true, title: true, type: true, difficulty: true } } }
+    });
+
+    res.status(201).json(sessionExercise);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 移除课时的题目关联
+router.delete('/sessions/:sessionId/exercises/:exerciseId', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { sessionId, exerciseId } = req.params;
+
+    await prisma.sessionExercise.delete({
+      where: { sessionId_exerciseId: { sessionId, exerciseId } }
+    });
+
+    res.json({ message: '删除成功' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 获取模块列表
+router.get('/modules', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const modules = await prisma.module.findMany({
+      orderBy: { orderIndex: 'asc' },
+      include: {
+        _count: { select: { skillUnits: true, courses: true } }
+      }
+    });
+    res.json(modules);
   } catch (error) {
     next(error);
   }
@@ -234,11 +425,16 @@ router.put('/lessons/reorder', async (req: AuthRequest, res: Response, next) => 
 // 获取题目列表
 router.get('/exercises', async (req: AuthRequest, res: Response, next) => {
   try {
-    const { unitId, lessonId, type, knowledgePointId, page = '1', limit = '20' } = req.query;
+    const { courseId, sessionId, type, knowledgePointId, page = '1', limit = '20' } = req.query;
 
     const where: any = {};
-    if (unitId) where.unitId = unitId;
-    if (lessonId) where.lessonId = lessonId;
+    if (sessionId) {
+      where.sessionExercises = { some: { sessionId: sessionId as string } };
+    } else if (courseId) {
+      where.sessionExercises = {
+        some: { session: { courseId: courseId as string } }
+      };
+    }
     if (type) where.type = type;
     if (knowledgePointId) {
       where.knowledgePoints = {
@@ -253,8 +449,11 @@ router.get('/exercises', async (req: AuthRequest, res: Response, next) => {
         skip: (Number(page) - 1) * Number(limit),
         take: Number(limit),
         include: {
-          unit: { select: { id: true, title: true } },
-          lesson: { select: { id: true, title: true } },
+          sessionExercises: {
+            include: {
+              session: { select: { id: true, title: true, course: { select: { id: true, code: true, title: true } } } }
+            }
+          },
           knowledgePoints: {
             include: { knowledgePoint: true }
           }
@@ -285,8 +484,11 @@ router.get('/exercises/:id', async (req: AuthRequest, res: Response, next) => {
     const exercise = await prisma.exercise.findUnique({
       where: { id },
       include: {
-        unit: { select: { id: true, title: true } },
-        lesson: { select: { id: true, title: true } },
+        sessionExercises: {
+          include: {
+            session: { select: { id: true, title: true, course: { select: { id: true, code: true, title: true } } } }
+          }
+        },
         knowledgePoints: {
           include: { knowledgePoint: true }
         }
@@ -308,7 +510,7 @@ router.post('/exercises', async (req: AuthRequest, res: Response, next) => {
   try {
     const {
       title, description, difficulty, category, starterCode,
-      hint, solution, xp, type, questionData, unitId, lessonId,
+      hint, solution, xp, type, questionData,
       knowledgePointIds
     } = req.body;
 
@@ -318,7 +520,6 @@ router.post('/exercises', async (req: AuthRequest, res: Response, next) => {
 
     // 获取最大 orderIndex
     const maxOrder = await prisma.exercise.aggregate({
-      where: lessonId ? { lessonId } : unitId ? { unitId } : {},
       _max: { orderIndex: true }
     });
     const orderIndex = (maxOrder._max.orderIndex || 0) + 1;
@@ -335,8 +536,6 @@ router.post('/exercises', async (req: AuthRequest, res: Response, next) => {
         xp: xp || 10,
         type: type || 'CODING',
         questionData,
-        unitId,
-        lessonId,
         orderIndex,
         knowledgePoints: knowledgePointIds?.length ? {
           create: knowledgePointIds.map((kpId: string) => ({
@@ -361,7 +560,7 @@ router.put('/exercises/:id', async (req: AuthRequest, res: Response, next) => {
     const { id } = req.params;
     const {
       title, description, difficulty, category, starterCode,
-      hint, solution, xp, type, questionData, unitId, lessonId,
+      hint, solution, xp, type, questionData,
       isPublished, knowledgePointIds
     } = req.body;
 
@@ -385,8 +584,6 @@ router.put('/exercises/:id', async (req: AuthRequest, res: Response, next) => {
         ...(xp !== undefined && { xp }),
         ...(type !== undefined && { type }),
         ...(questionData !== undefined && { questionData }),
-        ...(unitId !== undefined && { unitId }),
-        ...(lessonId !== undefined && { lessonId }),
         ...(isPublished !== undefined && { isPublished }),
         ...(knowledgePointIds !== undefined && {
           knowledgePoints: {

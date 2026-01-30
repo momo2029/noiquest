@@ -23,7 +23,7 @@ interface DashboardData {
   content: {
     exercises: number;
     units: number;
-    lessons: number;
+    courses: number;
   };
   learning: {
     totalProgress: number;
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-white/70">课程数量</span>
-                <span className="text-white font-bold">{data.content.lessons}</span>
+                <span className="text-white font-bold">{data.content.courses}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-white/70">练习题目</span>

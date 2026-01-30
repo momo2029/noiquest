@@ -1,0 +1,12 @@
+{
+  "ignorePatterns": [
+    "node_modules/",
+    "venv/",
+    "build/",
+    "dist/",
+"blog/",
+"backend/prisma/data"
+
+
+  ]
+}

@@ -39,29 +39,14 @@ export default function ProgressTracker({ completedIds, student }: ProgressTrack
   };
 
   // 检查成就是否解锁
-  const checkAchievement = (condition: string): boolean => {
-    switch (condition) {
-      case 'complete_1_exercise':
-        return completedCount >= 1;
-      case 'complete_5_exercises':
-        return completedCount >= 5;
-      case 'complete_10_exercises':
-        return completedCount >= 10;
-      case 'complete_all_exercises':
-        return completedCount >= totalExercises;
-      case 'streak_3':
-        return (student?.streak || 0) >= 3;
-      case 'streak_7':
-        return (student?.streak || 0) >= 7;
-      case 'streak_30':
-        return (student?.streak || 0) >= 30;
-      case 'reach_level_5':
-        return levelInfo.level >= 5;
-      case 'reach_level_10':
-        return levelInfo.level >= 10;
-      case 'complete_easy_medium':
-        return (difficultyStats.easy?.completed || 0) === (difficultyStats.easy?.total || 0) &&
-               (difficultyStats.medium?.completed || 0) === (difficultyStats.medium?.total || 0);
+  const checkAchievement = (condition: { type: string; value: number }): boolean => {
+    switch (condition.type) {
+      case 'exercisesCompleted':
+        return completedCount >= condition.value;
+      case 'streak':
+        return (student?.streak || 0) >= condition.value;
+      case 'level':
+        return levelInfo.level >= condition.value;
       default:
         return false;
     }
@@ -201,7 +186,7 @@ export default function ProgressTracker({ completedIds, student }: ProgressTrack
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm">{achievement.title}</span>
+                      <span className="font-bold text-sm">{achievement.name}</span>
                       {unlocked ? (
                         <CheckCircle size={14} className="text-[#007acc]" />
                       ) : (
@@ -209,7 +194,7 @@ export default function ProgressTracker({ completedIds, student }: ProgressTrack
                       )}
                     </div>
                     <p className="text-xs text-gray-400 mt-0.5">{achievement.description}</p>
-                    <p className="text-xs text-yellow-400 mt-1">+{achievement.xpReward} XP</p>
+                    <p className="text-xs text-yellow-400 mt-1">+{achievement.reward.xp} XP</p>
                   </div>
                 </div>
               </div>

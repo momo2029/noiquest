@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { Layers, FileText, BookOpen, Tag, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronRight, Eye, EyeOff } from 'lucide-react';
 
-type TabType = 'units' | 'lessons' | 'exercises' | 'knowledge';
+type TabType = 'units' | 'courses' | 'exercises' | 'knowledge';
 
 interface SkillUnit {
   id: string;
@@ -13,20 +13,29 @@ interface SkillUnit {
   orderIndex: number;
   requiredXp: number;
   isPublished: boolean;
-  prerequisiteId?: string;
-  lessons: { id: string; title: string; orderIndex: number; isPublished: boolean }[];
-  _count: { exercises: number; lessons: number };
+  code?: string;
+  tier?: string;
+  coreLevel?: number;
+  moduleId?: number;
+  module?: { id: number; name: string; icon: string };
+  courses: { course: { id: string; code: string; title: string } }[];
+  _count: { courses: number };
 }
 
-interface Lesson {
+interface Course {
   id: string;
+  code: string;
   title: string;
   description?: string;
+  objectives: string[];
+  tier: string;
   orderIndex: number;
   isPublished: boolean;
-  unitId: string;
-  unit: { id: string; title: string };
-  _count: { exercises: number };
+  moduleId: number;
+  module?: { id: number; name: string; icon: string };
+  units: { unit: { id: string; title: string; code?: string } }[];
+  sessions: { id: string; title: string; orderIndex: number; xpReward: number; isPublished: boolean }[];
+  _count: { sessions: number; units: number };
 }
 
 interface Exercise {
@@ -38,10 +47,7 @@ interface Exercise {
   difficulty: string;
   xp: number;
   isPublished: boolean;
-  unitId?: string;
-  lessonId?: string;
-  unit?: { id: string; title: string };
-  lesson?: { id: string; title: string };
+  sessionExercises?: { session: { id: string; title: string; course: { id: string; code: string; title: string } } }[];
   questionData?: any;
   starterCode?: string;
   hint?: string;
@@ -60,33 +66,38 @@ interface KnowledgePoint {
 export default function ContentManagement() {
   const [activeTab, setActiveTab] = useState<TabType>('units');
   const [units, setUnits] = useState<SkillUnit[]>([]);
-  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [knowledgePoints, setKnowledgePoints] = useState<KnowledgePoint[]>([]);
+  const [allKnowledgePoints, setAllKnowledgePoints] = useState<KnowledgePoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   // 筛选状态
-  const [filterUnitId, setFilterUnitId] = useState<string>('');
-  const [filterLessonId, setFilterLessonId] = useState<string>('');
+  const [filterCourseId, setFilterCourseId] = useState<string>('');
+  const [filterSessionId, setFilterSessionId] = useState<string>('');
   const [filterType, setFilterType] = useState<string>('');
+  const [filterKnowledgePointId, setFilterKnowledgePointId] = useState<string>('');
 
   // 编辑状态
   const [editingUnit, setEditingUnit] = useState<Partial<SkillUnit> | null>(null);
-  const [editingLesson, setEditingLesson] = useState<Partial<Lesson> | null>(null);
+  const [editingCourse, setEditingCourse] = useState<Partial<Course> | null>(null);
   const [editingExercise, setEditingExercise] = useState<Partial<Exercise> | null>(null);
+  const [selectedKnowledgePointIds, setSelectedKnowledgePointIds] = useState<string[]>([]);
   const [editingKnowledge, setEditingKnowledge] = useState<Partial<KnowledgePoint> | null>(null);
   const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
+  const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
 
   // 初始加载units（用于下拉选择）
   useEffect(() => {
     loadUnits();
+    loadAllKnowledgePoints();
   }, []);
 
   useEffect(() => {
     loadData();
-  }, [activeTab, page, filterUnitId, filterLessonId, filterType]);
+  }, [activeTab, page, filterCourseId, filterSessionId, filterType, filterKnowledgePointId]);
 
   const loadData = async () => {
     setLoading(true);
@@ -95,8 +106,8 @@ export default function ContentManagement() {
         case 'units':
           await loadUnits();
           break;
-        case 'lessons':
-          await loadLessons();
+        case 'courses':
+          await loadCourses();
           break;
         case 'exercises':
           await loadExercises();
@@ -122,22 +133,23 @@ export default function ContentManagement() {
     }
   };
 
-  const loadLessons = async () => {
+  const loadCourses = async () => {
     try {
-      const result = await api.getContentLessons(filterUnitId || undefined);
-      setLessons(result || []);
+      const result = await api.getContentCourses();
+      setCourses(result || []);
     } catch (error) {
       console.error('加载课程失败:', error);
-      setLessons([]);
+      setCourses([]);
     }
   };
 
   const loadExercises = async () => {
     try {
       const result = await api.getContentExercises({
-        unitId: filterUnitId || undefined,
-        lessonId: filterLessonId || undefined,
+        courseId: filterCourseId || undefined,
+        sessionId: filterSessionId || undefined,
         type: filterType || undefined,
+        knowledgePointId: filterKnowledgePointId || undefined,
         page,
         limit: 20
       });
@@ -156,6 +168,16 @@ export default function ContentManagement() {
     } catch (error) {
       console.error('加载知识点失败:', error);
       setKnowledgePoints([]);
+    }
+  };
+
+  const loadAllKnowledgePoints = async () => {
+    try {
+      const result = await api.getContentKnowledgePoints();
+      setAllKnowledgePoints(result || []);
+    } catch (error) {
+      console.error('加载知识点失败:', error);
+      setAllKnowledgePoints([]);
     }
   };
 
@@ -195,26 +217,26 @@ export default function ContentManagement() {
   };
 
   // CRUD 操作 - 课程
-  const handleSaveLesson = async () => {
-    if (!editingLesson) return;
+  const handleSaveCourse = async () => {
+    if (!editingCourse) return;
     try {
-      if (editingLesson.id) {
-        await api.updateContentLesson(editingLesson.id, editingLesson);
+      if (editingCourse.id) {
+        await api.updateContentCourse(editingCourse.id, editingCourse);
       } else {
-        await api.createContentLesson(editingLesson as any);
+        await api.createContentCourse(editingCourse as any);
       }
-      setEditingLesson(null);
-      loadLessons();
+      setEditingCourse(null);
+      loadCourses();
     } catch (error) {
       console.error('保存失败:', error);
     }
   };
 
-  const handleDeleteLesson = async (id: string) => {
+  const handleDeleteCourse = async (id: string) => {
     if (!confirm('确定要删除这个课程吗？')) return;
     try {
-      await api.deleteContentLesson(id);
-      loadLessons();
+      await api.deleteContentCourse(id);
+      loadCourses();
     } catch (error) {
       console.error('删除失败:', error);
     }
@@ -224,12 +246,17 @@ export default function ContentManagement() {
   const handleSaveExercise = async () => {
     if (!editingExercise) return;
     try {
+      const exerciseData = {
+        ...editingExercise,
+        knowledgePointIds: selectedKnowledgePointIds
+      };
       if (editingExercise.id) {
-        await api.updateContentExercise(editingExercise.id, editingExercise);
+        await api.updateContentExercise(editingExercise.id, exerciseData);
       } else {
-        await api.createContentExercise(editingExercise);
+        await api.createContentExercise(exerciseData);
       }
       setEditingExercise(null);
+      setSelectedKnowledgePointIds([]);
       loadExercises();
     } catch (error) {
       console.error('保存失败:', error);
@@ -282,6 +309,16 @@ export default function ContentManagement() {
     setExpandedUnits(newExpanded);
   };
 
+  const toggleCourseExpand = (id: string) => {
+    const newExpanded = new Set(expandedCourses);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedCourses(newExpanded);
+  };
+
   const getTypeLabel = (type: string) => {
     const types: Record<string, string> = {
       CODING: '编程题',
@@ -320,9 +357,9 @@ export default function ContentManagement() {
             技能单元
           </button>
           <button
-            onClick={() => { setActiveTab('lessons'); setPage(1); }}
+            onClick={() => { setActiveTab('courses'); setPage(1); }}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-colors ${
-              activeTab === 'lessons' ? 'bg-blue-500 text-white' : 'bg-white/10 text-white/70 hover:bg-white/20'
+              activeTab === 'courses' ? 'bg-blue-500 text-white' : 'bg-white/10 text-white/70 hover:bg-white/20'
             }`}
           >
             <BookOpen size={18} />
@@ -374,12 +411,16 @@ export default function ContentManagement() {
                           </button>
                           <span className="text-3xl">{unit.icon}</span>
                           <div>
+                            <div className="flex items-center gap-2">
+                              {unit.code && <span className="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded">{unit.code}</span>}
+                              {unit.module && <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded">{unit.module.icon} {unit.module.name}</span>}
+                            </div>
                             <h3 className="text-white font-bold">{unit.title}</h3>
                             <p className="text-white/50 text-sm">{unit.description}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-white/50 text-sm">{unit._count.lessons} 课程 · {unit._count.exercises} 题目</span>
+                          <span className="text-white/50 text-sm">{unit._count.courses} 课程</span>
                           <button
                             onClick={() => handleToggleUnitPublish(unit)}
                             className={`p-2 rounded-lg ${unit.isPublished ? 'text-green-400 bg-green-500/20' : 'text-white/30 bg-white/10'}`}
@@ -394,14 +435,12 @@ export default function ContentManagement() {
                           </button>
                         </div>
                       </div>
-                      {expandedUnits.has(unit.id) && unit.lessons.length > 0 && (
+                      {expandedUnits.has(unit.id) && unit.courses && unit.courses.length > 0 && (
                         <div className="border-t border-white/10 p-4 pl-16 space-y-2">
-                          {unit.lessons.map(lesson => (
-                            <div key={lesson.id} className="flex items-center justify-between py-2 px-3 bg-white/5 rounded-lg">
-                              <span className="text-white/70">{lesson.title}</span>
-                              <span className={`text-xs ${lesson.isPublished ? 'text-green-400' : 'text-white/30'}`}>
-                                {lesson.isPublished ? '已发布' : '未发布'}
-                              </span>
+                          {unit.courses.map(({ course }) => (
+                            <div key={course.id} className="flex items-center justify-between py-2 px-3 bg-white/5 rounded-lg">
+                              <span className="text-white/70">{course.title}</span>
+                              <span className="text-xs text-blue-400">{course.code}</span>
                             </div>
                           ))}
                         </div>
@@ -413,61 +452,62 @@ export default function ContentManagement() {
             )}
 
             {/* 课程标签页 */}
-            {activeTab === 'lessons' && (
+            {activeTab === 'courses' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <select
-                    value={filterUnitId}
-                    onChange={(e) => setFilterUnitId(e.target.value)}
-                    className="px-4 py-2 bg-white/10 text-white rounded-xl border-none"
-                  >
-                    <option value="">全部单元</option>
-                    {units.map(u => <option key={u.id} value={u.id}>{u.title}</option>)}
-                  </select>
                   <button
-                    onClick={() => setEditingLesson({ title: '', unitId: filterUnitId || units[0]?.id })}
+                    onClick={() => setEditingCourse({ code: '', title: '', moduleId: 1, tier: 'CSP_J' })}
                     className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600"
                   >
                     <Plus size={18} /> 新建课程
                   </button>
                 </div>
 
-                <div className="bg-[#252536] rounded-2xl overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-white/5">
-                      <tr>
-                        <th className="text-left text-white/50 text-sm font-medium px-4 py-3">课程名称</th>
-                        <th className="text-left text-white/50 text-sm font-medium px-4 py-3">所属单元</th>
-                        <th className="text-left text-white/50 text-sm font-medium px-4 py-3">题目数</th>
-                        <th className="text-left text-white/50 text-sm font-medium px-4 py-3">状态</th>
-                        <th className="text-left text-white/50 text-sm font-medium px-4 py-3">操作</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {lessons.map(lesson => (
-                        <tr key={lesson.id} className="border-t border-white/5 hover:bg-white/5">
-                          <td className="px-4 py-3 text-white">{lesson.title}</td>
-                          <td className="px-4 py-3 text-white/70">{lesson.unit.title}</td>
-                          <td className="px-4 py-3 text-white/70">{lesson._count.exercises}</td>
-                          <td className="px-4 py-3">
-                            <span className={`px-2 py-1 rounded text-xs ${lesson.isPublished ? 'text-green-400 bg-green-500/20' : 'text-white/50 bg-white/10'}`}>
-                              {lesson.isPublished ? '已发布' : '未发布'}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
+                <div className="space-y-3">
+                  {courses.map(course => (
+                    <div key={course.id} className="bg-[#252536] rounded-2xl overflow-hidden">
+                      <div className="flex items-center justify-between p-4">
+                        <div className="flex items-center gap-4">
+                          <button onClick={() => toggleCourseExpand(course.id)} className="text-white/50 hover:text-white">
+                            {expandedCourses.has(course.id) ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+                          </button>
+                          <div>
                             <div className="flex items-center gap-2">
-                              <button onClick={() => setEditingLesson(lesson)} className="p-1 text-blue-400 hover:bg-blue-500/20 rounded">
-                                <Edit2 size={16} />
-                              </button>
-                              <button onClick={() => handleDeleteLesson(lesson.id)} className="p-1 text-red-400 hover:bg-red-500/20 rounded">
-                                <Trash2 size={16} />
-                              </button>
+                              <span className="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded">{course.code}</span>
+                              {course.module && <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded">{course.module.icon} {course.module.name}</span>}
+                              <span className="text-xs px-2 py-0.5 bg-green-500/20 text-green-400 rounded">{course.tier}</span>
                             </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                            <h3 className="text-white font-bold">{course.title}</h3>
+                            {course.description && <p className="text-white/50 text-sm">{course.description}</p>}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-white/50 text-sm">{course._count.sessions} 课时 · {course._count.units} 知识点</span>
+                          <button onClick={() => setEditingCourse(course)} className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg">
+                            <Edit2 size={18} />
+                          </button>
+                          <button onClick={() => handleDeleteCourse(course.id)} className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg">
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+                      {expandedCourses.has(course.id) && course.sessions && course.sessions.length > 0 && (
+                        <div className="border-t border-white/10 p-4 pl-16 space-y-2">
+                          {course.sessions.map(session => (
+                            <div key={session.id} className="flex items-center justify-between py-2 px-3 bg-white/5 rounded-lg">
+                              <span className="text-white/70">{session.title}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-yellow-400 text-xs">+{session.xpReward} XP</span>
+                                <span className={`text-xs ${session.isPublished ? 'text-green-400' : 'text-white/30'}`}>
+                                  {session.isPublished ? '已发布' : '未发布'}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -476,9 +516,9 @@ export default function ContentManagement() {
             {activeTab === 'exercises' && (
               <div className="space-y-4">
                 <div className="flex items-center gap-4 flex-wrap">
-                  <select value={filterUnitId} onChange={(e) => { setFilterUnitId(e.target.value); setFilterLessonId(''); }} className="px-4 py-2 bg-white/10 text-white rounded-xl">
-                    <option value="">全部单元</option>
-                    {units.map(u => <option key={u.id} value={u.id}>{u.title}</option>)}
+                  <select value={filterCourseId} onChange={(e) => { setFilterCourseId(e.target.value); setFilterSessionId(''); }} className="px-4 py-2 bg-white/10 text-white rounded-xl">
+                    <option value="">全部课程</option>
+                    {courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
                   </select>
                   <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="px-4 py-2 bg-white/10 text-white rounded-xl">
                     <option value="">全部类型</option>
@@ -489,8 +529,12 @@ export default function ContentManagement() {
                     <option value="MATCHING">配对题</option>
                     <option value="BUG_FIX">改错题</option>
                   </select>
+                  <select value={filterKnowledgePointId} onChange={(e) => setFilterKnowledgePointId(e.target.value)} className="px-4 py-2 bg-white/10 text-white rounded-xl">
+                    <option value="">全部知识点</option>
+                    {allKnowledgePoints.map(kp => <option key={kp.id} value={kp.id}>{kp.name}</option>)}
+                  </select>
                   <button
-                    onClick={() => setEditingExercise({ title: '', description: '', category: '基础', difficulty: 'EASY', type: 'CODING', xp: 10 })}
+                    onClick={() => { setEditingExercise({ title: '', description: '', category: '基础', difficulty: 'EASY', type: 'CODING', xp: 10 }); setSelectedKnowledgePointIds([]); }}
                     className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600"
                   >
                     <Plus size={18} /> 新建题目
@@ -504,6 +548,7 @@ export default function ContentManagement() {
                         <th className="text-left text-white/50 text-sm font-medium px-4 py-3">题目</th>
                         <th className="text-left text-white/50 text-sm font-medium px-4 py-3">类型</th>
                         <th className="text-left text-white/50 text-sm font-medium px-4 py-3">难度</th>
+                        <th className="text-left text-white/50 text-sm font-medium px-4 py-3">知识点</th>
                         <th className="text-left text-white/50 text-sm font-medium px-4 py-3">XP</th>
                         <th className="text-left text-white/50 text-sm font-medium px-4 py-3">操作</th>
                       </tr>
@@ -513,7 +558,9 @@ export default function ContentManagement() {
                         <tr key={exercise.id} className="border-t border-white/5 hover:bg-white/5">
                           <td className="px-4 py-3">
                             <p className="text-white font-medium">{exercise.title}</p>
-                            {exercise.unit && <p className="text-white/50 text-xs">{exercise.unit.title}</p>}
+                            {exercise.sessionExercises && exercise.sessionExercises[0] && (
+                              <p className="text-white/50 text-xs">{exercise.sessionExercises[0].session.course.title}</p>
+                            )}
                           </td>
                           <td className="px-4 py-3 text-white/70 text-sm">{getTypeLabel(exercise.type)}</td>
                           <td className="px-4 py-3">
@@ -521,10 +568,23 @@ export default function ContentManagement() {
                               {exercise.difficulty === 'EASY' ? '简单' : exercise.difficulty === 'MEDIUM' ? '中等' : '困难'}
                             </span>
                           </td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-wrap gap-1">
+                              {exercise.knowledgePoints && exercise.knowledgePoints.length > 0 ? (
+                                exercise.knowledgePoints.map(({ knowledgePoint }) => (
+                                  <span key={knowledgePoint.id} className="px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded">
+                                    {knowledgePoint.name}
+                                  </span>
+                                ))
+                              ) : (
+                                <span className="text-white/30 text-xs">-</span>
+                              )}
+                            </div>
+                          </td>
                           <td className="px-4 py-3 text-yellow-400 font-medium">{exercise.xp}</td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-2">
-                              <button onClick={() => setEditingExercise(exercise)} className="p-1 text-blue-400 hover:bg-blue-500/20 rounded">
+                              <button onClick={() => { setEditingExercise(exercise); setSelectedKnowledgePointIds(exercise.knowledgePoints?.map(kp => kp.knowledgePoint.id) || []); }} className="p-1 text-blue-400 hover:bg-blue-500/20 rounded">
                                 <Edit2 size={16} />
                               </button>
                               <button onClick={() => handleDeleteExercise(exercise.id)} className="p-1 text-red-400 hover:bg-red-500/20 rounded">
@@ -629,29 +689,42 @@ export default function ContentManagement() {
       )}
 
       {/* 课程编辑弹窗 */}
-      {editingLesson && (
+      {editingCourse && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-[#252536] rounded-2xl p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold text-white mb-4">{editingLesson.id ? '编辑' : '新建'}课程</h2>
+            <h2 className="text-xl font-bold text-white mb-4">{editingCourse.id ? '编辑' : '新建'}课程</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-white/70 text-sm mb-1">标题</label>
-                <input type="text" value={editingLesson.title || ''} onChange={e => setEditingLesson({...editingLesson, title: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl" />
+                <label className="block text-white/70 text-sm mb-1">课程编号</label>
+                <input type="text" value={editingCourse.code || ''} onChange={e => setEditingCourse({...editingCourse, code: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl" />
               </div>
               <div>
-                <label className="block text-white/70 text-sm mb-1">所属单元</label>
-                <select value={editingLesson.unitId || ''} onChange={e => setEditingLesson({...editingLesson, unitId: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl">
-                  {units.map(u => <option key={u.id} value={u.id}>{u.title}</option>)}
-                </select>
+                <label className="block text-white/70 text-sm mb-1">标题</label>
+                <input type="text" value={editingCourse.title || ''} onChange={e => setEditingCourse({...editingCourse, title: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl" />
               </div>
               <div>
                 <label className="block text-white/70 text-sm mb-1">描述</label>
-                <textarea value={editingLesson.description || ''} onChange={e => setEditingLesson({...editingLesson, description: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl" rows={2} />
+                <textarea value={editingCourse.description || ''} onChange={e => setEditingCourse({...editingCourse, description: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl" rows={2} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-white/70 text-sm mb-1">梯队</label>
+                  <select value={editingCourse.tier || 'CSP_J'} onChange={e => setEditingCourse({...editingCourse, tier: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl">
+                    <option value="CSP_J">CSP-J</option>
+                    <option value="CSP_S">CSP-S</option>
+                    <option value="PROVINCIAL">省选</option>
+                    <option value="IOI">IOI</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-white/70 text-sm mb-1">模块ID</label>
+                  <input type="number" value={editingCourse.moduleId || 1} onChange={e => setEditingCourse({...editingCourse, moduleId: Number(e.target.value)})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl" />
+                </div>
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button onClick={() => setEditingLesson(null)} className="px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20"><X size={18} /></button>
-              <button onClick={handleSaveLesson} className="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 flex items-center gap-2"><Save size={18} /> 保存</button>
+              <button onClick={() => setEditingCourse(null)} className="px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20"><X size={18} /></button>
+              <button onClick={handleSaveCourse} className="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 flex items-center gap-2"><Save size={18} /> 保存</button>
             </div>
           </div>
         </div>
@@ -698,13 +771,6 @@ export default function ContentManagement() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-white/70 text-sm mb-1">所属单元</label>
-                  <select value={editingExercise.unitId || ''} onChange={e => setEditingExercise({...editingExercise, unitId: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl">
-                    <option value="">无</option>
-                    {units.map(u => <option key={u.id} value={u.id}>{u.title}</option>)}
-                  </select>
-                </div>
-                <div>
                   <label className="block text-white/70 text-sm mb-1">分类</label>
                   <input type="text" value={editingExercise.category || ''} onChange={e => setEditingExercise({...editingExercise, category: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl" />
                 </div>
@@ -713,9 +779,48 @@ export default function ContentManagement() {
                 <label className="block text-white/70 text-sm mb-1">提示</label>
                 <textarea value={editingExercise.hint || ''} onChange={e => setEditingExercise({...editingExercise, hint: e.target.value})} className="w-full px-4 py-2 bg-white/10 text-white rounded-xl" rows={2} />
               </div>
+              <div>
+                <label className="block text-white/70 text-sm mb-2">关联知识点</label>
+                <div className="bg-white/5 rounded-xl p-3 max-h-48 overflow-y-auto">
+                  {(() => {
+                    const grouped = allKnowledgePoints.reduce((acc, kp) => {
+                      if (!acc[kp.category]) acc[kp.category] = [];
+                      acc[kp.category].push(kp);
+                      return acc;
+                    }, {} as Record<string, KnowledgePoint[]>);
+                    return Object.entries(grouped).map(([category, kps]) => (
+                      <div key={category} className="mb-3 last:mb-0">
+                        <div className="text-white/50 text-xs font-medium mb-1">{category}</div>
+                        <div className="flex flex-wrap gap-2">
+                          {kps.map(kp => (
+                            <label key={kp.id} className="flex items-center gap-1.5 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={selectedKnowledgePointIds.includes(kp.id)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedKnowledgePointIds([...selectedKnowledgePointIds, kp.id]);
+                                  } else {
+                                    setSelectedKnowledgePointIds(selectedKnowledgePointIds.filter(id => id !== kp.id));
+                                  }
+                                }}
+                                className="w-4 h-4 rounded bg-white/10 border-white/20 text-purple-500 focus:ring-purple-500"
+                              />
+                              <span className="text-white/80 text-sm">{kp.name}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                  {allKnowledgePoints.length === 0 && (
+                    <p className="text-white/30 text-sm">暂无知识点，请先在知识点标签页创建</p>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="flex justify-end gap-2 mt-6">
-              <button onClick={() => setEditingExercise(null)} className="px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20"><X size={18} /></button>
+              <button onClick={() => { setEditingExercise(null); setSelectedKnowledgePointIds([]); }} className="px-4 py-2 bg-white/10 text-white rounded-xl hover:bg-white/20"><X size={18} /></button>
               <button onClick={handleSaveExercise} className="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 flex items-center gap-2"><Save size={18} /> 保存</button>
             </div>
           </div>
