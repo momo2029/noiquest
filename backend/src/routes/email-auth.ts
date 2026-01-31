@@ -132,7 +132,6 @@ router.post('/send-code', async (req, res, next) => {
 // 注册验证
 const registerSchema = z.object({
   email: emailSchema,
-  code: z.string().length(6, '验证码必须是6位数字'),
   password: z.string().min(6, '密码至少6位'),
   name: z.string().min(1, '姓名不能为空').max(50),
   role: z.enum(['STUDENT', 'TEACHER']).optional(),
@@ -142,7 +141,7 @@ const registerSchema = z.object({
 // 邮箱注册
 router.post('/register', async (req, res, next) => {
   try {
-    const { email, code, password, name, role, inviteCode } = registerSchema.parse(req.body);
+    const { email, password, name, role, inviteCode } = registerSchema.parse(req.body);
 
     // 检查是否需要邀请码
     if (config.invite.required) {
@@ -155,20 +154,6 @@ router.post('/register', async (req, res, next) => {
       if (!inviteResult.valid) {
         throw new AppError(inviteResult.error || '邀请码无效', 400);
       }
-    }
-
-    // 验证验证码
-    const verification = await prisma.verificationCode.findFirst({
-      where: {
-        email,
-        code,
-        used: false,
-        expiresAt: { gt: new Date() },
-      },
-    });
-
-    if (!verification) {
-      throw new AppError('验证码错误或已过期', 400);
     }
 
     // 检查邮箱是否已注册
@@ -186,6 +171,9 @@ router.post('/register', async (req, res, next) => {
     // 加密密码
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // 激活奖励：新用户注册送宝石
+    const ACTIVATION_BONUS_GEMS = 100;
+
     // 创建用户
     const user = await prisma.user.create({
       data: {
@@ -196,6 +184,7 @@ router.post('/register', async (req, res, next) => {
         role: role || 'STUDENT',
         inviteCode: inviteCode?.toUpperCase(),
         tokenVersion: 1,
+        gems: ACTIVATION_BONUS_GEMS, // 邮箱验证激活奖励
       },
       select: {
         id: true,
@@ -212,12 +201,6 @@ router.post('/register', async (req, res, next) => {
         gems: true,
         tokenVersion: true,
       },
-    });
-
-    // 标记验证码为已使用
-    await prisma.verificationCode.update({
-      where: { id: verification.id },
-      data: { used: true },
     });
 
     // 生成 JWT（包含 tokenVersion）

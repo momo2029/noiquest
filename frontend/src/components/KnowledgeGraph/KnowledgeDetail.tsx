@@ -198,7 +198,7 @@ export default function KnowledgeDetail({
         {/* 课程练习按钮 */}
         {!isCompleted && (
           <button
-            onClick={onNavigateToSkillTree}
+            onClick={onStartLearning || onNavigateToSkillTree}
             className={`
               w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium transition-all
               ${isLocked
@@ -216,7 +216,7 @@ export default function KnowledgeDetail({
 
         {isCompleted && (
           <button
-            onClick={onNavigateToSkillTree}
+            onClick={onStartLearning || onNavigateToSkillTree}
             className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium bg-white/10 text-white hover:bg-white/20 transition-all"
           >
             <BookOpen size={18} />

@@ -308,6 +308,7 @@
     "completeLearning": "完成学习",
     "noContent": "暂无学习内容",
     "noContentDesc": "该知识点的学习资料正在准备中，敬请期待！",
+    "goToPractice": "去做练习",
     "learningStatus": {
       "notStarted": "未学习",
       "inProgress": "学习中",

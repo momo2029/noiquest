@@ -11,56 +11,20 @@ interface EmailRegisterProps {
 
 export default function EmailRegister({ onBack }: EmailRegisterProps) {
   const { t } = useTranslation();
-  const [step, setStep] = useState(1); // 1: 输入邮箱, 2: 输入验证码和密码
+  const [step, setStep] = useState(1); // 1: 输入邮箱和邀请码, 2: 输入密码和信息
   const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState<UserRole>('student');
   const [inviteCode, setInviteCode] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [codeCountdown, setCodeCountdown] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { sendVerificationCode, emailRegister } = useAuth();
+  const { emailRegister } = useAuth();
 
   const validateEmail = (email: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const handleSendCode = async () => {
-    if (!validateEmail(email)) {
-      setError(t('auth.invalidEmail'));
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    try {
-      const result = await sendVerificationCode(email);
-      setCodeCountdown(60);
-
-      // 开发模式下，如果返回了验证码，自动填充
-      if (result && result.code) {
-        setCode(result.code);
-        alert(t('auth.codeAutoFilled', { code: result.code }));
-      }
-
-      const timer = setInterval(() => {
-        setCodeCountdown(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } catch (err) {
-      setError((err as Error).message || t('auth.sendCodeFailed'));
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleNext = async () => {
@@ -86,10 +50,6 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
   };
 
   const handleRegister = async () => {
-    if (!code || code.length !== 6) {
-      setError(t('auth.enter6DigitCode'));
-      return;
-    }
     if (!password || password.length < 6) {
       setError(t('auth.passwordMinLengthError'));
       return;
@@ -103,14 +63,11 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
       return;
     }
 
-
-
     setLoading(true);
     setError('');
     try {
       await emailRegister({
         email,
-        code,
         password,
         name: name.trim(),
         role: role.toUpperCase() as 'STUDENT' | 'TEACHER',
@@ -200,33 +157,6 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
           {step === 2 && (
             <>
               <div className="space-y-4">
-                {/* 验证码 */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('auth.verificationCode')}
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={code}
-                      onChange={(e) => setCode(e.target.value)}
-                      placeholder={t('auth.enterVerificationCode')}
-                      maxLength={6}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
-                      disabled={loading}
-                    />
-                    <button
-                      onClick={handleSendCode}
-                      disabled={loading || codeCountdown > 0}
-                      className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-xl font-medium text-sm transition-colors whitespace-nowrap"
-                    >
-                      {codeCountdown > 0
-                        ? t('auth.resendAfter', { seconds: codeCountdown })
-                        : t('auth.getVerificationCode')}
-                    </button>
-                  </div>
-                </div>
-
                 {/* 密码 */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">

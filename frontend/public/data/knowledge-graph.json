@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-31T09:22:10.149Z",
+  "generatedAt": "2026-01-31T10:17:52.072Z",
   "tiers": [
     {
       "id": "CSP_J",
@@ -117,8 +117,8 @@
       "coreLevel": 5,
       "orderIndex": 1,
       "totalSessions": 5,
-      "hasContent": false,
-      "estimatedTime": null,
+      "hasContent": true,
+      "estimatedTime": 20,
       "prerequisites": [],
       "dependents": [
         {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Clock, BookOpen, ChevronLeft, ChevronRight, Check, FileText } from 'lucide-react';
+import { ArrowLeft, Clock, BookOpen, ChevronRight, Check, FileText } from 'lucide-react';
 import { api } from '../../services/api';
 import { SkillUnit } from '../../types';
 import LearningContent from './LearningContent';
@@ -146,13 +146,7 @@ export default function KnowledgeLearningPage({
                 <BookOpen size={32} className="text-gray-500" />
               </div>
               <h3 className="text-lg font-medium text-white mb-2">{t('learning.noContent')}</h3>
-              <p className="text-gray-400 mb-6">{t('learning.noContentDesc')}</p>
-              <button
-                onClick={onNavigateToSkillTree}
-                className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-medium hover:from-cyan-600 hover:to-blue-600 transition-all"
-              >
-                {t('learning.viewCourse')}
-              </button>
+              <p className="text-gray-400">{t('learning.noContentDesc')}</p>
             </div>
           ) : (
             <>
@@ -177,27 +171,7 @@ export default function KnowledgeLearningPage({
         </div>
       </div>
 
-      {/* Footer Actions */}
-      <div className="flex-shrink-0 bg-gray-800 border-t border-gray-700">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={onBack}
-              className="flex items-center gap-2 px-4 py-2 text-gray-400 hover:text-white transition-colors"
-            >
-              <ChevronLeft size={20} />
-              <span>{t('learning.backToGraph')}</span>
-            </button>
-            <button
-              onClick={onNavigateToSkillTree}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-medium hover:from-cyan-600 hover:to-blue-600 transition-all"
-            >
-              <span>{unit.completed ? t('learning.reviewContent') : t('learning.startLearning')}</span>
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 }

@@ -127,7 +127,6 @@ class ApiService {
 
   async emailRegister(data: {
     email: string;
-    code: string;
     password: string;
     name: string;
     role?: 'STUDENT' | 'TEACHER';
@@ -653,6 +652,55 @@ class ApiService {
     return this.request(`/admin/content/knowledge-points/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  // ==================== 知识点学习资料 API ====================
+
+  async getSkillUnitLearningContent(unitId: string): Promise<{
+    id: string;
+    code: string;
+    title: string;
+    description: string;
+    content: string | null;
+    codeExamples: { title: string; code: string; language: string; explanation?: string }[] | null;
+    videoUrl: string | null;
+    references: { title: string; url: string }[] | null;
+    tips: string[];
+    commonMistakes: string[];
+    estimatedTime: number | null;
+  }> {
+    return this.request(`/admin/skill-units/${unitId}/content`);
+  }
+
+  async updateSkillUnitLearningContent(unitId: string, data: {
+    content?: string;
+    codeExamples?: { title: string; code: string; language: string; explanation?: string }[];
+    videoUrl?: string;
+    references?: { title: string; url: string }[];
+    tips?: string[];
+    commonMistakes?: string[];
+    estimatedTime?: number;
+  }): Promise<any> {
+    return this.request(`/admin/skill-units/${unitId}/content`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getAdminSkillUnits(params?: {
+    tier?: string;
+    moduleId?: number;
+    hasContent?: boolean;
+  }): Promise<{ units: any[] }> {
+    const query = new URLSearchParams();
+    if (params?.tier) query.set('tier', params.tier);
+    if (params?.moduleId) query.set('moduleId', String(params.moduleId));
+    if (params?.hasContent !== undefined) query.set('hasContent', String(params.hasContent));
+    return this.request(`/admin/skill-units?${query.toString()}`);
+  }
+
+  async regenerateStaticFiles(): Promise<{ message: string }> {
+    return this.request('/admin/regenerate-static', { method: 'POST' });
   }
 
   async getAdminAnalytics(days: number = 30): Promise<any> {

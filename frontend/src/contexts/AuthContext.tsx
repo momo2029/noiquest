@@ -8,13 +8,11 @@ interface AuthContextType extends AuthState {
   emailLogin: (email: string, password: string) => Promise<void>;
   emailRegister: (data: {
     email: string;
-    code: string;
     password: string;
     name: string;
     role?: 'STUDENT' | 'TEACHER';
     inviteCode?: string;
   }) => Promise<void>;
-  sendVerificationCode: (email: string) => Promise<{ message: string; code?: string }>;
   updateProfile: (data: { name?: string; avatar?: string }) => Promise<void>;
   logout: () => void;
 }
@@ -93,7 +91,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const emailRegister = async (data: {
     email: string;
-    code: string;
     password: string;
     name: string;
     role?: 'STUDENT' | 'TEACHER';
@@ -106,10 +103,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: true,
       isLoading: false,
     });
-  };
-
-  const sendVerificationCode = async (email: string) => {
-    return api.sendVerificationCode(email);
   };
 
   const updateProfile = async (data: { name?: string; avatar?: string }) => {
@@ -142,7 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ ...state, login, register, emailLogin, emailRegister, sendVerificationCode, updateProfile, logout }}>
+    <AuthContext.Provider value={{ ...state, login, register, emailLogin, emailRegister, updateProfile, logout }}>
       {children}
     </AuthContext.Provider>
   );

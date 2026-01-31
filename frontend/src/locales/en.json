@@ -308,6 +308,7 @@
     "completeLearning": "Complete",
     "noContent": "No Content Available",
     "noContentDesc": "Learning materials for this topic are being prepared. Stay tuned!",
+    "goToPractice": "Go to Practice",
     "learningStatus": {
       "notStarted": "Not Started",
       "inProgress": "In Progress",

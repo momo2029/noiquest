@@ -91,18 +91,8 @@ function MainApp() {
   const defaultView = userRole === 'student' ? 'skill-tree' : 'dashboard';
 
   const [currentView, setCurrentViewState] = useState<string>(() => {
-    const savedView = getCurrentView(defaultView);
-    // 未登录时只允许公开视图
-    if (!isAuthenticated) {
-      return PUBLIC_VIEWS.includes(savedView) ? savedView : 'knowledge-map';
-    }
-    // 验证保存的视图对当前角色是否有效
-    if (userRole === 'student' && STUDENT_VIEWS.includes(savedView)) {
-      return savedView;
-    } else if (userRole === 'teacher' && TEACHER_VIEWS.includes(savedView)) {
-      return savedView;
-    }
-    return defaultView;
+    // 初始化时只读取 localStorage 中保存的视图，不做复杂判断
+    return getCurrentView('knowledge-map');
   });
 
   // 包装 setCurrentView 以同时保存到 localStorage
@@ -110,6 +100,31 @@ function MainApp() {
     setCurrentViewState(view);
     saveCurrentView(view);
   }, []);
+
+  // 当认证状态确定后（isLoading 变为 false），根据用户角色正确设置视图
+  useEffect(() => {
+    if (isLoading) return; // 还在加载中，不处理
+
+    const savedView = getCurrentView(defaultView);
+
+    if (!isAuthenticated) {
+      // 未登录时只允许公开视图
+      if (!PUBLIC_VIEWS.includes(currentView)) {
+        setCurrentViewState(PUBLIC_VIEWS.includes(savedView) ? savedView : 'knowledge-map');
+      }
+    } else {
+      // 已登录，根据角色设置正确的默认视图
+      if (userRole === 'student') {
+        if (!STUDENT_VIEWS.includes(currentView)) {
+          setCurrentViewState(STUDENT_VIEWS.includes(savedView) ? savedView : defaultView);
+        }
+      } else if (userRole === 'teacher') {
+        if (!TEACHER_VIEWS.includes(currentView)) {
+          setCurrentViewState(TEACHER_VIEWS.includes(savedView) ? savedView : defaultView);
+        }
+      }
+    }
+  }, [isAuthenticated, isLoading, userRole]);
 
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
@@ -141,16 +156,6 @@ function MainApp() {
       }));
     }
   }, [user, userRole]);
-
-  // 当用户角色变化时验证并更新视图
-  useEffect(() => {
-    const savedView = getCurrentView(defaultView);
-    if (userRole === 'student' && !STUDENT_VIEWS.includes(savedView)) {
-      setCurrentView(defaultView);
-    } else if (userRole === 'teacher' && !TEACHER_VIEWS.includes(savedView)) {
-      setCurrentView(defaultView);
-    }
-  }, [userRole, defaultView, setCurrentView]);
 
   // 保存设置
   useEffect(() => {

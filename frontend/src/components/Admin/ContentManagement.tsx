@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Layers, FileText, BookOpen, Tag, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronRight, Eye, EyeOff } from 'lucide-react';
+import { Layers, FileText, BookOpen, Tag, Plus, Edit2, Trash2, Save, X, ChevronDown, ChevronRight, Eye, EyeOff, GraduationCap } from 'lucide-react';
+import LearningContentEditor from './LearningContentEditor';
 
 type TabType = 'units' | 'courses' | 'exercises' | 'knowledge';
 
@@ -17,6 +18,9 @@ interface SkillUnit {
   tier?: string;
   coreLevel?: number;
   moduleId?: number;
+  moduleName?: string;
+  hasContent?: boolean;
+  estimatedTime?: number;
   module?: { id: number; name: string; icon: string };
   courses: { course: { id: string; code: string; title: string } }[];
   _count: { courses: number };
@@ -89,6 +93,13 @@ export default function ContentManagement() {
   const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
 
+  // 学习资料编辑状态
+  const [editingLearningContent, setEditingLearningContent] = useState<{ id: string; title: string } | null>(null);
+
+  // 知识点筛选状态
+  const [filterTier, setFilterTier] = useState<string>('');
+  const [filterHasContent, setFilterHasContent] = useState<string>('');
+
   // 初始加载units（用于下拉选择）
   useEffect(() => {
     loadUnits();
@@ -97,7 +108,7 @@ export default function ContentManagement() {
 
   useEffect(() => {
     loadData();
-  }, [activeTab, page, filterCourseId, filterSessionId, filterType, filterKnowledgePointId]);
+  }, [activeTab, page, filterCourseId, filterSessionId, filterType, filterKnowledgePointId, filterTier, filterHasContent]);
 
   const loadData = async () => {
     setLoading(true);
@@ -125,8 +136,11 @@ export default function ContentManagement() {
 
   const loadUnits = async () => {
     try {
-      const result = await api.getContentSkillUnits();
-      setUnits(result || []);
+      const result = await api.getAdminSkillUnits({
+        tier: filterTier || undefined,
+        hasContent: filterHasContent === 'true' ? true : filterHasContent === 'false' ? false : undefined,
+      });
+      setUnits(result.units || []);
     } catch (error) {
       console.error('加载单元失败:', error);
       setUnits([]);
@@ -394,12 +408,43 @@ export default function ContentManagement() {
             {/* 技能单元标签页 */}
             {activeTab === 'units' && (
               <div className="space-y-4">
-                <button
-                  onClick={() => setEditingUnit({ title: '', description: '', icon: '📚', color: 'from-blue-400 to-blue-600' })}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600"
-                >
-                  <Plus size={18} /> 新建技能单元
-                </button>
+                {/* 筛选和操作栏 */}
+                <div className="flex items-center gap-4 flex-wrap">
+                  <select
+                    value={filterTier}
+                    onChange={e => setFilterTier(e.target.value)}
+                    className="px-4 py-2 bg-white/10 text-white rounded-xl"
+                  >
+                    <option value="">全部梯队</option>
+                    <option value="CSP_J">CSP-J 入门</option>
+                    <option value="CSP_S">CSP-S 进阶</option>
+                    <option value="PROVINCIAL">省选/NOI</option>
+                    <option value="IOI">IOI</option>
+                  </select>
+                  <select
+                    value={filterHasContent}
+                    onChange={e => setFilterHasContent(e.target.value)}
+                    className="px-4 py-2 bg-white/10 text-white rounded-xl"
+                  >
+                    <option value="">全部状态</option>
+                    <option value="true">有学习资料</option>
+                    <option value="false">无学习资料</option>
+                  </select>
+                  <button
+                    onClick={() => setEditingUnit({ title: '', description: '', icon: '📚', color: 'from-blue-400 to-blue-600' })}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600"
+                  >
+                    <Plus size={18} /> 新建技能单元
+                  </button>
+                </div>
+
+                {/* 统计信息 */}
+                <div className="flex items-center gap-4 text-sm text-white/50">
+                  <span>共 {units.length} 个知识点</span>
+                  <span>|</span>
+                  <span className="text-green-400">{units.filter(u => u.hasContent).length} 个有学习资料</span>
+                  <span className="text-white/30">{units.filter(u => !u.hasContent).length} 个待添加</span>
+                </div>
 
                 <div className="space-y-3">
                   {units.map(unit => (
@@ -409,28 +454,49 @@ export default function ContentManagement() {
                           <button onClick={() => toggleUnitExpand(unit.id)} className="text-white/50 hover:text-white">
                             {expandedUnits.has(unit.id) ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
                           </button>
-                          <span className="text-3xl">{unit.icon}</span>
+                          <span className="text-3xl">{unit.icon || '📚'}</span>
                           <div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
                               {unit.code && <span className="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded">{unit.code}</span>}
-                              {unit.module && <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded">{unit.module.icon} {unit.module.name}</span>}
+                              {unit.tier && <span className="text-xs px-2 py-0.5 bg-cyan-500/20 text-cyan-400 rounded">{unit.tier}</span>}
+                              {unit.moduleName && <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded">{unit.moduleName}</span>}
+                              {unit.hasContent ? (
+                                <span className="text-xs px-2 py-0.5 bg-green-500/20 text-green-400 rounded">有学习资料</span>
+                              ) : (
+                                <span className="text-xs px-2 py-0.5 bg-white/10 text-white/40 rounded">无学习资料</span>
+                              )}
+                              {unit.estimatedTime && (
+                                <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">{unit.estimatedTime}分钟</span>
+                              )}
                             </div>
                             <h3 className="text-white font-bold">{unit.title}</h3>
-                            <p className="text-white/50 text-sm">{unit.description}</p>
+                            <p className="text-white/50 text-sm line-clamp-1">{unit.description}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-white/50 text-sm">{unit._count.courses} 课程</span>
+                          {/* 编辑学习资料按钮 */}
+                          <button
+                            onClick={() => setEditingLearningContent({ id: unit.id, title: unit.title })}
+                            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                              unit.hasContent
+                                ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                                : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'
+                            }`}
+                          >
+                            <GraduationCap size={16} />
+                            {unit.hasContent ? '编辑资料' : '添加资料'}
+                          </button>
                           <button
                             onClick={() => handleToggleUnitPublish(unit)}
                             className={`p-2 rounded-lg ${unit.isPublished ? 'text-green-400 bg-green-500/20' : 'text-white/30 bg-white/10'}`}
+                            title={unit.isPublished ? '已发布' : '未发布'}
                           >
                             {unit.isPublished ? <Eye size={18} /> : <EyeOff size={18} />}
                           </button>
-                          <button onClick={() => setEditingUnit(unit)} className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg">
+                          <button onClick={() => setEditingUnit(unit)} className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg" title="编辑基本信息">
                             <Edit2 size={18} />
                           </button>
-                          <button onClick={() => handleDeleteUnit(unit.id)} className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg">
+                          <button onClick={() => handleDeleteUnit(unit.id)} className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg" title="删除">
                             <Trash2 size={18} />
                           </button>
                         </div>
@@ -852,6 +918,16 @@ export default function ContentManagement() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* 学习资料编辑器 */}
+      {editingLearningContent && (
+        <LearningContentEditor
+          unitId={editingLearningContent.id}
+          unitTitle={editingLearningContent.title}
+          onClose={() => setEditingLearningContent(null)}
+          onSaved={() => loadUnits()}
+        />
       )}
     </div>
   );

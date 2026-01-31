@@ -79,6 +79,9 @@ model User {
   // 邀请码
   inviteCode    String?  // 用户使用的邀请码
 
+  // 邮箱验证状态
+  emailVerified Boolean  @default(false)  // 是否已验证邮箱（验证后送宝石）
+
   // 班级信息
   classId       String?
   class         Class?   @relation(fields: [classId], references: [id])
