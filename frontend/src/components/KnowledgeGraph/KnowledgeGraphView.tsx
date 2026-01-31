@@ -6,6 +6,7 @@ import ModuleSidebar from '../SkillTree/ModuleSidebar';
 import GraphVisualization from './GraphVisualization';
 import KnowledgeDetail from './KnowledgeDetail';
 import StatisticsPanel from './StatisticsPanel';
+import KnowledgeLearningPage from './KnowledgeLearningPage';
 import { GitBranch, Filter } from 'lucide-react';
 
 interface KnowledgeGraphViewProps {
@@ -26,6 +27,9 @@ export default function KnowledgeGraphView({ onNavigateToSkillTree, isPublic = f
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
   const [selectedUnit, setSelectedUnit] = useState<SkillUnit | null>(null);
 
+  // 学习页面状态
+  const [learningUnitId, setLearningUnitId] = useState<string | null>(null);
+
   // 加载状态
   const [loading, setLoading] = useState(true);
 
@@ -38,33 +42,90 @@ export default function KnowledgeGraphView({ onNavigateToSkillTree, isPublic = f
     try {
       setLoading(true);
 
-      if (isPublic) {
-        // 公开模式：调用不需要登录的 API
-        const tiersData = await api.getPublicTiers();
-        setAllTiers(tiersData.tiers);
+      // 优先尝试加载静态文件（公开模式或登录模式都可以用）
+      const staticData = await api.getStaticKnowledgeGraph();
 
-        const modulesData = await api.getPublicModules();
-        setAllModules(modulesData.modules);
+      if (staticData) {
+        // 使用静态数据
+        setAllTiers(staticData.tiers.map(t => ({
+          ...t,
+          completedUnits: 0,
+          completionRate: 0,
+          unlocked: t.id === 'CSP_J',
+          unlockRequirement: null,
+        })));
+        setAllModules(staticData.modules.map(m => ({
+          ...m,
+          completedUnits: 0,
+          completionRate: 0,
+        })));
+        setAllUnits(staticData.skillTree.map(u => ({
+          ...u,
+          unlocked: (u.prerequisites?.length || 0) === 0,
+          completed: false,
+          sessionsCompleted: 0,
+          crownLevel: 0,
+          courses: [],
+        })));
+        setAllDependencies(staticData.dependencies || []);
 
-        const skillTreeData = await api.getPublicSkillTree();
-        setAllUnits(skillTreeData.skillTree);
-        setAllDependencies(skillTreeData.dependencies || []);
+        // 如果是登录用户，再异步加载用户进度数据
+        if (!isPublic) {
+          loadUserProgress();
+        }
       } else {
-        // 登录模式：调用需要认证的 API
-        const tiersData = await api.getTiers();
-        setAllTiers(tiersData.tiers);
-
-        const modulesData = await api.getModules();
-        setAllModules(modulesData.modules);
-
-        const skillTreeData = await api.getSkillTree();
-        setAllUnits(skillTreeData.skillTree);
-        setAllDependencies(skillTreeData.dependencies || []);
+        // 静态文件不存在，回退到 API
+        await loadFromApi();
       }
     } catch (error) {
       console.error('Failed to load knowledge graph data:', error);
+      // 出错时尝试从 API 加载
+      await loadFromApi();
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 从 API 加载数据（回退方案）
+  const loadFromApi = async () => {
+    if (isPublic) {
+      const tiersData = await api.getPublicTiers();
+      setAllTiers(tiersData.tiers);
+
+      const modulesData = await api.getPublicModules();
+      setAllModules(modulesData.modules);
+
+      const skillTreeData = await api.getPublicSkillTree();
+      setAllUnits(skillTreeData.skillTree);
+      setAllDependencies(skillTreeData.dependencies || []);
+    } else {
+      const tiersData = await api.getTiers();
+      setAllTiers(tiersData.tiers);
+
+      const modulesData = await api.getModules();
+      setAllModules(modulesData.modules);
+
+      const skillTreeData = await api.getSkillTree();
+      setAllUnits(skillTreeData.skillTree);
+      setAllDependencies(skillTreeData.dependencies || []);
+    }
+  };
+
+  // 加载用户进度数据（登录用户）
+  const loadUserProgress = async () => {
+    try {
+      const [tiersData, modulesData, skillTreeData] = await Promise.all([
+        api.getTiers(),
+        api.getModules(),
+        api.getSkillTree(),
+      ]);
+
+      // 更新带用户进度的数据
+      setAllTiers(tiersData.tiers);
+      setAllModules(modulesData.modules);
+      setAllUnits(skillTreeData.skillTree);
+    } catch (error) {
+      console.error('Failed to load user progress:', error);
     }
   };
 
@@ -120,6 +181,26 @@ export default function KnowledgeGraphView({ onNavigateToSkillTree, isPublic = f
     setSelectedModuleId(moduleId);
     setSelectedUnit(null);
   };
+
+  // 处理开始学习
+  const handleStartLearning = (unitId: string) => {
+    if (isPublic && onLoginRequired) {
+      onLoginRequired();
+      return;
+    }
+    setLearningUnitId(unitId);
+  };
+
+  // 如果正在学习页面，显示学习页面
+  if (learningUnitId) {
+    return (
+      <KnowledgeLearningPage
+        unitId={learningUnitId}
+        onBack={() => setLearningUnitId(null)}
+        onNavigateToSkillTree={onNavigateToSkillTree}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -203,6 +284,7 @@ export default function KnowledgeGraphView({ onNavigateToSkillTree, isPublic = f
             <KnowledgeDetail
               unit={selectedUnit}
               onNavigateToSkillTree={isPublic && onLoginRequired ? onLoginRequired : onNavigateToSkillTree}
+              onStartLearning={() => handleStartLearning(selectedUnit.id)}
             />
           ) : (
             <StatisticsPanel

@@ -387,6 +387,7 @@ function MainApp() {
                   <CodeEditor
                     file={activeFile}
                     files={files.filter(f => openFileIds.includes(f.id))}
+                    settings={settings}
                     onContentChange={updateFileContent}
                     onSelectionChange={setSelectedCode}
                     onFileSelect={setActiveFileId}

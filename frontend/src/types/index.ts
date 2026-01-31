@@ -236,6 +236,20 @@ export interface KnowledgePrerequisite {
   title: string;
 }
 
+// 代码示例
+export interface CodeExample {
+  title: string;
+  code: string;
+  language: string;
+  explanation?: string;
+}
+
+// 参考资料
+export interface Reference {
+  title: string;
+  url: string;
+}
+
 // 技能单元（知识点）
 export interface SkillUnit {
   id: string;
@@ -258,6 +272,14 @@ export interface SkillUnit {
   sessionsCompleted: number;
   totalSessions: number;
   crownLevel: number;
+  // 学习资料字段
+  content?: string;           // Markdown 学习内容
+  codeExamples?: CodeExample[];
+  videoUrl?: string;
+  references?: Reference[];
+  tips?: string[];
+  commonMistakes?: string[];
+  estimatedTime?: number;     // 预计学习时间（分钟）
 }
 
 // 技能树响应

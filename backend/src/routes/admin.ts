@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth.js';
+import { generateKnowledgeGraphStatic } from '../services/staticGenerator.js';
 
 const router = Router();
 
@@ -39,9 +40,9 @@ router.get('/dashboard', async (req: AuthRequest, res: Response, next) => {
     });
 
     // 技能树数据
-    const [totalUnits, totalLessons] = await Promise.all([
+    const [totalUnits, totalCourses] = await Promise.all([
       prisma.skillUnit.count(),
-      prisma.lesson.count(),
+      prisma.course.count(),
     ]);
 
     // 最近7天每日活跃用户趋势
@@ -75,7 +76,7 @@ router.get('/dashboard', async (req: AuthRequest, res: Response, next) => {
       content: {
         exercises: totalExercises,
         units: totalUnits,
-        lessons: totalLessons,
+        courses: totalCourses,
       },
       learning: {
         totalProgress: totalProgress,
@@ -595,6 +596,165 @@ router.delete('/classes/:classId', async (req: AuthRequest, res: Response, next)
     await prisma.class.delete({ where: { id: classId } });
 
     res.json({ message: '班级已删除' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ==================== 知识点学习资料管理 ====================
+
+// 获取知识点学习资料
+router.get('/skill-units/:unitId/content', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { unitId } = req.params;
+
+    const unit = await prisma.skillUnit.findUnique({
+      where: { id: unitId },
+      select: {
+        id: true,
+        code: true,
+        title: true,
+        description: true,
+        content: true,
+        codeExamples: true,
+        videoUrl: true,
+        references: true,
+        tips: true,
+        commonMistakes: true,
+        estimatedTime: true,
+      },
+    });
+
+    if (!unit) {
+      return res.status(404).json({ error: '知识点不存在' });
+    }
+
+    res.json(unit);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 更新知识点学习资料
+router.put('/skill-units/:unitId/content', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { unitId } = req.params;
+    const {
+      content,
+      codeExamples,
+      videoUrl,
+      references,
+      tips,
+      commonMistakes,
+      estimatedTime,
+    } = req.body;
+
+    // 检查知识点是否存在
+    const existingUnit = await prisma.skillUnit.findUnique({
+      where: { id: unitId },
+    });
+
+    if (!existingUnit) {
+      return res.status(404).json({ error: '知识点不存在' });
+    }
+
+    // 更新学习资料
+    const updatedUnit = await prisma.skillUnit.update({
+      where: { id: unitId },
+      data: {
+        ...(content !== undefined && { content }),
+        ...(codeExamples !== undefined && { codeExamples }),
+        ...(videoUrl !== undefined && { videoUrl }),
+        ...(references !== undefined && { references }),
+        ...(tips !== undefined && { tips }),
+        ...(commonMistakes !== undefined && { commonMistakes }),
+        ...(estimatedTime !== undefined && { estimatedTime }),
+      },
+      select: {
+        id: true,
+        code: true,
+        title: true,
+        content: true,
+        codeExamples: true,
+        videoUrl: true,
+        references: true,
+        tips: true,
+        commonMistakes: true,
+        estimatedTime: true,
+      },
+    });
+
+    // 异步重新生成静态文件（不阻塞响应）
+    generateKnowledgeGraphStatic().catch(err => {
+      console.error('[Admin] Failed to regenerate static file:', err);
+    });
+
+    res.json(updatedUnit);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 获取所有知识点列表（带学习资料状态）
+router.get('/skill-units', async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { tier, moduleId, hasContent } = req.query;
+
+    const whereClause: any = {};
+    if (tier) {
+      whereClause.tier = tier;
+    }
+    if (moduleId) {
+      whereClause.moduleId = parseInt(moduleId as string);
+    }
+
+    const units = await prisma.skillUnit.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        code: true,
+        title: true,
+        description: true,
+        tier: true,
+        moduleId: true,
+        coreLevel: true,
+        content: true,
+        estimatedTime: true,
+        tips: true,
+        commonMistakes: true,
+        module: {
+          select: { name: true },
+        },
+      },
+      orderBy: [{ tier: 'asc' }, { moduleId: 'asc' }, { orderIndex: 'asc' }],
+    });
+
+    // 添加是否有学习内容的标记
+    let result = units.map(unit => ({
+      ...unit,
+      moduleName: unit.module?.name,
+      hasContent: !!(unit.content || (unit.tips && unit.tips.length > 0)),
+      module: undefined,
+    }));
+
+    // 按是否有内容筛选
+    if (hasContent === 'true') {
+      result = result.filter(u => u.hasContent);
+    } else if (hasContent === 'false') {
+      result = result.filter(u => !u.hasContent);
+    }
+
+    res.json({ units: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 手动触发重新生成知识图谱静态文件
+router.post('/regenerate-static', async (_req: AuthRequest, res: Response, next) => {
+  try {
+    await generateKnowledgeGraphStatic();
+    res.json({ message: '静态文件已重新生成' });
   } catch (error) {
     next(error);
   }

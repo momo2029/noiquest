@@ -608,6 +608,14 @@ router.get('/units/:unitId', authenticate, async (req: AuthRequest, res: Respons
         code: p.prerequisite.code,
         title: p.prerequisite.title,
       })),
+      // 学习资料字段
+      content: unit.content,
+      codeExamples: unit.codeExamples,
+      videoUrl: unit.videoUrl,
+      references: unit.references,
+      tips: unit.tips,
+      commonMistakes: unit.commonMistakes,
+      estimatedTime: unit.estimatedTime,
     });
   } catch (error) {
     next(error);

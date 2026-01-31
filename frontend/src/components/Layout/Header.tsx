@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { UserRole, AppSettings, Student, DailyStatus } from '../../types';
 import { calculateLevel } from '../../data/exercises';
 import { api } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 import HeartsDisplay from '../Hearts/HeartsDisplay';
 import GemsDisplay from '../Gems/GemsDisplay';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -20,7 +21,8 @@ import {
   Zap,
   LogOut,
   Target,
-  RefreshCw
+  RefreshCw,
+  Check
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -55,9 +57,23 @@ export default function Header({
   onViewChange
 }: HeaderProps) {
   const { t } = useTranslation();
+  const { user, updateProfile } = useAuth();
   const [showSettings, setShowSettings] = useState(false);
   const [dailyStatus, setDailyStatus] = useState<DailyStatus | null>(null);
   const [reviewCount, setReviewCount] = useState(0);
+
+  // 个人资料编辑状态
+  const [editName, setEditName] = useState('');
+  const [editAvatar, setEditAvatar] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  // 预设头像列表
+  const AVATAR_OPTIONS = [
+    '🦊', '🐱', '🐶', '🐼', '🐨', '🦁', '🐯', '🐻', '🐰', '🐸',
+    '🦉', '🦋', '🐙', '🦄', '🐲', '🎃', '🤖', '👻', '🧙', '🦸',
+    '🐵', '🐧', '🐦', '🦅', '🦆', '🐴', '🦓', '🐘', '🦒', '🐿️'
+  ];
 
   // 获取每日状态和复习数量
   useEffect(() => {
@@ -66,6 +82,32 @@ export default function Header({
       api.getReviewStatus().then(status => setReviewCount(status.totalReviewItems)).catch(console.error);
     }
   }, [role]);
+
+  // 打开设置时初始化编辑状态
+  useEffect(() => {
+    if (showSettings && user) {
+      setEditName(user.name || '');
+      setEditAvatar(user.avatar || '🦊');
+      setSaveSuccess(false);
+    }
+  }, [showSettings, user]);
+
+  // 保存个人资料
+  const handleSaveProfile = async () => {
+    if (!editName.trim()) return;
+
+    setIsSaving(true);
+    setSaveSuccess(false);
+    try {
+      await updateProfile({ name: editName.trim(), avatar: editAvatar });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2000);
+    } catch (error) {
+      console.error('Failed to save profile:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const levelInfo = student ? calculateLevel(student.totalXp) : { level: 1, currentXp: 0, nextLevelXp: 50 };
   const xpProgress = (levelInfo.currentXp / levelInfo.nextLevelXp) * 100;
@@ -274,7 +316,73 @@ export default function Header({
             </div>
 
             {/* 设置内容 */}
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+              {/* 个人资料 */}
+              <div>
+                <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <User size={16} className="text-[#007acc]" />
+                  {t('settings.profile')}
+                </h3>
+                <div className="space-y-4">
+                  {/* 头像选择 */}
+                  <div>
+                    <label className="text-sm text-gray-600 block mb-2">{t('settings.avatar')}</label>
+                    <div className="flex flex-wrap gap-2">
+                      {AVATAR_OPTIONS.map(avatar => (
+                        <button
+                          key={avatar}
+                          onClick={() => setEditAvatar(avatar)}
+                          className={`w-10 h-10 text-xl rounded-lg transition-all ${
+                            editAvatar === avatar
+                              ? 'bg-[#007acc] ring-2 ring-[#007acc] ring-offset-2'
+                              : 'bg-gray-100 hover:bg-gray-200'
+                          }`}
+                        >
+                          {avatar}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 昵称输入 */}
+                  <div>
+                    <label className="text-sm text-gray-600 block mb-2">{t('settings.nickname')}</label>
+                    <input
+                      type="text"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      placeholder={t('settings.nicknamePlaceholder')}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#007acc] focus:border-transparent text-black"
+                      maxLength={20}
+                    />
+                  </div>
+
+                  {/* 保存按钮 */}
+                  <button
+                    onClick={handleSaveProfile}
+                    disabled={isSaving || !editName.trim()}
+                    className={`w-full py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                      saveSuccess
+                        ? 'bg-green-500 text-white'
+                        : isSaving || !editName.trim()
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'bg-[#007acc] hover:bg-[#005a9e] text-white'
+                    }`}
+                  >
+                    {saveSuccess ? (
+                      <>
+                        <Check size={18} />
+                        {t('settings.profileSaved')}
+                      </>
+                    ) : isSaving ? (
+                      t('common.loading')
+                    ) : (
+                      t('settings.saveProfile')
+                    )}
+                  </button>
+                </div>
+              </div>
+
               {/* 编辑器设置 */}
               <div>
                 <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">

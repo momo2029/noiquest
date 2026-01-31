@@ -52,6 +52,12 @@
   },
   "settings": {
     "title": "设置",
+    "profile": "个人资料",
+    "avatar": "头像",
+    "nickname": "昵称",
+    "nicknamePlaceholder": "输入你的昵称",
+    "saveProfile": "保存资料",
+    "profileSaved": "保存成功",
     "editor": "编辑器设置",
     "fontSize": "字体大小",
     "tabSize": "Tab 缩进",
@@ -282,5 +288,39 @@
     "zhCN": "简体中文",
     "zhTW": "繁體中文",
     "en": "English"
+  },
+  "learning": {
+    "startLearning": "开始学习",
+    "continueLearning": "继续学习",
+    "reviewContent": "复习巩固",
+    "viewCourse": "查看课程",
+    "estimatedTime": "预计学习时间",
+    "learningPoints": "学习要点",
+    "commonMistakes": "常见错误",
+    "codeExamples": "代码示例",
+    "references": "参考资料",
+    "videoTutorial": "视频讲解",
+    "backToGraph": "返回知识图谱",
+    "progress": "进度",
+    "chapter": "章节",
+    "prevChapter": "上一章节",
+    "nextChapter": "下一章节",
+    "completeLearning": "完成学习",
+    "noContent": "暂无学习内容",
+    "noContentDesc": "该知识点的学习资料正在准备中，敬请期待！",
+    "learningStatus": {
+      "notStarted": "未学习",
+      "inProgress": "学习中",
+      "completed": "已学习",
+      "mastered": "已掌握"
+    },
+    "contentSections": {
+      "overview": "概述",
+      "content": "学习内容",
+      "examples": "代码示例",
+      "tips": "要点提示",
+      "mistakes": "常见错误",
+      "practice": "练习"
+    }
   }
 }

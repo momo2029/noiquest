@@ -1,12 +1,13 @@
 import Editor from '@monaco-editor/react';
 import { useRef, useCallback } from 'react';
 import type { editor } from 'monaco-editor';
-import { CodeFile } from '../../types';
+import { CodeFile, AppSettings } from '../../types';
 import { Play, X, Loader2 } from 'lucide-react';
 
 interface CodeEditorProps {
   file: CodeFile;
   files: CodeFile[];
+  settings: AppSettings;
   onContentChange: (content: string) => void;
   onSelectionChange?: (selectedText: string) => void;
   onFileSelect: (fileId: string) => void;
@@ -18,6 +19,7 @@ interface CodeEditorProps {
 export default function CodeEditor({
   file,
   files,
+  settings,
   onContentChange,
   onSelectionChange,
   onFileSelect,
@@ -115,13 +117,13 @@ export default function CodeEditor({
           onMount={handleEditorDidMount}
           theme="vs-dark"
           options={{
-            fontSize: 16,
+            fontSize: settings.fontSize,
             fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
             fontLigatures: true,
             minimap: { enabled: false },
             scrollBeyondLastLine: false,
             automaticLayout: true,
-            tabSize: 4,
+            tabSize: settings.tabSize,
             wordWrap: 'on',
             lineNumbers: 'on',
             lineNumbersMinChars: 4,
@@ -159,7 +161,7 @@ export default function CodeEditor({
           <span>UTF-8</span>
         </div>
         <div className="flex items-center gap-4">
-          <span>Tab: 4</span>
+          <span>Tab: {settings.tabSize}</span>
           <span>行 1, 列 1</span>
         </div>
       </div>

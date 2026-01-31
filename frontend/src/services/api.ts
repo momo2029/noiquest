@@ -109,6 +109,14 @@ class ApiService {
     this.setToken(null);
   }
 
+  // 更新用户资料
+  async updateProfile(data: { name?: string; avatar?: string }): Promise<User> {
+    return this.request<User>('/users/me', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
   // 邮箱认证相关
   async sendVerificationCode(email: string): Promise<{ message: string; code?: string }> {
     return this.request<{ message: string; code?: string }>('/email-auth/send-code', {
@@ -172,6 +180,23 @@ class ApiService {
     if (params?.moduleId) query.set('moduleId', String(params.moduleId));
     const queryStr = query.toString();
     return this.request<SkillTreeResponse>(`/skill-tree/public${queryStr ? `?${queryStr}` : ''}`);
+  }
+
+  // 静态知识图谱数据（优先从静态文件加载）
+  async getStaticKnowledgeGraph(): Promise<{
+    generatedAt: string;
+    tiers: TierInfo[];
+    modules: ModuleInfo[];
+    skillTree: SkillUnit[];
+    dependencies: { from: string; to: string }[];
+  } | null> {
+    try {
+      const response = await fetch('/data/knowledge-graph.json');
+      if (!response.ok) return null;
+      return response.json();
+    } catch {
+      return null;
+    }
   }
 
   async getModules(tier?: string): Promise<{ modules: ModuleInfo[] }> {

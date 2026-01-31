@@ -546,6 +546,15 @@ model SkillUnit {
   moduleId       Int?
   coreLevel      Int      @default(3)  // 核心度 1-5
 
+  // 学习资料字段
+  content        String?  @db.Text    // Markdown 格式的学习内容
+  codeExamples   Json?                // 代码示例 [{ title, code, language, explanation }]
+  videoUrl       String?              // 视频教程链接
+  references     Json?                // 参考资料 [{ title, url }]
+  tips           String[]             // 学习要点/技巧
+  commonMistakes String[]             // 常见错误
+  estimatedTime  Int?                 // 预计学习时间（分钟）
+
   // 多前置依赖
   prerequisites  SkillUnitPrerequisite[] @relation("UnitPrerequisites")
   dependentUnits SkillUnitPrerequisite[] @relation("UnitDependents")
