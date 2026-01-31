@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Exercise } from '../../types';
 import { api } from '../../services/api';
 import { BookOpen, CheckCircle, Circle, Search, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
@@ -31,34 +32,35 @@ const difficultyColors: Record<string, string> = {
   HARD: 'bg-red-500',
 };
 
-const difficultyLabels: Record<string, string> = {
-  EASY: '简单',
-  MEDIUM: '中等',
-  HARD: '困难',
-};
-
-const difficulties = ['全部', 'EASY', 'MEDIUM', 'HARD'];
-
 export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
+  const { t } = useTranslation();
   const [exercises, setExercises] = useState<ExerciseListItem[]>([]);
-  const [categories, setCategories] = useState<string[]>(['全部']);
+  const [categories, setCategories] = useState<string[]>([t('common.all')]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // 筛选状态
-  const [selectedCategory, setSelectedCategory] = useState('全部');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('全部');
-  const [selectedStatus, setSelectedStatus] = useState('全部');
+  const [selectedCategory, setSelectedCategory] = useState(t('common.all'));
+  const [selectedDifficulty, setSelectedDifficulty] = useState(t('common.all'));
+  const [selectedStatus, setSelectedStatus] = useState(t('common.all'));
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+
+  const difficultyLabels: Record<string, string> = {
+    EASY: t('exercises.easy'),
+    MEDIUM: t('exercises.medium'),
+    HARD: t('exercises.hard'),
+  };
+
+  const difficulties = [t('common.all'), 'EASY', 'MEDIUM', 'HARD'];
 
   // 获取分类列表
   useEffect(() => {
     api.getExerciseCategories('EXERCISE_LIBRARY')
-      .then(cats => setCategories(['全部', ...cats]))
+      .then(cats => setCategories([t('common.all'), ...cats]))
       .catch(console.error);
-  }, []);
+  }, [t]);
 
   // 获取练习题列表
   const fetchExercises = useCallback(async () => {
@@ -80,8 +82,8 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
         limit: 20,
       };
 
-      if (selectedCategory !== '全部') params.category = selectedCategory;
-      if (selectedDifficulty !== '全部') params.difficulty = selectedDifficulty;
+      if (selectedCategory !== t('common.all')) params.category = selectedCategory;
+      if (selectedDifficulty !== t('common.all')) params.difficulty = selectedDifficulty;
       if (selectedStatus === 'completed') params.status = 'completed';
       if (selectedStatus === 'incomplete') params.status = 'incomplete';
       if (searchQuery.trim()) params.search = searchQuery.trim();
@@ -91,11 +93,11 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
       setExercises(response.exercises);
       setPagination(response.pagination);
     } catch (err: any) {
-      setError(err.message || '加载失败');
+      setError(err.message || t('common.error'));
     } finally {
       setLoading(false);
     }
-  }, [currentPage, selectedCategory, selectedDifficulty, selectedStatus, searchQuery]);
+  }, [currentPage, selectedCategory, selectedDifficulty, selectedStatus, searchQuery, t]);
 
   useEffect(() => {
     fetchExercises();
@@ -116,7 +118,7 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
       <div className="h-full flex items-center justify-center bg-gray-900">
         <div className="text-center">
           <Loader2 className="animate-spin h-12 w-12 text-blue-500 mx-auto" />
-          <p className="mt-4 text-gray-400">加载题目中...</p>
+          <p className="mt-4 text-gray-400">{t('exercises.loadingExercises')}</p>
         </div>
       </div>
     );
@@ -132,7 +134,7 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
             onClick={fetchExercises}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
-            重试
+            {t('common.retry')}
           </button>
         </div>
       </div>
@@ -145,11 +147,11 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
       <div className="p-4 border-b border-gray-700">
         <div className="flex items-center gap-2 mb-3">
           <BookOpen size={24} className="text-blue-400" />
-          <h2 className="text-xl font-bold">练习题库</h2>
+          <h2 className="text-xl font-bold">{t('exercises.title')}</h2>
         </div>
         <div className="flex items-center gap-4 text-sm">
           <span className="text-gray-400">
-            完成进度: <span className="text-green-400 font-bold">{completedCount}</span> / {totalCount}
+            {t('exercises.completionProgress')}: <span className="text-green-400 font-bold">{completedCount}</span> / {totalCount}
           </span>
           <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
             <div
@@ -168,7 +170,7 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="搜索题目..."
+            placeholder={t('exercises.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
           />
         </div>
@@ -178,7 +180,7 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
       <div className="p-4 border-b border-gray-700 space-y-3">
         {/* 分类筛选 */}
         <div>
-          <label className="text-sm text-gray-400 mb-1 block">分类</label>
+          <label className="text-sm text-gray-400 mb-1 block">{t('exercises.category')}</label>
           <div className="flex flex-wrap gap-2">
             {categories.map(cat => (
               <button
@@ -198,7 +200,7 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
 
         {/* 难度筛选 */}
         <div>
-          <label className="text-sm text-gray-400 mb-1 block">难度</label>
+          <label className="text-sm text-gray-400 mb-1 block">{t('exercises.difficulty')}</label>
           <div className="flex gap-2">
             {difficulties.map(diff => (
               <button
@@ -210,7 +212,7 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
-                {diff === '全部' ? '全部' : difficultyLabels[diff]}
+                {diff === t('common.all') ? t('common.all') : difficultyLabels[diff]}
               </button>
             ))}
           </div>
@@ -218,9 +220,9 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
 
         {/* 状态筛选 */}
         <div>
-          <label className="text-sm text-gray-400 mb-1 block">状态</label>
+          <label className="text-sm text-gray-400 mb-1 block">{t('exercises.status')}</label>
           <div className="flex gap-2">
-            {['全部', 'incomplete', 'completed'].map(status => (
+            {[t('common.all'), 'incomplete', 'completed'].map(status => (
               <button
                 key={status}
                 onClick={() => setSelectedStatus(status)}
@@ -230,7 +232,7 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
-                {status === '全部' ? '全部' : status === 'completed' ? '已完成' : '未完成'}
+                {status === t('common.all') ? t('common.all') : status === 'completed' ? t('exercises.completed') : t('exercises.incomplete')}
               </button>
             ))}
           </div>
@@ -248,7 +250,7 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
         {!loading && exercises.length === 0 && (
           <div className="text-center py-8 text-gray-400">
             <BookOpen size={48} className="mx-auto mb-4 opacity-50" />
-            <p>没有找到符合条件的题目</p>
+            <p>{t('exercises.noExercisesFound')}</p>
           </div>
         )}
 
@@ -292,7 +294,7 @@ export default function ExerciseList({ onSelectExercise }: ExerciseListProps) {
       {pagination && pagination.totalPages > 1 && (
         <div className="p-4 border-t border-gray-700 flex items-center justify-between">
           <span className="text-sm text-gray-400">
-            第 {pagination.page} / {pagination.totalPages} 页，共 {pagination.total} 题
+            {t('exercises.page', { current: pagination.page, total: pagination.totalPages, count: pagination.total })}
           </span>
           <div className="flex gap-2">
             <button

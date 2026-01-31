@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { UserRole, AppSettings, Student, DailyStatus } from '../../types';
 import { calculateLevel } from '../../data/exercises';
 import { api } from '../../services/api';
 import HeartsDisplay from '../Hearts/HeartsDisplay';
 import GemsDisplay from '../Gems/GemsDisplay';
+import LanguageSwitcher from './LanguageSwitcher';
 import {
   Settings,
   User,
@@ -52,6 +54,7 @@ export default function Header({
   onLogout,
   onViewChange
 }: HeaderProps) {
+  const { t } = useTranslation();
   const [showSettings, setShowSettings] = useState(false);
   const [dailyStatus, setDailyStatus] = useState<DailyStatus | null>(null);
   const [reviewCount, setReviewCount] = useState(0);
@@ -121,7 +124,7 @@ export default function Header({
               className={`p-2 rounded-lg transition-colors ${
                 showFileExplorer ? 'bg-white/20 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
               }`}
-              title="文件浏览器"
+              title={t('header.fileExplorer')}
             >
               <FolderTree size={18} />
             </button>
@@ -130,7 +133,7 @@ export default function Header({
               className={`p-2 rounded-lg transition-colors ${
                 showOutput ? 'bg-white/20 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
               }`}
-              title="输出面板"
+              title={t('header.outputPanel')}
             >
               <Terminal size={18} />
             </button>
@@ -139,7 +142,7 @@ export default function Header({
               className={`p-2 rounded-lg transition-colors ${
                 showAIPanel ? 'bg-white/20 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
               }`}
-              title="AI 助手"
+              title={t('header.aiAssistant')}
             >
               <MessageSquare size={18} />
             </button>
@@ -154,14 +157,14 @@ export default function Header({
               <button
                 onClick={() => onViewChange?.('skill-tree')}
                 className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl hover:bg-white/20 transition-colors"
-                title={`今日目标: ${dailyStatus.xpEarned}/${dailyStatus.goalXp} XP`}
+                title={`${t('header.dailyGoal')}: ${dailyStatus.xpEarned}/${dailyStatus.goalXp} XP`}
               >
                 <div className="relative">
                   <DailyProgressRing progress={dailyStatus.progress} size={32} />
                   <Target className="absolute inset-0 m-auto text-white" size={14} />
                 </div>
                 <div className="text-left">
-                  <p className="text-[10px] text-white/70">今日目标</p>
+                  <p className="text-[10px] text-white/70">{t('header.dailyGoal')}</p>
                   <p className="text-xs font-bold text-white">{dailyStatus.xpEarned}/{dailyStatus.goalXp}</p>
                 </div>
               </button>
@@ -172,7 +175,7 @@ export default function Header({
               <button
                 onClick={() => onViewChange?.('review')}
                 className="flex items-center gap-1.5 bg-orange-500/20 px-3 py-1.5 rounded-xl hover:bg-orange-500/30 transition-colors"
-                title={`${reviewCount} 项待复习`}
+                title={`${reviewCount} ${t('header.reviewReminder')}`}
               >
                 <RefreshCw className="text-orange-300" size={18} />
                 <span className="text-white font-bold text-sm">{reviewCount}</span>
@@ -216,6 +219,9 @@ export default function Header({
 
         {/* 右侧控制 */}
         <div className="flex items-center gap-3">
+          {/* 语言切换 */}
+          <LanguageSwitcher />
+
           {/* 用户名和角色显示 */}
           {userName && (
             <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-xl">
@@ -234,7 +240,7 @@ export default function Header({
           <button
             onClick={() => setShowSettings(true)}
             className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-            title="设置"
+            title={t('common.settings')}
           >
             <Settings size={20} />
           </button>
@@ -244,7 +250,7 @@ export default function Header({
             <button
               onClick={onLogout}
               className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-              title="退出登录"
+              title={t('common.logout')}
             >
               <LogOut size={20} />
             </button>
@@ -258,7 +264,7 @@ export default function Header({
           <div className="bg-white rounded-2xl w-[480px] shadow-2xl">
             {/* 弹窗头部 */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-xl font-bold text-gray-800">设置</h2>
+              <h2 className="text-xl font-bold text-gray-800">{t('settings.title')}</h2>
               <button
                 onClick={() => setShowSettings(false)}
                 className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
@@ -273,12 +279,12 @@ export default function Header({
               <div>
                 <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
                   <Zap size={16} className="text-[#007acc]" />
-                  编辑器设置
+                  {t('settings.editor')}
                 </h3>
                 <div className="space-y-4">
                   {/* 字体大小 */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">字体大小</span>
+                    <span className="text-sm text-gray-600">{t('settings.fontSize')}</span>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => onSettingsChange({ ...settings, fontSize: Math.max(12, settings.fontSize - 2) })}
@@ -298,7 +304,7 @@ export default function Header({
 
                   {/* Tab 大小 */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Tab 缩进</span>
+                    <span className="text-sm text-gray-600">{t('settings.tabSize')}</span>
                     <div className="flex items-center gap-2">
                       {[2, 4].map(size => (
                         <button
@@ -310,7 +316,7 @@ export default function Header({
                               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                           }`}
                         >
-                          {size} 空格
+                          {size} {t('settings.spaces')}
                         </button>
                       ))}
                     </div>
@@ -321,19 +327,19 @@ export default function Header({
               {/* 快捷键提示 */}
               <div>
                 <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  ⌨️ 快捷键
+                  ⌨️ {t('settings.shortcuts')}
                 </h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                    <span className="text-gray-600">运行代码</span>
+                    <span className="text-gray-600">{t('settings.runCode')}</span>
                     <kbd className="px-2 py-1 bg-white border border-gray-200 rounded text-gray-700 text-xs font-mono">Ctrl + Enter</kbd>
                   </div>
                   <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                    <span className="text-gray-600">保存文件</span>
+                    <span className="text-gray-600">{t('settings.saveFile')}</span>
                     <kbd className="px-2 py-1 bg-white border border-gray-200 rounded text-gray-700 text-xs font-mono">Ctrl + S</kbd>
                   </div>
                   <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                    <span className="text-gray-600">格式化代码</span>
+                    <span className="text-gray-600">{t('settings.formatCode')}</span>
                     <kbd className="px-2 py-1 bg-white border border-gray-200 rounded text-gray-700 text-xs font-mono">Shift + Alt + F</kbd>
                   </div>
                 </div>
@@ -346,7 +352,7 @@ export default function Header({
                 onClick={() => setShowSettings(false)}
                 className="px-6 py-2.5 bg-[#007acc] hover:bg-[#005a9e] text-white rounded-xl font-bold transition-colors"
               >
-                完成
+                {t('common.done')}
               </button>
             </div>
           </div>

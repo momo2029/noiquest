@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
 import { SkillUnit, DailyQuest, DailyStatus, TierInfo, ModuleInfo, Tier } from '../../types';
 import TierSelector from './TierSelector';
@@ -12,6 +13,7 @@ interface SkillTreeViewProps {
 }
 
 export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
+  const { t } = useTranslation();
   // 数据状态
   const [tiers, setTiers] = useState<TierInfo[]>([]);
   const [modules, setModules] = useState<ModuleInfo[]>([]);
@@ -113,7 +115,7 @@ export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
       <div className="flex-1 flex items-center justify-center bg-gradient-to-b from-[#1a1a2e] to-[#16213e]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-white/70">加载技能树...</p>
+          <p className="text-white/70">{t('skillTree.loadingSkillTree')}</p>
         </div>
       </div>
     );
@@ -124,9 +126,9 @@ export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
       {/* 顶部：梯队选择器 */}
       <div className="p-4 border-b border-white/10 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-white mb-1">NOI 知识图谱</h1>
+          <h1 className="text-xl font-bold text-white mb-1">{t('skillTree.title')}</h1>
           <p className="text-sm text-gray-400">
-            共 {skillTree.length} 个知识点
+            {t('skillTree.knowledgePoints', { count: skillTree.length })}
           </p>
         </div>
         <TierSelector
@@ -160,11 +162,11 @@ export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
             <div className="p-4 border-b border-white/10">
               <div className="flex items-center gap-2 mb-3">
                 <Target className="text-yellow-400" size={20} />
-                <h3 className="text-white font-bold">今日目标</h3>
+                <h3 className="text-white font-bold">{t('skillTree.todayGoal')}</h3>
               </div>
               <div className="bg-white/5 rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/70 text-sm">经验值</span>
+                  <span className="text-white/70 text-sm">{t('skillTree.experience')}</span>
                   <span className="text-white font-bold">
                     {dailyStatus.xpEarned} / {dailyStatus.goalXp} XP
                   </span>
@@ -180,7 +182,7 @@ export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
                 {dailyStatus.goalMet && (
                   <p className="text-green-400 text-sm mt-2 flex items-center gap-1">
                     <Trophy size={14} />
-                    目标已达成！
+                    {t('skillTree.goalAchieved')}
                   </p>
                 )}
               </div>
@@ -188,9 +190,9 @@ export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
               {/* 连续天数 */}
               <div className="flex items-center gap-2 mt-3 bg-orange-500/10 rounded-lg px-3 py-2">
                 <Flame className="text-orange-400" size={18} />
-                <span className="text-white/80 text-sm">连续学习</span>
+                <span className="text-white/80 text-sm">{t('skillTree.continuousLearning')}</span>
                 <span className="text-orange-400 font-bold ml-auto">
-                  {dailyStatus.streak} 天
+                  {dailyStatus.streak} {t('common.days')}
                 </span>
               </div>
             </div>
@@ -213,7 +215,7 @@ export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
 
               {selectedUnit.courses && selectedUnit.courses.length > 0 ? (
                 <div className="space-y-2">
-                  <h4 className="text-sm text-gray-500 mb-2">关联课程</h4>
+                  <h4 className="text-sm text-gray-500 mb-2">{t('skillTree.relatedCourses')}</h4>
                   {selectedUnit.courses.map((course) => (
                     <div
                       key={course.id}
@@ -239,14 +241,14 @@ export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
               ) : (
                 <div className="text-center py-8 text-gray-500">
                   <BookOpen size={32} className="mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">课程开发中...</p>
+                  <p className="text-sm">{t('skillTree.courseInDevelopment')}</p>
                 </div>
               )}
             </div>
           ) : (
             /* 每日任务 */
             <div className="flex-1 overflow-y-auto p-4">
-              <h3 className="text-white font-bold mb-3">每日任务</h3>
+              <h3 className="text-white font-bold mb-3">{t('skillTree.dailyQuests')}</h3>
               <div className="space-y-3">
                 {dailyQuests.map((quest) => (
                   <div
@@ -272,7 +274,7 @@ export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
                         </p>
                         {quest.gemsReward > 0 && (
                           <p className="text-blue-400 text-xs">
-                            +{quest.gemsReward} 宝石
+                            +{quest.gemsReward} {t('common.gems')}
                           </p>
                         )}
                       </div>
@@ -294,11 +296,11 @@ export default function SkillTreeView({ onStartSession }: SkillTreeViewProps) {
                           onClick={() => handleClaimQuest(quest.id)}
                           className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-lg transition-colors"
                         >
-                          领取奖励
+                          {t('skillTree.claimReward')}
                         </button>
                       )}
                       {quest.claimed && (
-                        <span className="text-green-400 text-xs">已领取</span>
+                        <span className="text-green-400 text-xs">{t('skillTree.claimed')}</span>
                       )}
                     </div>
                   </div>

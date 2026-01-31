@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Trophy, Lock, CheckCircle, Star, Flame, Target, Zap, Award } from 'lucide-react';
 import { api } from '../../services/api';
 
@@ -26,13 +27,6 @@ const RARITY_COLORS: Record<string, { bg: string; border: string; text: string }
   LEGENDARY: { bg: 'bg-yellow-900/50', border: 'border-yellow-500', text: 'text-yellow-400' },
 };
 
-const RARITY_NAMES: Record<string, string> = {
-  COMMON: '普通',
-  RARE: '稀有',
-  EPIC: '史诗',
-  LEGENDARY: '传说',
-};
-
 const CATEGORY_ICONS: Record<string, any> = {
   MILESTONE: Target,
   STREAK: Flame,
@@ -42,16 +36,24 @@ const CATEGORY_ICONS: Record<string, any> = {
   COLLECTION: Trophy,
 };
 
-const CATEGORY_NAMES: Record<string, string> = {
-  MILESTONE: '里程碑',
-  STREAK: '连续学习',
-  MASTERY: '掌握度',
-  PERFECT: '完美表现',
-  SPEED: '速度',
-  COLLECTION: '收集',
-};
-
 export default function AchievementsView() {
+  const { t } = useTranslation();
+
+  const RARITY_NAMES: Record<string, string> = {
+    COMMON: t('achievements.common'),
+    RARE: t('achievements.rare'),
+    EPIC: t('achievements.epic'),
+    LEGENDARY: t('achievements.legendary'),
+  };
+
+  const CATEGORY_NAMES: Record<string, string> = {
+    MILESTONE: t('achievements.milestone'),
+    STREAK: t('achievements.streak'),
+    MASTERY: t('achievements.mastery'),
+    PERFECT: t('achievements.perfect'),
+    SPEED: t('achievements.speed'),
+    COLLECTION: t('achievements.collection'),
+  };
   const [achievements, setAchievements] = useState<{
     unlocked: Achievement[];
     inProgress: Achievement[];
@@ -116,9 +118,9 @@ export default function AchievementsView() {
             <Trophy size={32} className="text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold">成就中心</h2>
+            <h2 className="text-2xl font-bold">{t('achievements.title')}</h2>
             <p className="text-gray-400">
-              已解锁 <span className="text-yellow-400 font-bold">{totalUnlocked}</span> / {totalAchievements} 个成就
+              {t('achievements.unlocked')} <span className="text-yellow-400 font-bold">{totalUnlocked}</span> / {totalAchievements} {t('achievements.achievementsCount')}
             </p>
           </div>
           <div className="ml-auto">
@@ -158,10 +160,10 @@ export default function AchievementsView() {
       <div className="flex flex-wrap gap-4">
         <div className="flex gap-2">
           {[
-            { key: 'all', label: '全部' },
-            { key: 'unlocked', label: `已解锁 (${achievements.unlocked.length})` },
-            { key: 'inProgress', label: `进行中 (${achievements.inProgress.length})` },
-            { key: 'locked', label: `未解锁 (${achievements.locked.length})` },
+            { key: 'all', label: t('common.all') },
+            { key: 'unlocked', label: `${t('achievements.unlocked')} (${achievements.unlocked.length})` },
+            { key: 'inProgress', label: `${t('achievements.inProgress')} (${achievements.inProgress.length})` },
+            { key: 'locked', label: `${t('achievements.locked')} (${achievements.locked.length})` },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -182,7 +184,7 @@ export default function AchievementsView() {
           onChange={(e) => setCategoryFilter(e.target.value)}
           className="px-4 py-2 bg-gray-700 rounded-lg text-gray-300"
         >
-          <option value="all">所有类型</option>
+          <option value="all">{t('achievements.allTypes')}</option>
           {Object.entries(CATEGORY_NAMES).map(([key, name]) => (
             <option key={key} value={key}>{name}</option>
           ))}
@@ -225,7 +227,7 @@ export default function AchievementsView() {
                   {isInProgress && achievement.progress !== undefined && (
                     <div className="mt-3">
                       <div className="flex justify-between text-xs text-gray-400 mb-1">
-                        <span>进度</span>
+                        <span>{t('achievements.progress')}</span>
                         <span>{achievement.progress} / {achievement.target}</span>
                       </div>
                       <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
@@ -240,7 +242,7 @@ export default function AchievementsView() {
                   {/* 解锁时间 */}
                   {isUnlocked && achievement.unlockedAt && (
                     <p className="text-xs text-gray-500 mt-2">
-                      解锁于 {new Date(achievement.unlockedAt).toLocaleDateString()}
+                      {t('achievements.unlockedAt')} {new Date(achievement.unlockedAt).toLocaleDateString()}
                     </p>
                   )}
 
@@ -271,7 +273,7 @@ export default function AchievementsView() {
 
       {getFilteredAchievements().length === 0 && (
         <div className="text-center py-12 text-gray-400">
-          没有符合条件的成就
+          {t('achievements.noResults')}
         </div>
       )}
     </div>

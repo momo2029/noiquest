@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserPlus, Eye, EyeOff, Loader2 } from 'lucide-react';
 
@@ -7,6 +8,7 @@ interface RegisterPageProps {
 }
 
 export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
+  const { t } = useTranslation();
   const { register } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,22 +24,22 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
     setError('');
 
     if (!username.trim() || !password.trim() || !name.trim()) {
-      setError('请填写所有必填项');
+      setError(t('auth.fillAllFields'));
       return;
     }
 
     if (username.length < 3) {
-      setError('用户名至少需要3个字符');
+      setError(t('auth.usernameMinLength'));
       return;
     }
 
     if (password.length < 6) {
-      setError('密码至少需要6个字符');
+      setError(t('auth.passwordMinLengthError'));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('两次输入的密码不一致');
+      setError(t('auth.passwordMismatch'));
       return;
     }
 
@@ -50,7 +52,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
         role,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : '注册失败，请重试');
+      setError(err instanceof Error ? err.message : t('auth.registerFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -67,13 +69,13 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
           <h1 className="text-2xl font-black text-white mb-1">
             NOI<span className="text-[#58cc02]">Quest</span>
           </h1>
-          <p className="text-blue-200 text-sm">信息学奥赛 C++ 训练营</p>
+          <p className="text-blue-200 text-sm">{t('app.slogan')}</p>
         </div>
 
         {/* 注册表单 */}
         <div className="bg-white rounded-2xl p-6 shadow-xl">
           <h2 className="text-xl font-bold text-gray-800 text-center mb-4">
-            创建账号
+            {t('auth.createAccount')}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-3">
@@ -86,7 +88,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
             {/* 角色选择 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                选择身份
+                {t('auth.selectRole')}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -100,7 +102,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
                 >
                   <div className="text-2xl mb-1">🧑‍💻</div>
                   <p className={`font-semibold text-sm ${role === 'STUDENT' ? 'text-[#58cc02]' : 'text-gray-700'}`}>
-                    我是选手
+                    {t('auth.iAmStudent')}
                   </p>
                 </button>
                 <button
@@ -114,7 +116,7 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
                 >
                   <div className="text-2xl mb-1">👨‍🏫</div>
                   <p className={`font-semibold text-sm ${role === 'TEACHER' ? 'text-[#58cc02]' : 'text-gray-700'}`}>
-                    我是教练
+                    {t('auth.iAmTeacher')}
                   </p>
                 </button>
               </div>
@@ -122,13 +124,13 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                用户名
+                {t('auth.username')}
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="3-20个字符"
+                placeholder={t('auth.usernameHint')}
                 className="w-full px-4 py-2.5 bg-gray-100 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#58cc02] transition-colors"
                 disabled={isLoading}
               />
@@ -136,13 +138,13 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {role === 'STUDENT' ? '昵称' : '姓名'}
+                {role === 'STUDENT' ? t('auth.nickname') : t('auth.name')}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={role === 'STUDENT' ? '给自己起个酷炫的名字' : '输入您的姓名'}
+                placeholder={role === 'STUDENT' ? t('auth.enterNickname') : t('auth.enterName')}
                 className="w-full px-4 py-2.5 bg-gray-100 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#58cc02] transition-colors"
                 disabled={isLoading}
               />
@@ -150,14 +152,14 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                密码
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="至少6个字符"
+                  placeholder={t('auth.passwordMinLength')}
                   className="w-full px-4 py-2.5 bg-gray-100 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#58cc02] transition-colors pr-12"
                   disabled={isLoading}
                 />
@@ -173,13 +175,13 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                确认密码
+                {t('auth.confirmPassword')}
               </label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="再次输入密码"
+                placeholder={t('auth.reenterPassword')}
                 className="w-full px-4 py-2.5 bg-gray-100 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#58cc02] transition-colors"
                 disabled={isLoading}
               />
@@ -193,12 +195,12 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
               {isLoading ? (
                 <>
                   <Loader2 className="animate-spin" size={20} />
-                  注册中...
+                  {t('auth.registering')}
                 </>
               ) : (
                 <>
                   <UserPlus size={20} />
-                  注册
+                  {t('auth.register')}
                 </>
               )}
             </button>
@@ -206,12 +208,12 @@ export default function RegisterPage({ onSwitchToLogin }: RegisterPageProps) {
 
           <div className="mt-4 text-center">
             <p className="text-gray-600 text-sm">
-              已有账号？{' '}
+              {t('auth.hasAccount')}{' '}
               <button
                 onClick={onSwitchToLogin}
                 className="text-[#58cc02] hover:text-[#4caf00] font-semibold"
               >
-                立即登录
+                {t('auth.loginNow')}
               </button>
             </p>
           </div>

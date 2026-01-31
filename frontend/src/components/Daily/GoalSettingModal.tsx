@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DailyGoalLevel } from '../../types';
 import { X, Target, Zap } from 'lucide-react';
 
@@ -8,15 +9,16 @@ interface GoalSettingModalProps {
   onClose: () => void;
 }
 
-const GOAL_OPTIONS: { level: DailyGoalLevel; label: string; xp: number; description: string }[] = [
-  { level: 'CASUAL', label: '休闲', xp: 10, description: '每天轻松学习' },
-  { level: 'REGULAR', label: '常规', xp: 20, description: '保持稳定进步' },
-  { level: 'SERIOUS', label: '认真', xp: 30, description: '加快学习速度' },
-  { level: 'INTENSE', label: '挑战', xp: 50, description: '全力以赴' },
-];
-
 export default function GoalSettingModal({ currentGoal, onSave, onClose }: GoalSettingModalProps) {
+  const { t } = useTranslation();
   const [selectedGoal, setSelectedGoal] = useState<DailyGoalLevel>(currentGoal);
+
+  const goalOptions = [
+    { level: 'CASUAL' as DailyGoalLevel, label: t('daily.casual'), xp: 10, description: t('daily.casualDesc') },
+    { level: 'REGULAR' as DailyGoalLevel, label: t('daily.regular'), xp: 20, description: t('daily.regularDesc') },
+    { level: 'SERIOUS' as DailyGoalLevel, label: t('daily.serious'), xp: 30, description: t('daily.seriousDesc') },
+    { level: 'INTENSE' as DailyGoalLevel, label: t('daily.intense'), xp: 50, description: t('daily.intenseDesc') },
+  ];
 
   const handleSave = () => {
     onSave(selectedGoal);
@@ -29,7 +31,7 @@ export default function GoalSettingModal({ currentGoal, onSave, onClose }: GoalS
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <div className="flex items-center gap-2">
             <Target className="text-yellow-400" size={24} />
-            <h2 className="text-xl font-bold text-white">设置每日目标</h2>
+            <h2 className="text-xl font-bold text-white">{t('daily.setGoalTitle')}</h2>
           </div>
           <button
             onClick={onClose}
@@ -42,12 +44,12 @@ export default function GoalSettingModal({ currentGoal, onSave, onClose }: GoalS
         {/* 内容 */}
         <div className="p-6">
           <p className="text-white/70 text-sm mb-4">
-            选择适合你的每日学习目标，坚持完成可以获得额外奖励！
+            {t('daily.goalDescription')}
           </p>
 
           {/* 目标选项 */}
           <div className="space-y-3">
-            {GOAL_OPTIONS.map(option => (
+            {goalOptions.map(option => (
               <button
                 key={option.level}
                 onClick={() => setSelectedGoal(option.level)}
@@ -80,13 +82,13 @@ export default function GoalSettingModal({ currentGoal, onSave, onClose }: GoalS
             onClick={onClose}
             className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl font-medium transition-colors"
           >
-            取消
+            {t('common.cancel')}
           </button>
           <button
             onClick={handleSave}
             className="flex-1 py-3 bg-yellow-500 hover:bg-yellow-600 text-yellow-900 rounded-xl font-bold transition-colors"
           >
-            保存
+            {t('common.save')}
           </button>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { UserRole } from '../../types';
 import {
   Code,
@@ -21,23 +22,25 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ role, currentView, onViewChange }: SidebarProps) {
+  const { t } = useTranslation();
+
   const studentMenuItems = [
- 
-    { id: 'skill-tree', icon: Map, label: '技能树', color: 'green' },
-    { id: 'knowledge-map', icon: GitBranch, label: '知识图谱', color: 'cyan' },
-    { id: 'editor', icon: Code, label: '代码编辑', color: 'blue' },
-    { id: 'exercises', icon: BookOpen, label: '练习题库', color: 'cyan' },
-    { id: 'review', icon: RefreshCw, label: '复习', color: 'orange' },
-    { id: 'leaderboard', icon: Trophy, label: '排行榜', color: 'yellow' },
-    { id: 'achievements', icon: Award, label: '成就', color: 'purple' },
-    { id: 'analytics', icon: LineChart, label: '学习报告', color: 'pink' },
-    { id: 'progress', icon: BarChart3, label: '学习进度', color: 'purple' },
+
+    { id: 'skill-tree', icon: Map, label: t('nav.skillTree'), color: 'green' },
+    { id: 'knowledge-map', icon: GitBranch, label: t('nav.knowledgeMap'), color: 'cyan' },
+    { id: 'editor', icon: Code, label: t('nav.codeEditor'), color: 'blue' },
+    { id: 'exercises', icon: BookOpen, label: t('nav.exercises'), color: 'cyan' },
+    { id: 'review', icon: RefreshCw, label: t('nav.review'), color: 'orange' },
+    { id: 'leaderboard', icon: Trophy, label: t('nav.leaderboard'), color: 'yellow' },
+    { id: 'achievements', icon: Award, label: t('nav.achievements'), color: 'purple' },
+    { id: 'analytics', icon: LineChart, label: t('nav.analytics'), color: 'pink' },
+    { id: 'progress', icon: BarChart3, label: t('nav.progress'), color: 'purple' },
   ];
 
   const teacherMenuItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: '仪表盘', color: 'blue' },
-    { id: 'students', icon: Users, label: '学生管理', color: 'green' },
-    { id: 'assignments', icon: ClipboardList, label: '作业管理', color: 'purple' },
+    { id: 'dashboard', icon: LayoutDashboard, label: t('nav.dashboard'), color: 'blue' },
+    { id: 'students', icon: Users, label: t('nav.students'), color: 'green' },
+    { id: 'assignments', icon: ClipboardList, label: t('nav.assignments'), color: 'purple' },
   ];
 
   const menuItems = role === 'student' ? studentMenuItems : teacherMenuItems;

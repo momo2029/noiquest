@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
 import { ReviewStatus, KnowledgeMastery } from '../../types';
 import MistakeBook from './MistakeBook';
@@ -10,6 +11,7 @@ interface ReviewDashboardProps {
 }
 
 export default function ReviewDashboard({ onStartReview }: ReviewDashboardProps) {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<ReviewStatus | null>(null);
   const [mastery, setMastery] = useState<KnowledgeMastery[]>([]);
   const [activeTab, setActiveTab] = useState<'overview' | 'mistakes' | 'mastery'>('overview');
@@ -40,7 +42,7 @@ export default function ReviewDashboard({ onStartReview }: ReviewDashboardProps)
       <div className="flex-1 flex items-center justify-center bg-gradient-to-b from-[#1a1a2e] to-[#16213e]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-white/70">加载复习数据...</p>
+          <p className="text-white/70">{t('review.loadingData')}</p>
         </div>
       </div>
     );
@@ -51,8 +53,8 @@ export default function ReviewDashboard({ onStartReview }: ReviewDashboardProps)
       <div className="max-w-4xl mx-auto p-8">
         {/* 标题 */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-black text-white mb-2">复习中心</h1>
-          <p className="text-white/60">巩固知识，查漏补缺</p>
+          <h1 className="text-3xl font-black text-white mb-2">{t('review.title')}</h1>
+          <p className="text-white/60">{t('review.subtitle')}</p>
         </div>
 
         {/* 复习状态卡片 */}
@@ -62,21 +64,21 @@ export default function ReviewDashboard({ onStartReview }: ReviewDashboardProps)
             <div className="bg-orange-500/20 rounded-2xl p-6 text-center">
               <RefreshCw className="text-orange-400 mx-auto mb-2" size={32} />
               <p className="text-3xl font-black text-white">{status.dueCount}</p>
-              <p className="text-white/60 text-sm">待复习知识点</p>
+              <p className="text-white/60 text-sm">{t('review.dueKnowledgePoints')}</p>
             </div>
 
             {/* 错题 */}
             <div className="bg-red-500/20 rounded-2xl p-6 text-center">
               <AlertTriangle className="text-red-400 mx-auto mb-2" size={32} />
               <p className="text-3xl font-black text-white">{status.mistakeCount}</p>
-              <p className="text-white/60 text-sm">未复习错题</p>
+              <p className="text-white/60 text-sm">{t('review.unreviewedMistakes')}</p>
             </div>
 
             {/* 薄弱点 */}
             <div className="bg-purple-500/20 rounded-2xl p-6 text-center">
               <Brain className="text-purple-400 mx-auto mb-2" size={32} />
               <p className="text-3xl font-black text-white">{status.weakPoints.length}</p>
-              <p className="text-white/60 text-sm">薄弱知识点</p>
+              <p className="text-white/60 text-sm">{t('review.weakPoints')}</p>
             </div>
           </div>
         )}
@@ -89,7 +91,7 @@ export default function ReviewDashboard({ onStartReview }: ReviewDashboardProps)
             className="p-4 bg-red-500 hover:bg-red-600 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-xl text-white font-bold transition-colors flex items-center justify-center gap-2"
           >
             <BookOpen size={20} />
-            复习错题
+            {t('review.reviewMistakes')}
           </button>
           <button
             onClick={() => onStartReview('knowledge')}
@@ -97,7 +99,7 @@ export default function ReviewDashboard({ onStartReview }: ReviewDashboardProps)
             className="p-4 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-xl text-white font-bold transition-colors flex items-center justify-center gap-2"
           >
             <Brain size={20} />
-            复习知识点
+            {t('review.reviewKnowledge')}
           </button>
           <button
             onClick={() => onStartReview('mixed')}
@@ -105,16 +107,16 @@ export default function ReviewDashboard({ onStartReview }: ReviewDashboardProps)
             className="p-4 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-xl text-white font-bold transition-colors flex items-center justify-center gap-2"
           >
             <Play size={20} />
-            综合复习
+            {t('review.mixedReview')}
           </button>
         </div>
 
         {/* 标签页 */}
         <div className="flex gap-2 mb-6">
           {[
-            { id: 'overview', label: '概览', icon: TrendingUp },
-            { id: 'mistakes', label: '错题本', icon: BookOpen },
-            { id: 'mastery', label: '掌握度', icon: Brain },
+            { id: 'overview', label: t('review.overview'), icon: TrendingUp },
+            { id: 'mistakes', label: t('review.mistakeBook'), icon: BookOpen },
+            { id: 'mastery', label: t('review.mastery'), icon: Brain },
           ].map(tab => (
             <button
               key={tab.id}
@@ -137,7 +139,7 @@ export default function ReviewDashboard({ onStartReview }: ReviewDashboardProps)
         <div className="bg-[#252536] rounded-2xl p-6">
           {activeTab === 'overview' && status && (
             <div>
-              <h3 className="text-white font-bold mb-4">薄弱知识点</h3>
+              <h3 className="text-white font-bold mb-4">{t('review.weakKnowledgePoints')}</h3>
               {status.weakPoints.length > 0 ? (
                 <div className="space-y-3">
                   {status.weakPoints.map(point => (
@@ -147,19 +149,19 @@ export default function ReviewDashboard({ onStartReview }: ReviewDashboardProps)
                     >
                       <div>
                         <p className="text-white font-medium">{point.key}</p>
-                        <p className="text-white/50 text-sm">{point.type === 'category' ? '分类' : '单元'}</p>
+                        <p className="text-white/50 text-sm">{point.type === 'category' ? t('review.categoryType') : t('review.unitType')}</p>
                       </div>
                       <div className="text-right">
                         <p className={`font-bold ${point.masteryLevel < 40 ? 'text-red-400' : 'text-orange-400'}`}>
                           {point.masteryLevel}%
                         </p>
-                        <p className="text-white/50 text-xs">掌握度</p>
+                        <p className="text-white/50 text-xs">{t('review.masteryLevel')}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-white/50 text-center py-8">暂无薄弱知识点，继续保持！</p>
+                <p className="text-white/50 text-center py-8">{t('review.noWeakPoints')}</p>
               )}
             </div>
           )}

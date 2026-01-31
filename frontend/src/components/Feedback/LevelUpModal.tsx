@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Star, Sparkles, Trophy } from 'lucide-react';
 
 interface LevelUpModalProps {
@@ -7,6 +8,7 @@ interface LevelUpModalProps {
 }
 
 export default function LevelUpModal({ level, onClose }: LevelUpModalProps) {
+  const { t } = useTranslation();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function LevelUpModal({ level, onClose }: LevelUpModalProps) {
         </div>
 
         {/* 标题 */}
-        <h2 className="text-3xl font-black text-white mb-2">升级了！</h2>
+        <h2 className="text-3xl font-black text-white mb-2">{t('feedback.levelUp')}</h2>
 
         {/* 等级显示 */}
         <div className="flex items-center justify-center gap-2 mb-4">
@@ -61,14 +63,14 @@ export default function LevelUpModal({ level, onClose }: LevelUpModalProps) {
           <Star className="text-yellow-200 fill-yellow-200" size={24} />
         </div>
 
-        <p className="text-white/80 mb-6">继续努力，解锁更多内容！</p>
+        <p className="text-white/80 mb-6">{t('feedback.keepGoing')}</p>
 
         {/* 关闭按钮 */}
         <button
           onClick={onClose}
           className="px-8 py-3 bg-white text-orange-600 font-bold rounded-xl hover:bg-orange-50 transition-colors"
         >
-          太棒了！
+          {t('feedback.awesome')}
         </button>
       </div>
 

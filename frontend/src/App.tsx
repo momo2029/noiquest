@@ -94,7 +94,7 @@ function MainApp() {
     const savedView = getCurrentView(defaultView);
     // 未登录时只允许公开视图
     if (!isAuthenticated) {
-      return PUBLIC_VIEWS.includes(savedView) ? savedView : 'skill-tree';
+      return PUBLIC_VIEWS.includes(savedView) ? savedView : 'knowledge-map';
     }
     // 验证保存的视图对当前角色是否有效
     if (userRole === 'student' && STUDENT_VIEWS.includes(savedView)) {

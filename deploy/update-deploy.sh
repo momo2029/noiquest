@@ -50,19 +50,7 @@ rsync -avz --progress \
 echo "复制环境变量配置..."
 scp "$PROJECT_DIR/backend/.env.production" "$SERVER:$REMOTE_DIR/deploy/.env"
 
-# 同步博客静态文件到服务器
-echo ""
-echo -e "${YELLOW}[1.5/4] 同步博客静态文件...${NC}"
-ssh $SERVER "mkdir -p $REMOTE_BLOG_DIR"
-rsync -avz --progress \
-    --exclude '.git' \
-    --exclude 'node_modules' \
-    --exclude '.eleventy.js' \
-    --exclude 'package.json' \
-    --exclude 'package-lock.json' \
-    --exclude 'README.md' \
-    --exclude 'src/' \
-    "$PROJECT_DIR/blog/" "$SERVER:$REMOTE_BLOG_DIR/"
+
 
 echo ""
 echo -e "${YELLOW}[2/4] 停止现有服务...${NC}"

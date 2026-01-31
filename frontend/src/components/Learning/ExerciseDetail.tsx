@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Exercise } from '../../types';
 import { api } from '../../services/api';
 import { ArrowLeft, Lightbulb, Eye, EyeOff, CheckCircle, Loader2, Zap } from 'lucide-react';
@@ -42,12 +43,6 @@ const difficultyColors: Record<string, string> = {
   HARD: 'bg-red-500',
 };
 
-const difficultyLabels: Record<string, string> = {
-  EASY: '简单',
-  MEDIUM: '中等',
-  HARD: '困难',
-};
-
 export default function ExerciseDetail({
   exercise,
   onBack,
@@ -55,6 +50,7 @@ export default function ExerciseDetail({
   onComplete,
   isCompleted: initialCompleted
 }: ExerciseDetailProps) {
+  const { t } = useTranslation();
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [detail, setDetail] = useState<ExerciseDetailData | null>(null);
@@ -65,6 +61,12 @@ export default function ExerciseDetail({
     xpEarned: number;
     isFirstCompletion: boolean;
   } | null>(null);
+
+  const difficultyLabels: Record<string, string> = {
+    EASY: t('exercises.easy'),
+    MEDIUM: t('exercises.medium'),
+    HARD: t('exercises.hard'),
+  };
 
   // 获取题目详情
   useEffect(() => {
@@ -102,10 +104,10 @@ export default function ExerciseDetail({
         onComplete();
       } else {
         // 代码验证失败
-        alert(result.message || '代码验证未通过，请检查后重试');
+        alert(result.message || t('exercises.verificationFailed'));
       }
     } catch (error: any) {
-      alert(error.message || '提交失败，请稍后重试');
+      alert(error.message || t('exercises.submitFailed'));
     } finally {
       setCompleting(false);
     }
@@ -138,7 +140,7 @@ export default function ExerciseDetail({
           className="flex items-center gap-2 text-gray-400 hover:text-white mb-3"
         >
           <ArrowLeft size={18} />
-          返回题目列表
+          {t('exercises.backToList')}
         </button>
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">{displayData.title}</h2>
@@ -154,7 +156,7 @@ export default function ExerciseDetail({
             {isCompleted && (
               <span className="flex items-center gap-1 px-2 py-0.5 text-xs rounded bg-green-600 text-white">
                 <CheckCircle size={12} />
-                已完成
+                {t('exercises.completed')}
               </span>
             )}
           </div>
@@ -169,39 +171,39 @@ export default function ExerciseDetail({
             <div className="flex items-center gap-2 text-green-400">
               <CheckCircle size={20} />
               <span className="font-medium">
-                {completionResult.isFirstCompletion ? '恭喜首次完成！' : '再次完成！'}
+                {completionResult.isFirstCompletion ? t('exercises.firstCompletion') : t('exercises.completedAgain')}
               </span>
             </div>
             <p className="text-green-300 mt-1">
-              获得 {completionResult.xpEarned} XP
+              {t('exercises.earned', { xp: completionResult.xpEarned })}
             </p>
           </div>
         )}
 
         {/* 题目描述 */}
         <div className="bg-gray-800 rounded-lg p-4">
-          <h3 className="font-semibold mb-2 text-blue-400">题目描述</h3>
+          <h3 className="font-semibold mb-2 text-blue-400">{t('exercises.problemDescription')}</h3>
           <p className="text-gray-300 whitespace-pre-wrap">{displayData.description}</p>
         </div>
 
         {/* 测试用例预览 */}
         {detail?.testCases && detail.testCases.length > 0 && (
           <div className="bg-gray-800 rounded-lg p-4">
-            <h3 className="font-semibold mb-3 text-blue-400">测试用例</h3>
+            <h3 className="font-semibold mb-3 text-blue-400">{t('exercises.testCases')}</h3>
             <div className="space-y-3">
               {detail.testCases.map((tc, index) => (
                 <div key={tc.id} className="bg-gray-900 rounded p-3">
-                  <div className="text-sm text-gray-400 mb-1">测试用例 {index + 1}</div>
+                  <div className="text-sm text-gray-400 mb-1">{t('exercises.testCase', { index: index + 1 })}</div>
                   {tc.isHidden ? (
-                    <p className="text-gray-500 italic">隐藏测试用例</p>
+                    <p className="text-gray-500 italic">{t('exercises.hiddenTestCase')}</p>
                   ) : (
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="text-gray-400">输入：</span>
+                        <span className="text-gray-400">{t('exercises.input')}</span>
                         <pre className="mt-1 text-gray-300 bg-gray-800 p-2 rounded">{tc.input}</pre>
                       </div>
                       <div>
-                        <span className="text-gray-400">期望输出：</span>
+                        <span className="text-gray-400">{t('exercises.expectedOutput')}</span>
                         <pre className="mt-1 text-gray-300 bg-gray-800 p-2 rounded">{tc.output}</pre>
                       </div>
                     </div>
@@ -220,7 +222,7 @@ export default function ExerciseDetail({
               className="flex items-center gap-2 text-yellow-400 hover:text-yellow-300"
             >
               <Lightbulb size={18} />
-              {showHint ? '隐藏提示' : '查看提示'}
+              {showHint ? t('exercises.hideHint') : t('exercises.showHint')}
             </button>
             {showHint && (
               <p className="mt-3 text-gray-300 pl-6">{detail?.hint || exercise.hint}</p>
@@ -236,7 +238,7 @@ export default function ExerciseDetail({
               className="flex items-center gap-2 text-purple-400 hover:text-purple-300"
             >
               {showSolution ? <EyeOff size={18} /> : <Eye size={18} />}
-              {showSolution ? '隐藏答案' : '查看参考答案'}
+              {showSolution ? t('exercises.hideSolution') : t('exercises.showSolution')}
             </button>
             {showSolution && (
               <pre className="mt-3 p-3 bg-gray-900 rounded text-sm overflow-x-auto">
@@ -249,7 +251,7 @@ export default function ExerciseDetail({
         {/* 代码执行服务提示 */}
         <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-4">
           <p className="text-blue-400 text-sm">
-            提示：点击"加载代码"后，可以在编辑器中运行和调试代码。
+            {t('exercises.codeHint')}
           </p>
         </div>
       </div>
@@ -260,7 +262,7 @@ export default function ExerciseDetail({
           onClick={handleLoadCode}
           className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
         >
-          {detail?.userProgress?.savedCode ? '加载已保存代码' : '加载初始代码'}
+          {detail?.userProgress?.savedCode ? t('exercises.loadSavedCode') : t('exercises.loadInitialCode')}
         </button>
         {!isCompleted && (
           <button
@@ -271,10 +273,10 @@ export default function ExerciseDetail({
             {completing ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
-                处理中...
+                {t('exercises.processing')}
               </>
             ) : (
-              '标记为完成'
+              t('exercises.markAsComplete')
             )}
           </button>
         )}

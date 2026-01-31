@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { LogIn, Eye, EyeOff, Loader2 } from 'lucide-react';
 
@@ -7,6 +8,7 @@ interface LoginPageProps {
 }
 
 export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +21,7 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
     setError('');
 
     if (!username.trim() || !password.trim()) {
-      setError('请填写用户名和密码');
+      setError(t('auth.fillUsernameAndPassword'));
       return;
     }
 
@@ -27,7 +29,7 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
     try {
       await login({ username: username.trim(), password });
     } catch (err) {
-      setError(err instanceof Error ? err.message : '登录失败，请重试');
+      setError(err instanceof Error ? err.message : t('auth.loginFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -44,13 +46,13 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
           <h1 className="text-3xl font-black text-white mb-2">
             NOI<span className="text-[#58cc02]">Quest</span>
           </h1>
-          <p className="text-blue-200">信息学奥赛 C++ 训练营</p>
+          <p className="text-blue-200">{t('app.slogan')}</p>
         </div>
 
         {/* 登录表单 */}
         <div className="bg-white rounded-2xl p-8 shadow-xl">
           <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
-            欢迎回来
+            {t('auth.welcomeBack')}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -62,13 +64,13 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                用户名
+                {t('auth.username')}
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="请输入用户名"
+                placeholder={t('auth.enterUsername')}
                 className="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#58cc02] transition-colors"
                 disabled={isLoading}
               />
@@ -76,14 +78,14 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                密码
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="请输入密码"
+                  placeholder={t('auth.enterPassword')}
                   className="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#58cc02] transition-colors pr-12"
                   disabled={isLoading}
                 />
@@ -105,12 +107,12 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
               {isLoading ? (
                 <>
                   <Loader2 className="animate-spin" size={20} />
-                  登录中...
+                  {t('auth.loggingIn')}
                 </>
               ) : (
                 <>
                   <LogIn size={20} />
-                  登录
+                  {t('auth.login')}
                 </>
               )}
             </button>
@@ -118,12 +120,12 @@ export default function LoginPage({ onSwitchToRegister }: LoginPageProps) {
 
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              还没有账号？{' '}
+              {t('auth.noAccount')}{' '}
               <button
                 onClick={onSwitchToRegister}
                 className="text-[#58cc02] hover:text-[#4caf00] font-semibold"
               >
-                立即注册
+                {t('auth.registerNow')}
               </button>
             </p>
           </div>
