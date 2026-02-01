@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Clock, BookOpen, ChevronRight, Check, FileText } from 'lucide-react';
+import { ArrowLeft, Clock, BookOpen, Check, FileText } from 'lucide-react';
 import { api } from '../../services/api';
 import { SkillUnit } from '../../types';
 import LearningContent from './LearningContent';
@@ -8,13 +8,11 @@ import LearningContent from './LearningContent';
 interface KnowledgeLearningPageProps {
   unitId: string;
   onBack: () => void;
-  onNavigateToSkillTree: () => void;
 }
 
 export default function KnowledgeLearningPage({
   unitId,
   onBack,
-  onNavigateToSkillTree,
 }: KnowledgeLearningPageProps) {
   const { t } = useTranslation();
   const [unit, setUnit] = useState<SkillUnit | null>(null);

@@ -1,6 +1,8 @@
 import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
+import { giveTeacherBonus } from '../utils/teacherBonus.js';
+import { recordTransaction, TransactionSource } from '../utils/currencyTransaction.js';
 
 const router = Router();
 
@@ -245,6 +247,35 @@ export async function checkAndUnlockAchievements(userId: string): Promise<any[]>
           gems: { increment: reward.gems },
         },
       });
+
+      // 记录经验值交易明细
+      if (reward.xp > 0) {
+        await recordTransaction({
+          userId,
+          type: 'EARN',
+          currency: 'XP',
+          amount: reward.xp,
+          source: TransactionSource.ACHIEVEMENT_UNLOCK,
+          sourceId: achievement.id,
+          note: `解锁成就: ${achievement.name}`,
+        });
+      }
+
+      // 记录宝石交易明细并给教师分成
+      if (reward.gems > 0) {
+        await recordTransaction({
+          userId,
+          type: 'EARN',
+          currency: 'GEMS',
+          amount: reward.gems,
+          source: TransactionSource.ACHIEVEMENT_UNLOCK,
+          sourceId: achievement.id,
+          note: `解锁成就: ${achievement.name}`,
+        });
+
+        // 给教师发放钻石分成
+        await giveTeacherBonus(userId, reward.gems, achievement.id);
+      }
 
       newlyUnlocked.push({
         ...achievement,

@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
+import { recordTransaction, TransactionSource } from '../utils/currencyTransaction.js';
 
 const router = Router();
 
@@ -141,18 +142,32 @@ router.get('/due', authenticate, async (req: AuthRequest, res: Response, next) =
           },
         });
       } else if (knowledge.knowledgeType === 'unit') {
-        exercises = await prisma.exercise.findMany({
-          where: { unitId: knowledge.knowledgeKey },
-          take: 3,
-          select: {
-            id: true,
-            title: true,
-            type: true,
-            category: true,
-            difficulty: true,
-            xp: true,
+        // 通过 SessionExercise 关联查找单元相关的练习
+        const sessionExercises = await prisma.sessionExercise.findMany({
+          where: {
+            session: {
+              course: {
+                units: {
+                  some: { unitId: knowledge.knowledgeKey },
+                },
+              },
+            },
           },
+          include: {
+            exercise: {
+              select: {
+                id: true,
+                title: true,
+                type: true,
+                category: true,
+                difficulty: true,
+                xp: true,
+              },
+            },
+          },
+          take: 3,
         });
+        exercises = sessionExercises.map(se => se.exercise);
       }
 
       if (exercises && exercises.length > 0) {
@@ -216,12 +231,29 @@ router.post('/start', authenticate, async (req: AuthRequest, res: Response, next
       });
 
       for (const knowledge of dueKnowledge) {
-        const knowledgeExercises = await prisma.exercise.findMany({
-          where: knowledge.knowledgeType === 'category'
-            ? { category: knowledge.knowledgeKey }
-            : { unitId: knowledge.knowledgeKey },
-          take: 2,
-        });
+        let knowledgeExercises;
+        if (knowledge.knowledgeType === 'category') {
+          knowledgeExercises = await prisma.exercise.findMany({
+            where: { category: knowledge.knowledgeKey },
+            take: 2,
+          });
+        } else {
+          // 通过 SessionExercise 关联查找单元相关的练习
+          const sessionExercises = await prisma.sessionExercise.findMany({
+            where: {
+              session: {
+                course: {
+                  units: {
+                    some: { unitId: knowledge.knowledgeKey },
+                  },
+                },
+              },
+            },
+            include: { exercise: true },
+            take: 2,
+          });
+          knowledgeExercises = sessionExercises.map(se => se.exercise);
+        }
 
         exercises.push(...knowledgeExercises.map(e => ({
           ...e,
@@ -313,7 +345,7 @@ router.post('/complete', authenticate, async (req: AuthRequest, res: Response, n
       // 获取练习的分类，更新分类掌握度
       const exercise = await prisma.exercise.findUnique({
         where: { id: result.exerciseId },
-        select: { category: true, unitId: true },
+        select: { category: true },
       });
 
       if (exercise) {
@@ -350,6 +382,16 @@ router.post('/complete', authenticate, async (req: AuthRequest, res: Response, n
           xp: { increment: totalXp },
           totalXp: { increment: totalXp },
         },
+      });
+
+      // 记录经验值交易明细
+      await recordTransaction({
+        userId,
+        type: 'EARN',
+        currency: 'XP',
+        amount: totalXp,
+        source: TransactionSource.REVIEW_COMPLETE,
+        note: `复习完成: ${correctCount}/${results.length} 正确`,
       });
 
       // 更新每日 XP 记录

@@ -126,6 +126,9 @@ model User {
   // 兑换记录
   redeemRecords      RedeemRecord[]
 
+  // 货币交易明细
+  currencyTransactions CurrencyTransaction[]
+
   // 单设备登录控制
   tokenVersion  Int      @default(0)
 
@@ -1071,6 +1074,43 @@ model UserFile {
   @@unique([userId, name])
   @@index([userId])
   @@index([updatedAt])
+}
+
+// ==================== 货币交易明细 ====================
+
+// 货币交易类型
+enum TransactionType {
+  EARN      // 获得
+  SPEND     // 消费
+  WITHDRAW  // 提现
+  TRANSFER  // 转账（教师分成）
+}
+
+// 货币类型
+enum CurrencyType {
+  GEMS
+  XP
+}
+
+// 货币交易明细
+model CurrencyTransaction {
+  id          String          @id @default(uuid())
+  userId      String
+  type        TransactionType
+  currency    CurrencyType
+  amount      Int             // 正数为增加，负数为减少
+  balance     Int             // 交易后余额
+  source      String          // 来源：EXERCISE_COMPLETE, ACHIEVEMENT, DAILY_QUEST, TEACHER_BONUS, WITHDRAW 等
+  sourceId    String?         // 关联ID（练习ID、成就ID等），可选
+  note        String?         // 备注
+
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime        @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, currency])
+  @@index([source])
 }
 
 // ==================== 练习题库测试用例 ====================

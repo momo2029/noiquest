@@ -197,7 +197,6 @@ export default function KnowledgeGraphView({ onNavigateToSkillTree, isPublic = f
       <KnowledgeLearningPage
         unitId={learningUnitId}
         onBack={() => setLearningUnitId(null)}
-        onNavigateToSkillTree={onNavigateToSkillTree}
       />
     );
   }

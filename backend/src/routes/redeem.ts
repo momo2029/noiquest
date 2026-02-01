@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth.js';
+import { recordTransaction, TransactionSource } from '../utils/currencyTransaction.js';
 
 const router = Router();
 
@@ -116,6 +117,19 @@ router.post('/redeem', authenticate, async (req: AuthRequest, res: Response, nex
         },
       }),
     ]);
+
+    // 记录宝石交易明细
+    if (redeemCode.type === 'GEMS') {
+      await recordTransaction({
+        userId,
+        type: 'EARN',
+        currency: 'GEMS',
+        amount: redeemCode.value,
+        source: TransactionSource.REDEEM_CODE,
+        sourceId: redeemCode.id,
+        note: `兑换码: ${trimmedCode}`,
+      });
+    }
 
     // 获取更新后的用户数据
     const updatedUser = await prisma.user.findUnique({

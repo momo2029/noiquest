@@ -340,4 +340,132 @@ router.delete('/:id/invite-codes/:codeId', authenticate, requireRole('TEACHER', 
   }
 });
 
+// ==================== 学生错题查看 ====================
+
+// 获取班级学生的错题列表
+router.get('/:id/students/:studentId/mistakes', authenticate, requireRole('TEACHER', 'ADMIN'), async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { id: classId, studentId } = req.params;
+    const { status, page = '1', limit = '20' } = req.query;
+
+    // 验证班级存在且属于当前教师
+    const classInfo = await prisma.class.findUnique({
+      where: { id: classId },
+    });
+
+    if (!classInfo) {
+      throw new AppError('班级不存在', 404);
+    }
+
+    if (classInfo.teacherId !== req.user!.id && req.user!.role !== 'ADMIN') {
+      throw new AppError('无权访问此班级', 403);
+    }
+
+    // 验证学生属于该班级
+    const student = await prisma.user.findUnique({
+      where: { id: studentId },
+      select: { id: true, name: true, classId: true },
+    });
+
+    if (!student || student.classId !== classId) {
+      throw new AppError('学生不存在或不属于该班级', 404);
+    }
+
+    // 构建查询条件
+    const where: any = { userId: studentId };
+    if (status === 'UNREVIEWED' || status === 'REVIEWING' || status === 'MASTERED') {
+      where.status = status;
+    }
+
+    // 获取错题列表
+    const [mistakes, total] = await Promise.all([
+      prisma.mistakeRecord.findMany({
+        where,
+        include: {
+          exercise: {
+            select: {
+              id: true,
+              title: true,
+              category: true,
+              difficulty: true,
+            },
+          },
+        },
+        orderBy: { lastWrongAt: 'desc' },
+        skip: (Number(page) - 1) * Number(limit),
+        take: Number(limit),
+      }),
+      prisma.mistakeRecord.count({ where }),
+    ]);
+
+    res.json({
+      student: { id: student.id, name: student.name },
+      mistakes,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        totalPages: Math.ceil(total / Number(limit)),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 获取班级所有学生的错题统计
+router.get('/:id/mistakes-summary', authenticate, requireRole('TEACHER', 'ADMIN'), async (req: AuthRequest, res: Response, next) => {
+  try {
+    const classId = req.params.id;
+
+    // 验证班级存在且属于当前教师
+    const classInfo = await prisma.class.findUnique({
+      where: { id: classId },
+    });
+
+    if (!classInfo) {
+      throw new AppError('班级不存在', 404);
+    }
+
+    if (classInfo.teacherId !== req.user!.id && req.user!.role !== 'ADMIN') {
+      throw new AppError('无权访问此班级', 403);
+    }
+
+    // 获取班级所有学生的错题统计
+    const students = await prisma.user.findMany({
+      where: { classId },
+      select: {
+        id: true,
+        name: true,
+        avatar: true,
+        _count: {
+          select: {
+            mistakeRecords: true,
+          },
+        },
+      },
+    });
+
+    // 获取每个学生的未复习错题数
+    const studentsWithMistakes = await Promise.all(
+      students.map(async (student) => {
+        const unreviewedCount = await prisma.mistakeRecord.count({
+          where: { userId: student.id, status: 'UNREVIEWED' },
+        });
+        return {
+          id: student.id,
+          name: student.name,
+          avatar: student.avatar,
+          totalMistakes: student._count.mistakeRecords,
+          unreviewedMistakes: unreviewedCount,
+        };
+      })
+    );
+
+    res.json({ students: studentsWithMistakes });
+  } catch (error) {
+    next(error);
+  }
+});
+
 export { router as classRouter };

@@ -815,6 +815,36 @@ class ApiService {
     });
   }
 
+  // 获取班级学生错题统计
+  async getClassMistakesSummary(classId: string): Promise<{
+    students: {
+      id: string;
+      name: string;
+      avatar: string;
+      totalMistakes: number;
+      unreviewedMistakes: number;
+    }[];
+  }> {
+    return this.request(`/classes/${classId}/mistakes-summary`);
+  }
+
+  // 获取学生错题列表
+  async getStudentMistakes(classId: string, studentId: string, params?: {
+    status?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    student: { id: string; name: string };
+    mistakes: any[];
+    pagination: { page: number; limit: number; total: number; totalPages: number };
+  }> {
+    const query = new URLSearchParams();
+    if (params?.status) query.set('status', params.status);
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+    return this.request(`/classes/${classId}/students/${studentId}/mistakes?${query.toString()}`);
+  }
+
   // ==================== 邀请码 API ====================
 
   async getInviteCodes(params?: { used?: boolean }): Promise<any> {

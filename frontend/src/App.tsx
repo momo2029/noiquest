@@ -12,9 +12,6 @@ import AIChat from './components/AI/AIChat';
 import ExerciseList from './components/Learning/ExerciseList';
 import ExerciseDetail from './components/Learning/ExerciseDetail';
 import ProgressTracker from './components/Learning/ProgressTracker';
-import Dashboard from './components/Teacher/Dashboard';
-import StudentList from './components/Teacher/StudentList';
-import AssignmentManager from './components/Teacher/AssignmentManager';
 import ClassManager from './components/Teacher/ClassManager';
 import LearningCenter from './components/SkillTree/LearningCenter';
 import LessonSession from './components/SkillTree/LessonSession';
@@ -25,7 +22,7 @@ import LeaderboardView from './components/Leaderboard/LeaderboardView';
 import AchievementsView from './components/Achievements/AchievementsView';
 import AnalyticsView from './components/Analytics/AnalyticsView';
 import KnowledgeGraphView from './components/KnowledgeGraph/KnowledgeGraphView';
-import { UserRole, Exercise, Student, Assignment, AppSettings, SessionCompleteResult, ReviewCompleteResult } from './types';
+import { UserRole, Exercise, Student, AppSettings, SessionCompleteResult, ReviewCompleteResult } from './types';
 import { exercises } from './data/exercises';
 import { api } from './services/api';
 import {
@@ -33,8 +30,6 @@ import {
   saveSettings,
   getStudents,
   saveStudents,
-  getAssignments,
-  saveAssignments,
   createDefaultStudent,
   updateStreak,
   addXp,
@@ -46,7 +41,7 @@ import { useUserFiles } from './hooks/useUserFiles';
 // 学生可用的视图
 const STUDENT_VIEWS = ['knowledge-map', 'skill-tree', 'review', 'editor', 'exercises', 'progress', 'leaderboard', 'achievements', 'analytics'];
 // 教师可用的视图
-const TEACHER_VIEWS = ['dashboard', 'classes', 'students', 'assignments'];
+const TEACHER_VIEWS = ['classes'];
 // 公开可访问的视图（不需要登录）
 const PUBLIC_VIEWS = ['knowledge-map', 'editor'];
 
@@ -57,7 +52,6 @@ function MainApp() {
   // 核心状态
   const [settings, setSettings] = useState<AppSettings>(() => getSettings());
   const [students, setStudents] = useState<Student[]>(() => getStudents());
-  const [assignments, setAssignments] = useState<Assignment[]>(() => getAssignments());
 
   // 编辑器状态 - 使用 useUserFiles hook
   const {
@@ -166,10 +160,6 @@ function MainApp() {
   useEffect(() => {
     saveStudents(students);
   }, [students]);
-
-  useEffect(() => {
-    saveAssignments(assignments);
-  }, [assignments]);
 
   useEffect(() => {
     if (!students.find(s => s.id === currentStudent.id)) {
@@ -460,28 +450,10 @@ function MainApp() {
       }
     } else {
       switch (currentView) {
-        case 'dashboard':
-          return <Dashboard students={students} assignments={assignments} />;
         case 'classes':
           return <ClassManager />;
-        case 'students':
-          return (
-            <StudentList
-              students={students}
-              onAddStudent={(student) => setStudents(prev => [...prev, student])}
-              onDeleteStudent={(id) => setStudents(prev => prev.filter(s => s.id !== id))}
-            />
-          );
-        case 'assignments':
-          return (
-            <AssignmentManager
-              assignments={assignments}
-              onAddAssignment={(assignment) => setAssignments(prev => [...prev, assignment])}
-              onDeleteAssignment={(id) => setAssignments(prev => prev.filter(a => a.id !== id))}
-            />
-          );
         default:
-          return null;
+          return <ClassManager />;
       }
     }
   };

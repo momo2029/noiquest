@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth.js';
 import { runTestCases } from '../services/cppExec.js';
+import { recordTransaction, TransactionSource } from '../utils/currencyTransaction.js';
 
 const router = Router();
 
@@ -699,6 +700,19 @@ router.post('/:id/submit', authenticate, async (req: AuthRequest, res: Response,
         totalXp: { increment: xpEarned },
       },
     });
+
+    // 记录经验值交易明细
+    if (xpEarned > 0) {
+      await recordTransaction({
+        userId,
+        type: 'EARN',
+        currency: 'XP',
+        amount: xpEarned,
+        source: TransactionSource.EXERCISE_COMPLETE,
+        sourceId: exerciseId,
+        note: `完成练习: ${exercise.title}${isFirstCompletion ? '' : ' (重做)'}`,
+      });
+    }
 
     // 如果之前有错题记录，更新状态
     await prisma.mistakeRecord.updateMany({

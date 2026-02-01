@@ -144,6 +144,7 @@ router.post('/register', async (req, res, next) => {
     const { email, password, name, role, inviteCode } = registerSchema.parse(req.body);
 
     let classId: string | null = null;
+    const userRole = role || 'STUDENT';
 
     // 检查是否需要邀请码
     if (config.invite.required) {
@@ -157,8 +158,8 @@ router.post('/register', async (req, res, next) => {
         throw new AppError(inviteResult.error || '邀请码无效', 400);
       }
 
-      // 如果邀请码关联了班级，记录 classId
-      if (inviteResult.classId) {
+      // 如果邀请码关联了班级，记录 classId（仅学生）
+      if (inviteResult.classId && userRole === 'STUDENT') {
         classId = inviteResult.classId;
       }
     }
@@ -188,11 +189,11 @@ router.post('/register', async (req, res, next) => {
         email,
         password: hashedPassword,
         name,
-        role: role || 'STUDENT',
+        role: userRole,
         inviteCode: inviteCode?.toUpperCase(),
         tokenVersion: 1,
         gems: ACTIVATION_BONUS_GEMS,
-        classId, // 自动加入班级
+        classId, // 学生自动加入班级
       },
       select: {
         id: true,
@@ -211,6 +212,17 @@ router.post('/register', async (req, res, next) => {
         classId: true,
       },
     });
+
+    // 如果是教师，自动创建一个班级
+    if (userRole === 'TEACHER') {
+      await prisma.class.create({
+        data: {
+          name: `${name}老师的班级`,
+          description: '默认班级',
+          teacherId: user.id,
+        },
+      });
+    }
 
     // 生成 JWT（包含 tokenVersion）
     const token = jwt.sign(

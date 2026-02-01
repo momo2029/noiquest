@@ -277,8 +277,6 @@ router.get('/exercises', async (req: AuthRequest, res: Response, next) => {
       prisma.exercise.findMany({
         where,
         include: {
-          unit: { select: { id: true, title: true } },
-          lesson: { select: { id: true, title: true } },
           _count: {
             select: {
               progress: true,
@@ -325,14 +323,8 @@ router.get('/units', async (req: AuthRequest, res: Response, next) => {
   try {
     const units = await prisma.skillUnit.findMany({
       include: {
-        lessons: {
-          include: {
-            _count: { select: { exercises: true } },
-          },
-        },
         _count: {
           select: {
-            exercises: true,
             userProgress: true,
           },
         },
@@ -342,8 +334,6 @@ router.get('/units', async (req: AuthRequest, res: Response, next) => {
 
     res.json(units.map(u => ({
       ...u,
-      lessonCount: u.lessons.length,
-      exerciseCount: u._count.exercises,
       userProgressCount: u._count.userProgress,
     })));
   } catch (error) {

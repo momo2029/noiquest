@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { Tier } from '@prisma/client';
+import { recordTransaction, TransactionSource } from '../utils/currencyTransaction.js';
 
 const router = Router();
 
@@ -532,6 +533,19 @@ router.post('/sessions/:sessionId/complete', authenticate, async (req: AuthReque
         totalXp: { increment: xpEarned },
       },
     });
+
+    // 记录经验值交易明细
+    if (xpEarned > 0) {
+      await recordTransaction({
+        userId,
+        type: 'EARN',
+        currency: 'XP',
+        amount: xpEarned,
+        source: TransactionSource.SESSION_COMPLETE,
+        sourceId: sessionId,
+        note: `完成课时: ${session.title}${perfectRun ? ' (完美通关)' : ''}`,
+      });
+    }
 
     // 更新每日XP记录
     const today = new Date();

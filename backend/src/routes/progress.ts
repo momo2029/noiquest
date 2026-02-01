@@ -2,6 +2,8 @@ import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { giveTeacherBonus } from '../utils/teacherBonus.js';
+import { recordTransaction, TransactionSource } from '../utils/currencyTransaction.js';
 
 const router = Router();
 
@@ -159,6 +161,35 @@ router.post('/:exerciseId/complete', authenticate, async (req: AuthRequest, res:
             level: newLevel,
           },
         });
+
+        // 记录经验值交易明细
+        if (xpGained > 0) {
+          await recordTransaction({
+            userId,
+            type: 'EARN',
+            currency: 'XP',
+            amount: xpGained,
+            source: TransactionSource.EXERCISE_COMPLETE,
+            sourceId: exerciseId,
+            note: `完成练习: ${exercise.title}`,
+          });
+        }
+
+        // 记录宝石交易明细
+        if (gemsGained > 0) {
+          await recordTransaction({
+            userId,
+            type: 'EARN',
+            currency: 'GEMS',
+            amount: gemsGained,
+            source: TransactionSource.EXERCISE_COMPLETE,
+            sourceId: exerciseId,
+            note: `完成练习: ${exercise.title}`,
+          });
+
+          // 给教师发放钻石分成
+          await giveTeacherBonus(userId, gemsGained, exerciseId);
+        }
       }
     }
 

@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, optionalAuthenticate, AuthRequest } from '../middleware/auth.js';
 import { Tier } from '@prisma/client';
+import { recordTransaction, TransactionSource } from '../utils/currencyTransaction.js';
 
 const router = Router();
 
@@ -865,6 +866,17 @@ router.post('/sessions/:sessionId/complete', authenticate, async (req: AuthReque
           xp: { increment: bonusXp },
           totalXp: { increment: bonusXp },
         },
+      });
+
+      // 记录完美通关奖励经验值
+      await recordTransaction({
+        userId,
+        type: 'EARN',
+        currency: 'XP',
+        amount: bonusXp,
+        source: TransactionSource.SESSION_COMPLETE,
+        sourceId: sessionId,
+        note: `完美通关奖励: ${session.title}`,
       });
 
       const today = new Date();

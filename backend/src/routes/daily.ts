@@ -1,6 +1,8 @@
 import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
+import { giveTeacherBonus } from '../utils/teacherBonus.js';
+import { recordTransaction, TransactionSource } from '../utils/currencyTransaction.js';
 
 const router = Router();
 
@@ -242,6 +244,35 @@ router.post('/quests/:questId/claim', authenticate, async (req: AuthRequest, res
         gems: { increment: quest.gemsReward },
       },
     });
+
+    // 记录经验值交易明细
+    if (quest.xpReward > 0) {
+      await recordTransaction({
+        userId,
+        type: 'EARN',
+        currency: 'XP',
+        amount: quest.xpReward,
+        source: TransactionSource.DAILY_QUEST,
+        sourceId: questId,
+        note: `每日任务: ${quest.template.title}`,
+      });
+    }
+
+    // 记录宝石交易明细并给教师分成
+    if (quest.gemsReward > 0) {
+      await recordTransaction({
+        userId,
+        type: 'EARN',
+        currency: 'GEMS',
+        amount: quest.gemsReward,
+        source: TransactionSource.DAILY_QUEST,
+        sourceId: questId,
+        note: `每日任务: ${quest.template.title}`,
+      });
+
+      // 给教师发放钻石分成
+      await giveTeacherBonus(userId, quest.gemsReward, questId);
+    }
 
     // 更新每日 XP 记录
     const today = new Date();
