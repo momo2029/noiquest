@@ -32,11 +32,13 @@ export default function InviteCodeManagement() {
 
   // 生成表单
   const [generateForm, setGenerateForm] = useState({
-    count: 1,
+    count:1,
     type: 'STUDENT',
     maxUses: 1,
     expiresInDays: 30,
-    note: ''
+    note: '',
+    useCustomCodes: false,
+    customCodes: ''
   });
 
   useEffect(() => {
@@ -59,26 +61,52 @@ export default function InviteCodeManagement() {
 
   const handleGenerate = async () => {
     try {
-      const result = await api.generateInviteCodes({
-        count: generateForm.count,
-        type: generateForm.type,
-        maxUses: generateForm.maxUses,
-        expiresInDays: generateForm.expiresInDays || undefined,
-        note: generateForm.note || undefined
-      });
+      let result;
+      
+      if (generateForm.useCustomCodes) {
+        const customCodesList = generateForm.customCodes
+          .split('\n')
+          .map(code => code.trim())
+          .filter(code => code.length > 0);
+
+        if (customCodesList.length === 0) {
+          alert('请至少输入一个自定义邀请码');
+          return;
+        }
+
+        result = await api.generateInviteCodes({
+          type: generateForm.type,
+          maxUses: generateForm.maxUses,
+          expiresInDays: generateForm.expiresInDays || undefined,
+          note: generateForm.note || undefined,
+          customCodes: customCodesList
+        });
+      } else {
+        result = await api.generateInviteCodes({
+          count: generateForm.count,
+          type: generateForm.type,
+          maxUses: generateForm.maxUses,
+          expiresInDays: generateForm.expiresInDays || undefined,
+          note: generateForm.note || undefined
+        });
+      }
+      
       setShowGenerateModal(false);
       setGenerateForm({
-        count: 1,
+        count:1,
         type: 'STUDENT',
         maxUses: 1,
         expiresInDays: 30,
-        note: ''
+        note: '',
+        useCustomCodes: false,
+        customCodes: ''
       });
       loadCodes();
       alert(`成功生成 ${result.codes.length} 个邀请码`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to generate codes:', error);
-      alert('生成失败，请重试');
+      const errorMessage = error.response?.data?.error || error.message || '生成失败，请重试';
+      alert(errorMessage);
     }
   };
 
@@ -236,6 +264,7 @@ export default function InviteCodeManagement() {
                         <button
                           onClick={() => copyToClipboard(code.code)}
                           className="p-1 text-white/50 hover:text-white transition-colors"
+                          title="复制邀请码"
                         >
                           {copiedCode === code.code ? (
                             <Check size={16} className="text-green-400" />
@@ -270,6 +299,7 @@ export default function InviteCodeManagement() {
                       <button
                         onClick={() => handleDelete(code.id)}
                         className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        title="删除邀请码"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -291,6 +321,7 @@ export default function InviteCodeManagement() {
               <button
                 onClick={() => setShowGenerateModal(false)}
                 className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-lg"
+                title="关闭"
               >
                 <X size={20} />
               </button>
@@ -306,6 +337,7 @@ export default function InviteCodeManagement() {
                   onChange={(e) => setGenerateForm({ ...generateForm, count: parseInt(e.target.value) || 1 })}
                   min="1"
                   max="100"
+                  placeholder="请输入生成数量"
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-pink-500"
                 />
               </div>
@@ -316,6 +348,7 @@ export default function InviteCodeManagement() {
                 <select
                   value={generateForm.type}
                   onChange={(e) => setGenerateForm({ ...generateForm, type: e.target.value })}
+                  title="用户类型"
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-pink-500"
                 >
                   <option value="STUDENT">学生</option>
@@ -332,6 +365,7 @@ export default function InviteCodeManagement() {
                   value={generateForm.maxUses}
                   onChange={(e) => setGenerateForm({ ...generateForm, maxUses: parseInt(e.target.value) || 1 })}
                   min="1"
+                  placeholder="请输入每码可用次数"
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-pink-500"
                 />
               </div>
@@ -344,6 +378,7 @@ export default function InviteCodeManagement() {
                   value={generateForm.expiresInDays}
                   onChange={(e) => setGenerateForm({ ...generateForm, expiresInDays: parseInt(e.target.value) || 0 })}
                   min="0"
+                  placeholder="请输入有效期天数"
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-pink-500"
                 />
               </div>
@@ -359,6 +394,54 @@ export default function InviteCodeManagement() {
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-pink-500"
                 />
               </div>
+
+              {/* 自定义邀请码开关 */}
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="useCustomCodes"
+                  checked={generateForm.useCustomCodes}
+                  onChange={(e) => setGenerateForm({ ...generateForm, useCustomCodes: e.target.checked })}
+                  className="w-5 h-5 rounded border-white/10 bg-white/5 text-pink-500 focus:ring-pink-500"
+                />
+                <label htmlFor="useCustomCodes" className="text-white/70 text-sm cursor-pointer">
+                  使用自定义邀请码
+                </label>
+              </div>
+
+              {/* 自定义邀请码输入 */}
+              {generateForm.useCustomCodes && (
+                <div>
+                  <label className="block text-white/70 text-sm mb-2">
+                    自定义邀请码（每行一个，4-20位）
+                  </label>
+                  <textarea
+                    value={generateForm.customCodes}
+                    onChange={(e) => setGenerateForm({ ...generateForm, customCodes: e.target.value })}
+                    placeholder="CLASS2024&#10;SPRING2024&#10;SUMMER2024"
+                    rows={5}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-pink-500 resize-none"
+                  />
+                  <p className="text-white/50 text-xs mt-1">
+                    每行输入一个邀请码，长度必须在 4-20 位之间
+                  </p>
+                </div>
+              )}
+
+              {!generateForm.useCustomCodes && (
+                <div>
+                  <label className="block text-white/70 text-sm mb-2">生成数量</label>
+                  <input
+                    type="number"
+                    value={generateForm.count}
+                    onChange={(e) => setGenerateForm({ ...generateForm, count: parseInt(e.target.value) || 1 })}
+                    min="1"
+                    max="100"
+                    placeholder="请输入生成数量"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-pink-500"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex gap-3 mt-6">

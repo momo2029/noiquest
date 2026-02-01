@@ -757,11 +757,12 @@ class ApiService {
   }
 
   async generateInviteCodes(data: {
-    count: number;
+    count?: number;
     type: string;
     maxUses: number;
     expiresInDays?: number;
     note?: string;
+    customCodes?: string[];
   }): Promise<any> {
     return this.request('/invite/generate', {
       method: 'POST',

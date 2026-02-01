@@ -9,7 +9,7 @@ const router = Router();
 // 生成邀请码（仅管理员）
 router.post('/generate', authenticate, requireRole('ADMIN'), async (req: AuthRequest, res: Response, next) => {
   try {
-    const { count = 1, type = 'STUDENT', expiresInDays, maxUses = 1, note } = req.body;
+    const { count = 1, type = 'STUDENT', expiresInDays, maxUses = 1, note, customCodes } = req.body;
 
     if (count < 1 || count > 100) {
       throw new AppError('生成数量必须在 1-100 之间', 400);
@@ -18,26 +18,60 @@ router.post('/generate', authenticate, requireRole('ADMIN'), async (req: AuthReq
     const codes: string[] = [];
     const expiresAt = expiresInDays ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000) : null;
 
-    for (let i = 0; i < count; i++) {
-      // 生成 8 位邀请码
-      const code = uuidv4().replace(/-/g, '').substring(0, 8).toUpperCase();
+    if (customCodes && customCodes.length > 0) {
+      for (let i = 0; i < customCodes.length; i++) {
+        const code = customCodes[i].toUpperCase().trim();
+        
+        if (!code) {
+          throw new AppError(`第 ${i + 1} 个邀请码不能为空`, 400);
+        }
 
-      await prisma.inviteCode.create({
-        data: {
-          code,
-          createdBy: req.user!.id,
-          type,
-          maxUses,
-          expiresAt,
-          note,
-        },
-      });
+        if (code.length < 4 || code.length > 20) {
+          throw new AppError(`邀请码 "${code}" 长度必须在 4-20 位之间`, 400);
+        }
 
-      codes.push(code);
+        const existingCode = await prisma.inviteCode.findUnique({
+          where: { code },
+        });
+
+        if (existingCode) {
+          throw new AppError(`邀请码 "${code}" 已存在`, 400);
+        }
+
+        await prisma.inviteCode.create({
+          data: {
+            code,
+            createdBy: req.user!.id,
+            type,
+            maxUses,
+            expiresAt,
+            note,
+          },
+        });
+
+        codes.push(code);
+      }
+    } else {
+      for (let i = 0; i < count; i++) {
+        const code = uuidv4().replace(/-/g, '').substring(0, 8).toUpperCase();
+
+        await prisma.inviteCode.create({
+          data: {
+            code,
+            createdBy: req.user!.id,
+            type,
+            maxUses,
+            expiresAt,
+            note,
+          },
+        });
+
+        codes.push(code);
+      }
     }
 
     res.json({
-      message: `成功生成 ${count} 个邀请码`,
+      message: `成功生成 ${codes.length} 个邀请码`,
       codes,
       type,
       maxUses,

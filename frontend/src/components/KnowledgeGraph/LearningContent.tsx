@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { CodeExample, Reference } from '../../types';
 import { Code, ExternalLink, Lightbulb, AlertTriangle, Play } from 'lucide-react';
 
@@ -28,6 +29,7 @@ export default function LearningContent({
       {content && (
         <div className="prose prose-invert prose-sm max-w-none">
           <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
             components={{
               code: ({ className, children, ...props }) => {
                 const match = /language-(\w+)/.exec(className || '');
@@ -84,6 +86,26 @@ export default function LearningContent({
                 >
                   {children}
                 </a>
+              ),
+              table: ({ children }) => (
+                <div className="overflow-x-auto my-4">
+                  <table className="min-w-full border-collapse border border-gray-700">{children}</table>
+                </div>
+              ),
+              thead: ({ children }) => (
+                <thead className="bg-gray-800">{children}</thead>
+              ),
+              tbody: ({ children }) => (
+                <tbody>{children}</tbody>
+              ),
+              tr: ({ children }) => (
+                <tr className="border-b border-gray-700">{children}</tr>
+              ),
+              th: ({ children }) => (
+                <th className="px-4 py-2 text-left text-sm font-semibold text-white border-r border-gray-700">{children}</th>
+              ),
+              td: ({ children }) => (
+                <td className="px-4 py-2 text-sm text-gray-300 border-r border-gray-700">{children}</td>
               ),
             }}
           >

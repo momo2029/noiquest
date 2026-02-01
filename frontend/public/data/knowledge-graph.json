@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-31T10:17:52.072Z",
+  "generatedAt": "2026-01-31T14:47:16.079Z",
   "tiers": [
     {
       "id": "CSP_J",
@@ -37,8 +37,8 @@
       "icon": "📝",
       "color": "#22c55e",
       "orderIndex": 1,
-      "createdAt": "2026-01-30T16:25:15.036Z",
-      "updatedAt": "2026-01-30T16:25:15.036Z",
+      "createdAt": "2026-01-31T14:41:54.751Z",
+      "updatedAt": "2026-01-31T14:41:54.751Z",
       "totalUnits": 18
     },
     {
@@ -47,8 +47,8 @@
       "icon": "🏗️",
       "color": "#3b82f6",
       "orderIndex": 2,
-      "createdAt": "2026-01-30T16:25:15.040Z",
-      "updatedAt": "2026-01-30T16:25:15.040Z",
+      "createdAt": "2026-01-31T14:41:54.760Z",
+      "updatedAt": "2026-01-31T14:41:54.760Z",
       "totalUnits": 39
     },
     {
@@ -57,8 +57,8 @@
       "icon": "⚡",
       "color": "#eab308",
       "orderIndex": 3,
-      "createdAt": "2026-01-30T16:25:15.042Z",
-      "updatedAt": "2026-01-30T16:25:15.042Z",
+      "createdAt": "2026-01-31T14:41:54.767Z",
+      "updatedAt": "2026-01-31T14:41:54.767Z",
       "totalUnits": 49
     },
     {
@@ -67,8 +67,8 @@
       "icon": "🔢",
       "color": "#a855f7",
       "orderIndex": 4,
-      "createdAt": "2026-01-30T16:25:15.044Z",
-      "updatedAt": "2026-01-30T16:25:15.044Z",
+      "createdAt": "2026-01-31T14:41:54.773Z",
+      "updatedAt": "2026-01-31T14:41:54.773Z",
       "totalUnits": 44
     },
     {
@@ -77,8 +77,8 @@
       "icon": "🕸️",
       "color": "#ef4444",
       "orderIndex": 5,
-      "createdAt": "2026-01-30T16:25:15.047Z",
-      "updatedAt": "2026-01-30T16:25:15.047Z",
+      "createdAt": "2026-01-31T14:41:54.778Z",
+      "updatedAt": "2026-01-31T14:41:54.778Z",
       "totalUnits": 36
     },
     {
@@ -87,8 +87,8 @@
       "icon": "📐",
       "color": "#06b6d4",
       "orderIndex": 6,
-      "createdAt": "2026-01-30T16:25:15.049Z",
-      "updatedAt": "2026-01-30T16:25:15.049Z",
+      "createdAt": "2026-01-31T14:41:54.783Z",
+      "updatedAt": "2026-01-31T14:41:54.783Z",
       "totalUnits": 38
     },
     {
@@ -97,14 +97,14 @@
       "icon": "🎮",
       "color": "#f97316",
       "orderIndex": 7,
-      "createdAt": "2026-01-30T16:25:15.052Z",
-      "updatedAt": "2026-01-30T16:25:15.052Z",
+      "createdAt": "2026-01-31T14:41:54.787Z",
+      "updatedAt": "2026-01-31T14:41:54.787Z",
       "totalUnits": 7
     }
   ],
   "skillTree": [
     {
-      "id": "15e7e7f0-da80-4dc4-a1e3-1c06334cf8a0",
+      "id": "0eaac3f6-c81a-41ef-8e5f-7734271b9755",
       "code": "1-01",
       "title": "变量与基本数据类型",
       "description": "入门核心，含类型范围、转换",
@@ -118,23 +118,23 @@
       "orderIndex": 1,
       "totalSessions": 5,
       "hasContent": true,
-      "estimatedTime": 20,
+      "estimatedTime": 120,
       "prerequisites": [],
       "dependents": [
         {
-          "id": "94aeb740-89b3-478d-b0df-c770e7d1c055",
+          "id": "104467e4-a57e-4be0-b579-10bc9d6ae3f6",
           "code": "1-02",
           "title": "运算符与表达式"
         },
         {
-          "id": "27b12275-2700-42d2-a3e1-61bb02674adb",
+          "id": "c0488f6c-1438-4799-9f76-581ab0197fe4",
           "code": "1-03",
           "title": "输入输出"
         }
       ]
     },
     {
-      "id": "94aeb740-89b3-478d-b0df-c770e7d1c055",
+      "id": "104467e4-a57e-4be0-b579-10bc9d6ae3f6",
       "code": "1-02",
       "title": "运算符与表达式",
       "description": "含运算符优先级、结合性",
@@ -151,31 +151,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "15e7e7f0-da80-4dc4-a1e3-1c06334cf8a0",
+          "id": "0eaac3f6-c81a-41ef-8e5f-7734271b9755",
           "code": "1-01",
           "title": "变量与基本数据类型"
         }
       ],
       "dependents": [
         {
-          "id": "965c734b-c17e-4aaf-8284-7ddcbdc751b0",
+          "id": "9a534d6d-81b9-4420-ae8e-120313e17615",
           "code": "1-04",
           "title": "分支结构"
         },
         {
-          "id": "46b62af2-0787-4e65-a307-4c8199ffb7a9",
+          "id": "e655dc09-a999-47d3-b81e-317e4f1cc8de",
           "code": "1-16",
           "title": "位运算"
         },
         {
-          "id": "9e06a71e-d502-404f-a098-6464dba7a7b5",
+          "id": "4d207a83-a926-4643-80ad-6ac2a3cac3ba",
           "code": "4-01",
           "title": "进制转换"
         }
       ]
     },
     {
-      "id": "27b12275-2700-42d2-a3e1-61bb02674adb",
+      "id": "c0488f6c-1438-4799-9f76-581ab0197fe4",
       "code": "1-03",
       "title": "输入输出",
       "description": "基础输入输出，含格式控制",
@@ -192,26 +192,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "15e7e7f0-da80-4dc4-a1e3-1c06334cf8a0",
+          "id": "0eaac3f6-c81a-41ef-8e5f-7734271b9755",
           "code": "1-01",
           "title": "变量与基本数据类型"
         }
       ],
       "dependents": [
         {
-          "id": "40ceb569-45ca-443a-a550-76bef7f969e1",
+          "id": "c5ea10c7-81ac-4242-b6af-b259a42b11f0",
           "code": "1-11",
           "title": "文件操作"
         },
         {
-          "id": "c1661656-2941-4f2f-918d-2a010ad51407",
+          "id": "e02e210b-d457-4d9c-a9a5-4f2f625aea7c",
           "code": "1-17",
           "title": "快速读写优化"
         }
       ]
     },
     {
-      "id": "965c734b-c17e-4aaf-8284-7ddcbdc751b0",
+      "id": "9a534d6d-81b9-4420-ae8e-120313e17615",
       "code": "1-04",
       "title": "分支结构",
       "description": "含条件表达式、多分支逻辑",
@@ -228,21 +228,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "94aeb740-89b3-478d-b0df-c770e7d1c055",
+          "id": "104467e4-a57e-4be0-b579-10bc9d6ae3f6",
           "code": "1-02",
           "title": "运算符与表达式"
         }
       ],
       "dependents": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
       ]
     },
     {
-      "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+      "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
       "code": "1-05",
       "title": "循环结构",
       "description": "含循环嵌套、break/continue",
@@ -259,61 +259,61 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "965c734b-c17e-4aaf-8284-7ddcbdc751b0",
+          "id": "9a534d6d-81b9-4420-ae8e-120313e17615",
           "code": "1-04",
           "title": "分支结构"
         }
       ],
       "dependents": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         },
         {
-          "id": "5824206a-aef3-4d4c-9981-fc5a3e00c6e9",
+          "id": "86955e0b-674a-4f33-9e86-b319dd0200f6",
           "code": "1-08",
           "title": "函数"
         },
         {
-          "id": "fdc7e8df-a91e-4581-be44-dbc8643dd9f6",
+          "id": "9857e808-eb16-4ba9-9af2-ad78833c3a49",
           "code": "3-01",
           "title": "枚举"
         },
         {
-          "id": "8ba795d9-632d-4300-a1bd-fc46e8aa144a",
+          "id": "ac4044d4-6d1d-422e-a8f9-2d45db5c6e86",
           "code": "3-02",
           "title": "模拟"
         },
         {
-          "id": "437bba76-21d3-4ad2-9f22-98d5392a2096",
+          "id": "222f8c9e-55d6-459a-81d7-b7e2909dc419",
           "code": "3-04",
           "title": "递推"
         },
         {
-          "id": "fd156aae-e0f6-4dd8-a73b-4cb9fd7f2ae6",
+          "id": "f1a402a2-59ed-4296-98d8-24f9898dbf1e",
           "code": "3-13",
           "title": "二分答案"
         },
         {
-          "id": "21e8c8b7-6059-4c9d-b7b4-ed33b5c3f6be",
+          "id": "b4f4dd8a-3160-47f8-8777-e0e3545590c8",
           "code": "4-02",
           "title": "GCD/LCM"
         },
         {
-          "id": "78c4a721-9678-4908-833f-ea53fadcf548",
+          "id": "c30fb13e-6801-4d7a-ac64-5060ca0eaeb8",
           "code": "4-03",
           "title": "质数判断"
         },
         {
-          "id": "d473f446-75d3-48c1-b48f-da55c77f1238",
+          "id": "36392875-0c36-4e70-9c40-d510c996951b",
           "code": "4-04",
           "title": "因数倍数"
         }
       ]
     },
     {
-      "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+      "id": "9d140fa0-51b6-46f4-8785-319decebff97",
       "code": "1-06",
       "title": "数组",
       "description": "含数组下标、遍历、初始化",
@@ -330,91 +330,91 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
       ],
       "dependents": [
         {
-          "id": "fc11066a-45b2-42e5-a368-d903335a1ecc",
+          "id": "e249f60f-2280-455e-8a4c-36388aec50d0",
           "code": "1-07",
           "title": "字符串"
         },
         {
-          "id": "7e524d43-68ed-4b61-a21a-c838efb2cee6",
+          "id": "b590d58c-df76-4659-ac06-5fa203c73bc2",
           "code": "1-10",
           "title": "结构体与枚举"
         },
         {
-          "id": "0c5409f1-fa1c-4d61-a530-137f68c6bd31",
+          "id": "c48334ec-b1a2-44ac-abda-0acb363d3830",
           "code": "1-12",
           "title": "指针与引用"
         },
         {
-          "id": "e0027a03-d267-49a9-ac41-6489e2be773a",
+          "id": "1b699767-4bcd-4779-8e59-dcb07801ccb9",
           "code": "1-13",
           "title": "STL容器vector"
         },
         {
-          "id": "a9d4375d-5938-47ac-9cc4-2302df0d807c",
+          "id": "d8f27029-332e-4cdf-9e3a-25adb8917ef7",
           "code": "2-01",
           "title": "模拟栈"
         },
         {
-          "id": "43d2d867-bb37-40ae-af00-8659b36c48ba",
+          "id": "7206424c-934a-4d8d-9d0c-03a0c0c57e56",
           "code": "2-02",
           "title": "模拟队列"
         },
         {
-          "id": "a8e4da54-e63b-47d9-874c-556addbef0b4",
+          "id": "0132695b-113f-4533-99d1-21fa85bac181",
           "code": "2-03",
           "title": "静态链表"
         },
         {
-          "id": "08bada00-71d8-456d-aa03-dab658e66d3a",
+          "id": "db3c56e0-aa6f-4835-a753-ffc6edc441b3",
           "code": "2-04",
           "title": "简单哈希表"
         },
         {
-          "id": "93858dd2-5e2c-4907-878b-431447858da0",
+          "id": "60657e18-6eae-4074-83a4-d7ac0f485f5a",
           "code": "2-09",
           "title": "并查集基础"
         },
         {
-          "id": "3366cbfb-194b-4617-8be8-cd6c02f91e7d",
+          "id": "dff0bf9e-05aa-424c-84d8-b1caf23bff5c",
           "code": "2-14",
           "title": "ST表"
         },
         {
-          "id": "cf9baf0f-063f-46c7-babd-8d8f539b9085",
+          "id": "fdd176b4-6aaf-432f-a479-f3f6344777fd",
           "code": "2-29",
           "title": "块状数组分块"
         },
         {
-          "id": "dc69e64e-3e9a-4233-9f03-105fee867fa4",
+          "id": "d2ec4358-1483-47e5-ae2d-24555bf7b71d",
           "code": "3-05",
           "title": "基础排序"
         },
         {
-          "id": "17e886f3-ae73-4d0d-b1d6-ba2d9a8971a7",
+          "id": "9a7d4b19-ae9c-4c2f-9bae-72d2a3e7eee1",
           "code": "4-22",
           "title": "高斯消元"
         },
         {
-          "id": "c0be3139-cebc-4c97-996e-f62bb711331c",
+          "id": "05f33882-c8ce-4d8b-8a75-df25123c4ab9",
           "code": "5-01",
           "title": "邻接矩阵"
         },
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         }
       ]
     },
     {
-      "id": "fc11066a-45b2-42e5-a368-d903335a1ecc",
+      "id": "e249f60f-2280-455e-8a4c-36388aec50d0",
       "code": "1-07",
       "title": "字符串",
       "description": "遍历、拼接、截取、比较",
@@ -431,51 +431,51 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         }
       ],
       "dependents": [
         {
-          "id": "ca8481c6-1304-4944-a2d0-4df198e7eaad",
+          "id": "69bcf076-0407-47ba-a3a9-9f8a5865badd",
           "code": "2-13",
           "title": "字典树Trie"
         },
         {
-          "id": "bb5d1311-3d0f-443e-aab6-66758987e388",
+          "id": "d68e6ad1-ed6e-4f09-a0cc-bc42eea23e5b",
           "code": "6-01",
           "title": "字符串暴力匹配"
         },
         {
-          "id": "b93489ea-74a3-4ae9-8983-9ad2b36d1d8d",
+          "id": "124010ce-d408-47a2-91ee-2be4de911ad3",
           "code": "6-02",
           "title": "字符串操作"
         },
         {
-          "id": "39b4ba91-ae2c-4dc7-8a40-131a7b5be917",
+          "id": "501a4eb3-9184-442a-a4fb-cd52905f3892",
           "code": "6-05",
           "title": "字符串哈希"
         },
         {
-          "id": "02e0890b-2168-44c8-9a25-8a1d8c74aa2e",
+          "id": "9b373ec7-96ed-4e61-9a2c-d650b963a575",
           "code": "6-08",
           "title": "Manacher"
         },
         {
-          "id": "80e097c3-c688-46dc-aca4-e8eb5d4228af",
+          "id": "f6c16dca-2f8b-4d24-b633-73233e9c0375",
           "code": "6-09",
           "title": "后缀数组SA"
         },
         {
-          "id": "754d04ba-806e-47a1-9cc5-c7b68e565c7b",
+          "id": "75d30dbf-eeb2-420a-af5a-d98d02033da9",
           "code": "6-17",
           "title": "字符串压缩"
         }
       ]
     },
     {
-      "id": "5824206a-aef3-4d4c-9981-fc5a3e00c6e9",
+      "id": "86955e0b-674a-4f33-9e86-b319dd0200f6",
       "code": "1-08",
       "title": "函数",
       "description": "含值传递、函数重载基础",
@@ -492,36 +492,36 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
       ],
       "dependents": [
         {
-          "id": "699af192-a579-4c1c-8497-39667597d75c",
+          "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
           "code": "1-09",
           "title": "递归"
         },
         {
-          "id": "7e524d43-68ed-4b61-a21a-c838efb2cee6",
+          "id": "b590d58c-df76-4659-ac06-5fa203c73bc2",
           "code": "1-10",
           "title": "结构体与枚举"
         },
         {
-          "id": "0c5409f1-fa1c-4d61-a530-137f68c6bd31",
+          "id": "c48334ec-b1a2-44ac-abda-0acb363d3830",
           "code": "1-12",
           "title": "指针与引用"
         },
         {
-          "id": "2dd22b08-2ba1-404d-9b46-4d28b01e5895",
+          "id": "f495bc31-cee1-4cbf-be29-345b7c5892ff",
           "code": "1-18",
           "title": "模板函数/类"
         }
       ]
     },
     {
-      "id": "699af192-a579-4c1c-8497-39667597d75c",
+      "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
       "code": "1-09",
       "title": "递归",
       "description": "阶乘、斐波那契等基础递归",
@@ -538,56 +538,56 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "5824206a-aef3-4d4c-9981-fc5a3e00c6e9",
+          "id": "86955e0b-674a-4f33-9e86-b319dd0200f6",
           "code": "1-08",
           "title": "函数"
         }
       ],
       "dependents": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         },
         {
-          "id": "93858dd2-5e2c-4907-878b-431447858da0",
+          "id": "60657e18-6eae-4074-83a4-d7ac0f485f5a",
           "code": "2-09",
           "title": "并查集基础"
         },
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         },
         {
-          "id": "e0b624d8-ae7d-4edc-a322-c500c294587c",
+          "id": "6e2f6518-b09a-4a94-8aa6-d867c0d3ba37",
           "code": "3-06",
           "title": "快速排序"
         },
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         },
         {
-          "id": "0065c4a6-55ab-4f18-88f3-5d2d76d88e69",
+          "id": "a362136e-8801-4f08-9d7b-202d07fc3ea5",
           "code": "3-12",
           "title": "分治"
         },
         {
-          "id": "c4548f43-e090-49b0-9bcc-5428ca87edf4",
+          "id": "b95f1aba-b08e-4db4-8ea3-139faa28d2dd",
           "code": "3-18",
           "title": "倍增算法"
         },
         {
-          "id": "d10b015d-060b-4098-9c84-f14cd7bfdaab",
+          "id": "e1ae1cd5-3723-4ab2-971d-04378c45d3ec",
           "code": "4-06",
           "title": "快速幂"
         }
       ]
     },
     {
-      "id": "7e524d43-68ed-4b61-a21a-c838efb2cee6",
+      "id": "b590d58c-df76-4659-ac06-5fa203c73bc2",
       "code": "1-10",
       "title": "结构体与枚举",
       "description": "结构体定义、成员访问、枚举使用",
@@ -604,36 +604,36 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         },
         {
-          "id": "5824206a-aef3-4d4c-9981-fc5a3e00c6e9",
+          "id": "86955e0b-674a-4f33-9e86-b319dd0200f6",
           "code": "1-08",
           "title": "函数"
         }
       ],
       "dependents": [
         {
-          "id": "2dd22b08-2ba1-404d-9b46-4d28b01e5895",
+          "id": "f495bc31-cee1-4cbf-be29-345b7c5892ff",
           "code": "1-18",
           "title": "模板函数/类"
         },
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         },
         {
-          "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+          "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
           "code": "6-18",
           "title": "点与向量"
         }
       ]
     },
     {
-      "id": "40ceb569-45ca-443a-a550-76bef7f969e1",
+      "id": "c5ea10c7-81ac-4242-b6af-b259a42b11f0",
       "code": "1-11",
       "title": "文件操作",
       "description": "竞赛必备输入输出重定向",
@@ -650,7 +650,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "27b12275-2700-42d2-a3e1-61bb02674adb",
+          "id": "c0488f6c-1438-4799-9f76-581ab0197fe4",
           "code": "1-03",
           "title": "输入输出"
         }
@@ -658,7 +658,7 @@
       "dependents": []
     },
     {
-      "id": "0c5409f1-fa1c-4d61-a530-137f68c6bd31",
+      "id": "c48334ec-b1a2-44ac-abda-0acb363d3830",
       "code": "1-12",
       "title": "指针与引用",
       "description": "指针地址、引用传递、数组与指针",
@@ -675,26 +675,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         },
         {
-          "id": "5824206a-aef3-4d4c-9981-fc5a3e00c6e9",
+          "id": "86955e0b-674a-4f33-9e86-b319dd0200f6",
           "code": "1-08",
           "title": "函数"
         }
       ],
       "dependents": [
         {
-          "id": "e0027a03-d267-49a9-ac41-6489e2be773a",
+          "id": "1b699767-4bcd-4779-8e59-dcb07801ccb9",
           "code": "1-13",
           "title": "STL容器vector"
         }
       ]
     },
     {
-      "id": "e0027a03-d267-49a9-ac41-6489e2be773a",
+      "id": "1b699767-4bcd-4779-8e59-dcb07801ccb9",
       "code": "1-13",
       "title": "STL容器vector",
       "description": "动态数组，增删改查、遍历",
@@ -711,26 +711,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         },
         {
-          "id": "0c5409f1-fa1c-4d61-a530-137f68c6bd31",
+          "id": "c48334ec-b1a2-44ac-abda-0acb363d3830",
           "code": "1-12",
           "title": "指针与引用"
         }
       ],
       "dependents": [
         {
-          "id": "354166d9-f33e-4e71-a605-d9096cd777ca",
+          "id": "3440b279-ec26-42c5-8514-b02cc834b17c",
           "code": "1-14",
           "title": "STL容器"
         }
       ]
     },
     {
-      "id": "354166d9-f33e-4e71-a605-d9096cd777ca",
+      "id": "3440b279-ec26-42c5-8514-b02cc834b17c",
       "code": "1-14",
       "title": "STL容器",
       "description": "集合、映射、队列、栈、双端队列",
@@ -747,31 +747,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "e0027a03-d267-49a9-ac41-6489e2be773a",
+          "id": "1b699767-4bcd-4779-8e59-dcb07801ccb9",
           "code": "1-13",
           "title": "STL容器vector"
         }
       ],
       "dependents": [
         {
-          "id": "145ee048-e49f-4d3b-ad1b-c7d6a6282565",
+          "id": "476965c1-bce5-4c1d-8c69-1b7e77ade521",
           "code": "1-15",
           "title": "STL算法"
         },
         {
-          "id": "1afab01f-8233-4c6a-9151-38f3bc6eb175",
+          "id": "27bcfed2-1276-41e7-8a0f-a8cd5afac0f4",
           "code": "2-05",
           "title": "STL栈"
         },
         {
-          "id": "23f1b70f-2fff-492d-bb93-be84431c9306",
+          "id": "06a7020b-f0f4-49dc-b3cd-2d3797f3caf2",
           "code": "2-06",
           "title": "STL队列"
         }
       ]
     },
     {
-      "id": "145ee048-e49f-4d3b-ad1b-c7d6a6282565",
+      "id": "476965c1-bce5-4c1d-8c69-1b7e77ade521",
       "code": "1-15",
       "title": "STL算法",
       "description": "排序、交换、查找等常用算法",
@@ -788,7 +788,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "354166d9-f33e-4e71-a605-d9096cd777ca",
+          "id": "3440b279-ec26-42c5-8514-b02cc834b17c",
           "code": "1-14",
           "title": "STL容器"
         }
@@ -796,7 +796,7 @@
       "dependents": []
     },
     {
-      "id": "46b62af2-0787-4e65-a307-4c8199ffb7a9",
+      "id": "e655dc09-a999-47d3-b81e-317e4f1cc8de",
       "code": "1-16",
       "title": "位运算",
       "description": "位运算优化、状态压缩基础",
@@ -813,31 +813,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "94aeb740-89b3-478d-b0df-c770e7d1c055",
+          "id": "104467e4-a57e-4be0-b579-10bc9d6ae3f6",
           "code": "1-02",
           "title": "运算符与表达式"
         }
       ],
       "dependents": [
         {
-          "id": "47b09657-9150-4b79-b988-882c8530a63d",
+          "id": "aa2f2999-3d4d-41fe-9924-0fa5303a40de",
           "code": "3-21",
           "title": "状态压缩DP"
         },
         {
-          "id": "7e057bd0-7df7-4145-80c6-e39148909188",
+          "id": "832cd7f1-2b44-4081-be0f-6af60a1e3453",
           "code": "4-25",
           "title": "线性基"
         },
         {
-          "id": "667c542c-af8e-443a-b2f4-4aa110789baf",
+          "id": "c3e1489e-e90c-4f64-8884-d76c2e2e2b0a",
           "code": "7-02",
           "title": "Nim游戏"
         }
       ]
     },
     {
-      "id": "c1661656-2941-4f2f-918d-2a010ad51407",
+      "id": "e02e210b-d457-4d9c-a9a5-4f2f625aea7c",
       "code": "1-17",
       "title": "快速读写优化",
       "description": "大数据输入输出必备",
@@ -854,7 +854,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "27b12275-2700-42d2-a3e1-61bb02674adb",
+          "id": "c0488f6c-1438-4799-9f76-581ab0197fe4",
           "code": "1-03",
           "title": "输入输出"
         }
@@ -862,7 +862,7 @@
       "dependents": []
     },
     {
-      "id": "2dd22b08-2ba1-404d-9b46-4d28b01e5895",
+      "id": "f495bc31-cee1-4cbf-be29-345b7c5892ff",
       "code": "1-18",
       "title": "模板函数/类",
       "description": "通用代码复用，竞赛简化模板",
@@ -879,12 +879,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "5824206a-aef3-4d4c-9981-fc5a3e00c6e9",
+          "id": "86955e0b-674a-4f33-9e86-b319dd0200f6",
           "code": "1-08",
           "title": "函数"
         },
         {
-          "id": "7e524d43-68ed-4b61-a21a-c838efb2cee6",
+          "id": "b590d58c-df76-4659-ac06-5fa203c73bc2",
           "code": "1-10",
           "title": "结构体与枚举"
         }
@@ -892,7 +892,7 @@
       "dependents": []
     },
     {
-      "id": "a9d4375d-5938-47ac-9cc4-2302df0d807c",
+      "id": "d8f27029-332e-4cdf-9e3a-25adb8917ef7",
       "code": "2-01",
       "title": "模拟栈",
       "description": "入栈、出栈、判空",
@@ -909,21 +909,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         }
       ],
       "dependents": [
         {
-          "id": "1afab01f-8233-4c6a-9151-38f3bc6eb175",
+          "id": "27bcfed2-1276-41e7-8a0f-a8cd5afac0f4",
           "code": "2-05",
           "title": "STL栈"
         }
       ]
     },
     {
-      "id": "43d2d867-bb37-40ae-af00-8659b36c48ba",
+      "id": "7206424c-934a-4d8d-9d0c-03a0c0c57e56",
       "code": "2-02",
       "title": "模拟队列",
       "description": "入队、出队、判空",
@@ -940,21 +940,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         }
       ],
       "dependents": [
         {
-          "id": "23f1b70f-2fff-492d-bb93-be84431c9306",
+          "id": "06a7020b-f0f4-49dc-b3cd-2d3797f3caf2",
           "code": "2-06",
           "title": "STL队列"
         }
       ]
     },
     {
-      "id": "a8e4da54-e63b-47d9-874c-556addbef0b4",
+      "id": "0132695b-113f-4533-99d1-21fa85bac181",
       "code": "2-03",
       "title": "静态链表",
       "description": "链表节点、增删、遍历",
@@ -971,26 +971,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         }
       ],
       "dependents": [
         {
-          "id": "a4479858-7168-4e05-8640-a7bb3d357e68",
+          "id": "ec2777b6-d3ad-4623-9a0b-d89a70766294",
           "code": "2-33",
           "title": "块状链表"
         },
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         }
       ]
     },
     {
-      "id": "08bada00-71d8-456d-aa03-dab658e66d3a",
+      "id": "db3c56e0-aa6f-4835-a753-ffc6edc441b3",
       "code": "2-04",
       "title": "简单哈希表",
       "description": "哈希映射、冲突处理",
@@ -1007,21 +1007,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         }
       ],
       "dependents": [
         {
-          "id": "39b4ba91-ae2c-4dc7-8a40-131a7b5be917",
+          "id": "501a4eb3-9184-442a-a4fb-cd52905f3892",
           "code": "6-05",
           "title": "字符串哈希"
         }
       ]
     },
     {
-      "id": "1afab01f-8233-4c6a-9151-38f3bc6eb175",
+      "id": "27bcfed2-1276-41e7-8a0f-a8cd5afac0f4",
       "code": "2-05",
       "title": "STL栈",
       "description": "括号匹配、表达式求值等应用",
@@ -1038,26 +1038,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "354166d9-f33e-4e71-a605-d9096cd777ca",
+          "id": "3440b279-ec26-42c5-8514-b02cc834b17c",
           "code": "1-14",
           "title": "STL容器"
         },
         {
-          "id": "a9d4375d-5938-47ac-9cc4-2302df0d807c",
+          "id": "d8f27029-332e-4cdf-9e3a-25adb8917ef7",
           "code": "2-01",
           "title": "模拟栈"
         }
       ],
       "dependents": [
         {
-          "id": "47928bfc-b297-470b-9fc9-995f38eda9c3",
+          "id": "655f7352-e4e0-4204-8a4b-70998ecc6bcd",
           "code": "2-11",
           "title": "单调栈"
         }
       ]
     },
     {
-      "id": "23f1b70f-2fff-492d-bb93-be84431c9306",
+      "id": "06a7020b-f0f4-49dc-b3cd-2d3797f3caf2",
       "code": "2-06",
       "title": "STL队列",
       "description": "BFS、任务调度等应用",
@@ -1074,41 +1074,41 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "354166d9-f33e-4e71-a605-d9096cd777ca",
+          "id": "3440b279-ec26-42c5-8514-b02cc834b17c",
           "code": "1-14",
           "title": "STL容器"
         },
         {
-          "id": "43d2d867-bb37-40ae-af00-8659b36c48ba",
+          "id": "7206424c-934a-4d8d-9d0c-03a0c0c57e56",
           "code": "2-02",
           "title": "模拟队列"
         }
       ],
       "dependents": [
         {
-          "id": "01cacd31-fe9c-4ef6-949a-c9426d292abc",
+          "id": "839df1b6-0c55-47f1-94f7-e07098d27b2a",
           "code": "2-12",
           "title": "单调队列"
         },
         {
-          "id": "2dc5dc2c-6c3c-4f24-9187-048290aa0836",
+          "id": "3da42b72-45c6-4563-9c4b-e237d40c94ec",
           "code": "3-10",
           "title": "BFS广搜"
         },
         {
-          "id": "efab340f-8987-4f31-a32f-acb2eb0c33c4",
+          "id": "0a1aa1a6-2033-4d5e-b153-eeb1dc204f1c",
           "code": "5-07",
           "title": "SPFA最短路"
         },
         {
-          "id": "c2ae281e-fa11-4aab-afac-dfff3879038c",
+          "id": "4a2c1abc-cda9-49dc-b044-df5d18d12612",
           "code": "5-12",
           "title": "拓扑排序"
         }
       ]
     },
     {
-      "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+      "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
       "code": "2-07",
       "title": "二叉树基础",
       "description": "存储、前中后序遍历、层序遍历",
@@ -1125,101 +1125,101 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "699af192-a579-4c1c-8497-39667597d75c",
+          "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
           "code": "1-09",
           "title": "递归"
         },
         {
-          "id": "7e524d43-68ed-4b61-a21a-c838efb2cee6",
+          "id": "b590d58c-df76-4659-ac06-5fa203c73bc2",
           "code": "1-10",
           "title": "结构体与枚举"
         }
       ],
       "dependents": [
         {
-          "id": "9e9b4124-26fd-491a-ae1f-a267c3647de3",
+          "id": "28c028d4-fbd7-47cf-a2d2-0e00d3e35f0e",
           "code": "2-08",
           "title": "堆/优先队列"
         },
         {
-          "id": "ca8481c6-1304-4944-a2d0-4df198e7eaad",
+          "id": "69bcf076-0407-47ba-a3a9-9f8a5865badd",
           "code": "2-13",
           "title": "字典树Trie"
         },
         {
-          "id": "fb33c82b-82ec-4c38-8e1a-7027dd111f16",
+          "id": "5a27a380-70b3-4b47-a000-7ee0b01e7bc4",
           "code": "2-15",
           "title": "树状数组一维"
         },
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         },
         {
-          "id": "668e1645-84cc-49c7-976e-0a165e83e937",
+          "id": "b8791f5b-cc33-4361-94f4-db316b6b58c5",
           "code": "2-22",
           "title": "平衡树Treap"
         },
         {
-          "id": "614e65fb-0dc1-48dd-a5c5-3132ab137c05",
+          "id": "11676edf-10a5-480d-94f5-271a7859d3b3",
           "code": "2-23",
           "title": "平衡树Splay"
         },
         {
-          "id": "47aa2954-26a9-48fc-93c0-f89b18830226",
+          "id": "32a375b0-04df-4200-b849-0e262866c17d",
           "code": "2-24",
           "title": "替罪羊树"
         },
         {
-          "id": "ad98c206-8725-4f93-b93c-8bdfa97bb247",
+          "id": "1df5abce-8b9b-476d-9c24-be39af047cab",
           "code": "2-25",
           "title": "笛卡尔树"
         },
         {
-          "id": "10b3b498-e4b1-45fe-80a3-7b8463b2341c",
+          "id": "4ba841d0-485f-4c23-8eab-4f0e5283f242",
           "code": "2-26",
           "title": "树链剖分"
         },
         {
-          "id": "9c01d51d-95aa-4772-a76e-a85f32619f8c",
+          "id": "242b0064-ede5-4cbd-9ca8-f8eda15d0f5a",
           "code": "2-38",
           "title": "K-D Tree"
         },
         {
-          "id": "dd6e1ed0-4bf9-4010-8a8f-a46d771d173b",
+          "id": "395a8031-ac6d-4936-8b57-8ab239a9d0c0",
           "code": "3-23",
           "title": "树形DP"
         },
         {
-          "id": "9cd4f2a6-97f2-4086-bd7d-c03b38e6b93c",
+          "id": "d4ac9c44-163e-41bb-a439-7a8e81426bcd",
           "code": "3-29",
           "title": "点分治"
         },
         {
-          "id": "d890b38a-5b4c-4789-bac3-d4609605e81b",
+          "id": "93764b6b-2ddd-4e6f-bcc8-5ffe43989894",
           "code": "3-35",
           "title": "树上莫队"
         },
         {
-          "id": "e6e8e641-78b0-49b7-b18f-873db7a410c5",
+          "id": "c296c0c8-28f8-46ae-8692-eb5757067b49",
           "code": "3-41",
           "title": "DSU on Tree"
         },
         {
-          "id": "4d74600e-953f-4bbb-8b42-df479144b2d0",
+          "id": "8f02c09d-a636-49b9-bf51-7875c21cd5e9",
           "code": "5-16",
           "title": "LCA倍增"
         },
         {
-          "id": "8abf88cd-18b6-4fa4-b375-57eee522fe7b",
+          "id": "ea96afb8-475b-4852-8933-6efbcc16ad63",
           "code": "5-27",
           "title": "基环树"
         }
       ]
     },
     {
-      "id": "9e9b4124-26fd-491a-ae1f-a267c3647de3",
+      "id": "28c028d4-fbd7-47cf-a2d2-0e00d3e35f0e",
       "code": "2-08",
       "title": "堆/优先队列",
       "description": "大根堆/小根堆、堆排序",
@@ -1236,41 +1236,41 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
       ],
       "dependents": [
         {
-          "id": "668e1645-84cc-49c7-976e-0a165e83e937",
+          "id": "b8791f5b-cc33-4361-94f4-db316b6b58c5",
           "code": "2-22",
           "title": "平衡树Treap"
         },
         {
-          "id": "ad98c206-8725-4f93-b93c-8bdfa97bb247",
+          "id": "1df5abce-8b9b-476d-9c24-be39af047cab",
           "code": "2-25",
           "title": "笛卡尔树"
         },
         {
-          "id": "f6c55aa0-5d16-4c35-b8f8-7c160a6b4820",
+          "id": "fbee180b-1d4d-4102-a3fa-02e877fe541e",
           "code": "2-34",
           "title": "左偏树"
         },
         {
-          "id": "c97f4bf5-26a7-4088-81a0-0dff5f723e6c",
+          "id": "1f175335-c72b-4bbb-bbe9-8093be6a5dae",
           "code": "5-06",
           "title": "Dijkstra最短路"
         },
         {
-          "id": "3ea6facc-0dc9-4a24-892a-9b21d491e499",
+          "id": "9539e757-fce6-4532-a904-54deb52dd94d",
           "code": "5-11",
           "title": "Prim最小生成树"
         }
       ]
     },
     {
-      "id": "93858dd2-5e2c-4907-878b-431447858da0",
+      "id": "60657e18-6eae-4074-83a4-d7ac0f485f5a",
       "code": "2-09",
       "title": "并查集基础",
       "description": "查找、合并、路径压缩",
@@ -1287,46 +1287,46 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         },
         {
-          "id": "699af192-a579-4c1c-8497-39667597d75c",
+          "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
           "code": "1-09",
           "title": "递归"
         }
       ],
       "dependents": [
         {
-          "id": "348b0760-074b-4bce-92e2-c812f5acdc46",
+          "id": "2372ef70-c742-45be-96c6-123d3ce4a2f2",
           "code": "2-10",
           "title": "并查集进阶"
         },
         {
-          "id": "e6a51f26-5273-4999-bea9-906909db933b",
+          "id": "d35e04b1-0b3c-4902-873d-44604a22b116",
           "code": "2-28",
           "title": "可持久化并查集"
         },
         {
-          "id": "e56a3800-17db-43e9-84dd-72b17e806090",
+          "id": "5cd24945-f7c5-424f-9359-7b18c9616bb5",
           "code": "2-32",
           "title": "可撤销并查集"
         },
         {
-          "id": "7c228841-3b86-4b6d-9c77-50cec19aca04",
+          "id": "04322688-9b7d-4f8b-bd3d-0f3b615cd139",
           "code": "3-40",
           "title": "启发式合并"
         },
         {
-          "id": "0392790c-77db-4569-aab4-cd73e644735d",
+          "id": "4bd37030-19a6-4b49-9b5d-947164392889",
           "code": "5-10",
           "title": "Kruskal最小生成树"
         }
       ]
     },
     {
-      "id": "348b0760-074b-4bce-92e2-c812f5acdc46",
+      "id": "2372ef70-c742-45be-96c6-123d3ce4a2f2",
       "code": "2-10",
       "title": "并查集进阶",
       "description": "处理关系类问题",
@@ -1343,7 +1343,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "93858dd2-5e2c-4907-878b-431447858da0",
+          "id": "60657e18-6eae-4074-83a4-d7ac0f485f5a",
           "code": "2-09",
           "title": "并查集基础"
         }
@@ -1351,7 +1351,7 @@
       "dependents": []
     },
     {
-      "id": "47928bfc-b297-470b-9fc9-995f38eda9c3",
+      "id": "655f7352-e4e0-4204-8a4b-70998ecc6bcd",
       "code": "2-11",
       "title": "单调栈",
       "description": "找下一个更大/更小元素",
@@ -1368,26 +1368,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "1afab01f-8233-4c6a-9151-38f3bc6eb175",
+          "id": "27bcfed2-1276-41e7-8a0f-a8cd5afac0f4",
           "code": "2-05",
           "title": "STL栈"
         }
       ],
       "dependents": [
         {
-          "id": "ad98c206-8725-4f93-b93c-8bdfa97bb247",
+          "id": "1df5abce-8b9b-476d-9c24-be39af047cab",
           "code": "2-25",
           "title": "笛卡尔树"
         },
         {
-          "id": "eb640205-f39e-4faa-a285-f484c21a752d",
+          "id": "77cba714-c4f9-4e97-9fc9-3a945809c561",
           "code": "6-23",
           "title": "凸包Andrew"
         }
       ]
     },
     {
-      "id": "01cacd31-fe9c-4ef6-949a-c9426d292abc",
+      "id": "839df1b6-0c55-47f1-94f7-e07098d27b2a",
       "code": "2-12",
       "title": "单调队列",
       "description": "滑动窗口最值",
@@ -1404,21 +1404,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "23f1b70f-2fff-492d-bb93-be84431c9306",
+          "id": "06a7020b-f0f4-49dc-b3cd-2d3797f3caf2",
           "code": "2-06",
           "title": "STL队列"
         }
       ],
       "dependents": [
         {
-          "id": "0875a5ad-e359-4137-8dfe-82cf6bc7e34c",
+          "id": "be59d480-e037-4c84-b454-f4c313656ba1",
           "code": "3-27",
           "title": "单调队列优化DP"
         }
       ]
     },
     {
-      "id": "ca8481c6-1304-4944-a2d0-4df198e7eaad",
+      "id": "69bcf076-0407-47ba-a3a9-9f8a5865badd",
       "code": "2-13",
       "title": "字典树Trie",
       "description": "前缀匹配、单词统计",
@@ -1435,36 +1435,36 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         },
         {
-          "id": "fc11066a-45b2-42e5-a368-d903335a1ecc",
+          "id": "e249f60f-2280-455e-8a4c-36388aec50d0",
           "code": "1-07",
           "title": "字符串"
         }
       ],
       "dependents": [
         {
-          "id": "726eea59-6c2f-47ec-b24e-2b5e54fee9c9",
+          "id": "f051f79f-d405-4c70-aa74-a8e6a54b484b",
           "code": "2-39",
           "title": "可持久化字典树"
         },
         {
-          "id": "9cd63e8c-6c29-461e-ab86-17f21ae1ea95",
+          "id": "f1c77277-7461-4330-92a9-445a8f1b14ac",
           "code": "6-06",
           "title": "AC自动机"
         },
         {
-          "id": "8747e0f5-6a94-4336-af0e-27e3eddf6103",
+          "id": "bbfaf5e9-d189-4d65-9291-12db0be1d721",
           "code": "6-11",
           "title": "后缀自动机SAM"
         }
       ]
     },
     {
-      "id": "3366cbfb-194b-4617-8be8-cd6c02f91e7d",
+      "id": "dff0bf9e-05aa-424c-84d8-b1caf23bff5c",
       "code": "2-14",
       "title": "ST表",
       "description": "RMQ问题O(1)查询，倍增思想",
@@ -1481,12 +1481,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         },
         {
-          "id": "c4548f43-e090-49b0-9bcc-5428ca87edf4",
+          "id": "b95f1aba-b08e-4db4-8ea3-139faa28d2dd",
           "code": "3-18",
           "title": "倍增算法"
         }
@@ -1494,7 +1494,7 @@
       "dependents": []
     },
     {
-      "id": "fb33c82b-82ec-4c38-8e1a-7027dd111f16",
+      "id": "5a27a380-70b3-4b47-a000-7ee0b01e7bc4",
       "code": "2-15",
       "title": "树状数组一维",
       "description": "单点修改、区间查询",
@@ -1511,26 +1511,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
       ],
       "dependents": [
         {
-          "id": "84ba396d-88f0-43b2-a5d1-0762c2c8bd2e",
+          "id": "b80398e0-c090-44ba-96bb-383c42d9c463",
           "code": "2-16",
           "title": "树状数组二维"
         },
         {
-          "id": "0b351548-8ffc-4867-820a-8a72b7f19f7d",
+          "id": "94ca68dd-66ee-49e7-9b21-395a22e69d81",
           "code": "2-17",
           "title": "树状数组区间"
         }
       ]
     },
     {
-      "id": "84ba396d-88f0-43b2-a5d1-0762c2c8bd2e",
+      "id": "b80398e0-c090-44ba-96bb-383c42d9c463",
       "code": "2-16",
       "title": "树状数组二维",
       "description": "二维区间修改、查询",
@@ -1547,7 +1547,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fb33c82b-82ec-4c38-8e1a-7027dd111f16",
+          "id": "5a27a380-70b3-4b47-a000-7ee0b01e7bc4",
           "code": "2-15",
           "title": "树状数组一维"
         }
@@ -1555,7 +1555,7 @@
       "dependents": []
     },
     {
-      "id": "0b351548-8ffc-4867-820a-8a72b7f19f7d",
+      "id": "94ca68dd-66ee-49e7-9b21-395a22e69d81",
       "code": "2-17",
       "title": "树状数组区间",
       "description": "差分思想应用",
@@ -1572,7 +1572,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fb33c82b-82ec-4c38-8e1a-7027dd111f16",
+          "id": "5a27a380-70b3-4b47-a000-7ee0b01e7bc4",
           "code": "2-15",
           "title": "树状数组一维"
         }
@@ -1580,7 +1580,7 @@
       "dependents": []
     },
     {
-      "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+      "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
       "code": "2-18",
       "title": "线段树基础",
       "description": "区间修改、区间查询、单点更新",
@@ -1597,66 +1597,66 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         },
         {
-          "id": "699af192-a579-4c1c-8497-39667597d75c",
+          "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
           "code": "1-09",
           "title": "递归"
         }
       ],
       "dependents": [
         {
-          "id": "7ad0eb1c-b014-4759-8920-4e73b9b81597",
+          "id": "09ffb60f-5060-4be9-b35c-1476b238d4b8",
           "code": "2-19",
           "title": "线段树懒标记"
         },
         {
-          "id": "c1c8731a-9cf6-4141-96e7-6285417b506e",
+          "id": "2c7f13e4-3c33-4254-9f3d-3b828391a170",
           "code": "2-20",
           "title": "线段树区间合并"
         },
         {
-          "id": "d20bd8d4-bdea-4eca-a7bf-0e2b6c9061d4",
+          "id": "445100c9-456e-4883-80ad-96a239bca51c",
           "code": "2-21",
           "title": "主席树"
         },
         {
-          "id": "10b3b498-e4b1-45fe-80a3-7b8463b2341c",
+          "id": "4ba841d0-485f-4c23-8eab-4f0e5283f242",
           "code": "2-26",
           "title": "树链剖分"
         },
         {
-          "id": "c63ee21d-69c3-4089-b2ed-0dc9b374b16c",
+          "id": "abfd315e-10c7-4ee1-9dec-4b76147e4394",
           "code": "2-30",
           "title": "动态开点线段树"
         },
         {
-          "id": "eb60c8e6-6c2c-4053-8515-9679cee8725c",
+          "id": "35f78b10-6858-4228-a858-9c0cbe261f24",
           "code": "2-31",
           "title": "李超线段树"
         },
         {
-          "id": "ac037146-b00d-4b8b-bbae-662a1a447cde",
+          "id": "8cbf82e8-7044-4571-a6f5-12acdfc23ff1",
           "code": "2-35",
           "title": "珂朵莉树ODT"
         },
         {
-          "id": "eb96caa1-d187-4037-9013-d9d1e32ae524",
+          "id": "c311d803-e6c6-4643-8572-f49d81041e71",
           "code": "2-36",
           "title": "树套树"
         },
         {
-          "id": "021f4ea3-0abd-4b80-943f-de1f8d4cda7c",
+          "id": "b3617cf7-ba73-4abf-b3f7-eab31fa91623",
           "code": "3-39",
           "title": "扫描线算法"
         }
       ]
     },
     {
-      "id": "7ad0eb1c-b014-4759-8920-4e73b9b81597",
+      "id": "09ffb60f-5060-4be9-b35c-1476b238d4b8",
       "code": "2-19",
       "title": "线段树懒标记",
       "description": "延迟更新，区间加/乘",
@@ -1673,7 +1673,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         }
@@ -1681,7 +1681,7 @@
       "dependents": []
     },
     {
-      "id": "c1c8731a-9cf6-4141-96e7-6285417b506e",
+      "id": "2c7f13e4-3c33-4254-9f3d-3b828391a170",
       "code": "2-20",
       "title": "线段树区间合并",
       "description": "处理区间连续问题",
@@ -1698,7 +1698,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         }
@@ -1706,7 +1706,7 @@
       "dependents": []
     },
     {
-      "id": "d20bd8d4-bdea-4eca-a7bf-0e2b6c9061d4",
+      "id": "445100c9-456e-4883-80ad-96a239bca51c",
       "code": "2-21",
       "title": "主席树",
       "description": "历史版本查询、区间第k大",
@@ -1723,26 +1723,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         }
       ],
       "dependents": [
         {
-          "id": "e6a51f26-5273-4999-bea9-906909db933b",
+          "id": "d35e04b1-0b3c-4902-873d-44604a22b116",
           "code": "2-28",
           "title": "可持久化并查集"
         },
         {
-          "id": "726eea59-6c2f-47ec-b24e-2b5e54fee9c9",
+          "id": "f051f79f-d405-4c70-aa74-a8e6a54b484b",
           "code": "2-39",
           "title": "可持久化字典树"
         }
       ]
     },
     {
-      "id": "668e1645-84cc-49c7-976e-0a165e83e937",
+      "id": "b8791f5b-cc33-4361-94f4-db316b6b58c5",
       "code": "2-22",
       "title": "平衡树Treap",
       "description": "插入、删除、查询排名",
@@ -1759,26 +1759,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         },
         {
-          "id": "9e9b4124-26fd-491a-ae1f-a267c3647de3",
+          "id": "28c028d4-fbd7-47cf-a2d2-0e00d3e35f0e",
           "code": "2-08",
           "title": "堆/优先队列"
         }
       ],
       "dependents": [
         {
-          "id": "eb96caa1-d187-4037-9013-d9d1e32ae524",
+          "id": "c311d803-e6c6-4643-8572-f49d81041e71",
           "code": "2-36",
           "title": "树套树"
         }
       ]
     },
     {
-      "id": "614e65fb-0dc1-48dd-a5c5-3132ab137c05",
+      "id": "11676edf-10a5-480d-94f5-271a7859d3b3",
       "code": "2-23",
       "title": "平衡树Splay",
       "description": "伸展操作、区间翻转",
@@ -1795,21 +1795,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
       ],
       "dependents": [
         {
-          "id": "f50a17f9-cc95-4eb7-b800-23500a757830",
+          "id": "a8badd58-5e7a-41aa-9059-dacb01e83c20",
           "code": "2-37",
           "title": "Link-Cut Tree"
         }
       ]
     },
     {
-      "id": "47aa2954-26a9-48fc-93c0-f89b18830226",
+      "id": "32a375b0-04df-4200-b849-0e262866c17d",
       "code": "2-24",
       "title": "替罪羊树",
       "description": "平衡树简化版",
@@ -1826,7 +1826,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
@@ -1834,7 +1834,7 @@
       "dependents": []
     },
     {
-      "id": "ad98c206-8725-4f93-b93c-8bdfa97bb247",
+      "id": "1df5abce-8b9b-476d-9c24-be39af047cab",
       "code": "2-25",
       "title": "笛卡尔树",
       "description": "堆性质+BST性质",
@@ -1851,17 +1851,17 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         },
         {
-          "id": "9e9b4124-26fd-491a-ae1f-a267c3647de3",
+          "id": "28c028d4-fbd7-47cf-a2d2-0e00d3e35f0e",
           "code": "2-08",
           "title": "堆/优先队列"
         },
         {
-          "id": "47928bfc-b297-470b-9fc9-995f38eda9c3",
+          "id": "655f7352-e4e0-4204-8a4b-70998ecc6bcd",
           "code": "2-11",
           "title": "单调栈"
         }
@@ -1869,7 +1869,7 @@
       "dependents": []
     },
     {
-      "id": "10b3b498-e4b1-45fe-80a3-7b8463b2341c",
+      "id": "4ba841d0-485f-4c23-8eab-4f0e5283f242",
       "code": "2-26",
       "title": "树链剖分",
       "description": "树路径修改、查询",
@@ -1886,36 +1886,36 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         },
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
       ],
       "dependents": [
         {
-          "id": "410aa882-4b06-4768-a5a6-49043dfd301c",
+          "id": "4c261cc3-fe13-4823-8a01-222c0d127e17",
           "code": "2-27",
           "title": "虚树"
         },
         {
-          "id": "f50a17f9-cc95-4eb7-b800-23500a757830",
+          "id": "a8badd58-5e7a-41aa-9059-dacb01e83c20",
           "code": "2-37",
           "title": "Link-Cut Tree"
         },
         {
-          "id": "39e56537-f7c1-46ff-a66e-60aa00c40118",
+          "id": "a810052b-91a5-4007-8061-b77d60a5d29a",
           "code": "5-17",
           "title": "LCA树剖"
         }
       ]
     },
     {
-      "id": "410aa882-4b06-4768-a5a6-49043dfd301c",
+      "id": "4c261cc3-fe13-4823-8a01-222c0d127e17",
       "code": "2-27",
       "title": "虚树",
       "description": "树上关键点问题优化",
@@ -1932,7 +1932,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "10b3b498-e4b1-45fe-80a3-7b8463b2341c",
+          "id": "4ba841d0-485f-4c23-8eab-4f0e5283f242",
           "code": "2-26",
           "title": "树链剖分"
         }
@@ -1940,7 +1940,7 @@
       "dependents": []
     },
     {
-      "id": "e6a51f26-5273-4999-bea9-906909db933b",
+      "id": "d35e04b1-0b3c-4902-873d-44604a22b116",
       "code": "2-28",
       "title": "可持久化并查集",
       "description": "历史版本并查集查询",
@@ -1957,12 +1957,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "93858dd2-5e2c-4907-878b-431447858da0",
+          "id": "60657e18-6eae-4074-83a4-d7ac0f485f5a",
           "code": "2-09",
           "title": "并查集基础"
         },
         {
-          "id": "d20bd8d4-bdea-4eca-a7bf-0e2b6c9061d4",
+          "id": "445100c9-456e-4883-80ad-96a239bca51c",
           "code": "2-21",
           "title": "主席树"
         }
@@ -1970,7 +1970,7 @@
       "dependents": []
     },
     {
-      "id": "cf9baf0f-063f-46c7-babd-8d8f539b9085",
+      "id": "fdd176b4-6aaf-432f-a479-f3f6344777fd",
       "code": "2-29",
       "title": "块状数组分块",
       "description": "区间操作、根号算法",
@@ -1987,26 +1987,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         }
       ],
       "dependents": [
         {
-          "id": "a4479858-7168-4e05-8640-a7bb3d357e68",
+          "id": "ec2777b6-d3ad-4623-9a0b-d89a70766294",
           "code": "2-33",
           "title": "块状链表"
         },
         {
-          "id": "936f038e-66f8-4f24-ad82-642b2ccb505c",
+          "id": "ef1864d0-2853-4aff-b465-0ef848cc0070",
           "code": "3-33",
           "title": "莫队算法"
         }
       ]
     },
     {
-      "id": "c63ee21d-69c3-4089-b2ed-0dc9b374b16c",
+      "id": "abfd315e-10c7-4ee1-9dec-4b76147e4394",
       "code": "2-30",
       "title": "动态开点线段树",
       "description": "大数据范围线段树优化",
@@ -2023,7 +2023,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         }
@@ -2031,7 +2031,7 @@
       "dependents": []
     },
     {
-      "id": "eb60c8e6-6c2c-4053-8515-9679cee8725c",
+      "id": "35f78b10-6858-4228-a858-9c0cbe261f24",
       "code": "2-31",
       "title": "李超线段树",
       "description": "维护直线/线段最值",
@@ -2048,7 +2048,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         }
@@ -2056,7 +2056,7 @@
       "dependents": []
     },
     {
-      "id": "e56a3800-17db-43e9-84dd-72b17e806090",
+      "id": "5cd24945-f7c5-424f-9359-7b18c9616bb5",
       "code": "2-32",
       "title": "可撤销并查集",
       "description": "支持撤销操作",
@@ -2073,7 +2073,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "93858dd2-5e2c-4907-878b-431447858da0",
+          "id": "60657e18-6eae-4074-83a4-d7ac0f485f5a",
           "code": "2-09",
           "title": "并查集基础"
         }
@@ -2081,7 +2081,7 @@
       "dependents": []
     },
     {
-      "id": "a4479858-7168-4e05-8640-a7bb3d357e68",
+      "id": "ec2777b6-d3ad-4623-9a0b-d89a70766294",
       "code": "2-33",
       "title": "块状链表",
       "description": "大数据量链表操作优化",
@@ -2098,12 +2098,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "a8e4da54-e63b-47d9-874c-556addbef0b4",
+          "id": "0132695b-113f-4533-99d1-21fa85bac181",
           "code": "2-03",
           "title": "静态链表"
         },
         {
-          "id": "cf9baf0f-063f-46c7-babd-8d8f539b9085",
+          "id": "fdd176b4-6aaf-432f-a479-f3f6344777fd",
           "code": "2-29",
           "title": "块状数组分块"
         }
@@ -2111,7 +2111,7 @@
       "dependents": []
     },
     {
-      "id": "f6c55aa0-5d16-4c35-b8f8-7c160a6b4820",
+      "id": "fbee180b-1d4d-4102-a3fa-02e877fe541e",
       "code": "2-34",
       "title": "左偏树",
       "description": "堆合并、带权合并",
@@ -2128,7 +2128,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9e9b4124-26fd-491a-ae1f-a267c3647de3",
+          "id": "28c028d4-fbd7-47cf-a2d2-0e00d3e35f0e",
           "code": "2-08",
           "title": "堆/优先队列"
         }
@@ -2136,7 +2136,7 @@
       "dependents": []
     },
     {
-      "id": "ac037146-b00d-4b8b-bbae-662a1a447cde",
+      "id": "8cbf82e8-7044-4571-a6f5-12acdfc23ff1",
       "code": "2-35",
       "title": "珂朵莉树ODT",
       "description": "区间赋值、随机数据优化",
@@ -2153,7 +2153,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         }
@@ -2161,7 +2161,7 @@
       "dependents": []
     },
     {
-      "id": "eb96caa1-d187-4037-9013-d9d1e32ae524",
+      "id": "c311d803-e6c6-4643-8572-f49d81041e71",
       "code": "2-36",
       "title": "树套树",
       "description": "二维数点、区间第k大进阶",
@@ -2178,12 +2178,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         },
         {
-          "id": "668e1645-84cc-49c7-976e-0a165e83e937",
+          "id": "b8791f5b-cc33-4361-94f4-db316b6b58c5",
           "code": "2-22",
           "title": "平衡树Treap"
         }
@@ -2191,7 +2191,7 @@
       "dependents": []
     },
     {
-      "id": "f50a17f9-cc95-4eb7-b800-23500a757830",
+      "id": "a8badd58-5e7a-41aa-9059-dacb01e83c20",
       "code": "2-37",
       "title": "Link-Cut Tree",
       "description": "动态树，支持链修改/查询",
@@ -2208,12 +2208,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "614e65fb-0dc1-48dd-a5c5-3132ab137c05",
+          "id": "11676edf-10a5-480d-94f5-271a7859d3b3",
           "code": "2-23",
           "title": "平衡树Splay"
         },
         {
-          "id": "10b3b498-e4b1-45fe-80a3-7b8463b2341c",
+          "id": "4ba841d0-485f-4c23-8eab-4f0e5283f242",
           "code": "2-26",
           "title": "树链剖分"
         }
@@ -2221,7 +2221,7 @@
       "dependents": []
     },
     {
-      "id": "9c01d51d-95aa-4772-a76e-a85f32619f8c",
+      "id": "242b0064-ede5-4cbd-9ca8-f8eda15d0f5a",
       "code": "2-38",
       "title": "K-D Tree",
       "description": "多维空间查询、最近邻搜索",
@@ -2238,7 +2238,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
@@ -2246,7 +2246,7 @@
       "dependents": []
     },
     {
-      "id": "726eea59-6c2f-47ec-b24e-2b5e54fee9c9",
+      "id": "f051f79f-d405-4c70-aa74-a8e6a54b484b",
       "code": "2-39",
       "title": "可持久化字典树",
       "description": "历史版本前缀查询",
@@ -2263,12 +2263,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ca8481c6-1304-4944-a2d0-4df198e7eaad",
+          "id": "69bcf076-0407-47ba-a3a9-9f8a5865badd",
           "code": "2-13",
           "title": "字典树Trie"
         },
         {
-          "id": "d20bd8d4-bdea-4eca-a7bf-0e2b6c9061d4",
+          "id": "445100c9-456e-4883-80ad-96a239bca51c",
           "code": "2-21",
           "title": "主席树"
         }
@@ -2276,7 +2276,7 @@
       "dependents": []
     },
     {
-      "id": "fdc7e8df-a91e-4581-be44-dbc8643dd9f6",
+      "id": "9857e808-eb16-4ba9-9af2-ad78833c3a49",
       "code": "3-01",
       "title": "枚举",
       "description": "基础穷举，优化剪枝基础",
@@ -2293,31 +2293,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
       ],
       "dependents": [
         {
-          "id": "10427381-1f02-4ac4-8c3e-2da23d90acc8",
+          "id": "78c8b348-dabf-40d7-bb09-f038507b71d4",
           "code": "3-03",
           "title": "贪心简单"
         },
         {
-          "id": "82eab1ad-3d40-46e4-a277-1be89a2db5a4",
+          "id": "6555b1eb-dc1d-4720-9c03-3b0bd777894e",
           "code": "3-42",
           "title": "蒙特卡洛算法"
         },
         {
-          "id": "46a26693-8351-4948-ad2a-6fc70086f044",
+          "id": "e3aac91e-467e-4dee-a30e-98802e01a788",
           "code": "4-44",
           "title": "鸽巢原理"
         }
       ]
     },
     {
-      "id": "8ba795d9-632d-4300-a1bd-fc46e8aa144a",
+      "id": "ac4044d4-6d1d-422e-a8f9-2d45db5c6e86",
       "code": "3-02",
       "title": "模拟",
       "description": "按题目步骤模拟执行",
@@ -2334,7 +2334,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
@@ -2342,7 +2342,7 @@
       "dependents": []
     },
     {
-      "id": "10427381-1f02-4ac4-8c3e-2da23d90acc8",
+      "id": "78c8b348-dabf-40d7-bb09-f038507b71d4",
       "code": "3-03",
       "title": "贪心简单",
       "description": "区间选点、找零钱、排序贪心",
@@ -2359,26 +2359,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fdc7e8df-a91e-4581-be44-dbc8643dd9f6",
+          "id": "9857e808-eb16-4ba9-9af2-ad78833c3a49",
           "code": "3-01",
           "title": "枚举"
         }
       ],
       "dependents": [
         {
-          "id": "571053e3-f8b5-43fc-97b3-3a39d991ce8b",
+          "id": "2bbbafd5-7a15-4160-a39a-11173b8cbd6d",
           "code": "3-17",
           "title": "贪心进阶"
         },
         {
-          "id": "0392790c-77db-4569-aab4-cd73e644735d",
+          "id": "4bd37030-19a6-4b49-9b5d-947164392889",
           "code": "5-10",
           "title": "Kruskal最小生成树"
         }
       ]
     },
     {
-      "id": "437bba76-21d3-4ad2-9f22-98d5392a2096",
+      "id": "222f8c9e-55d6-459a-81d7-b7e2909dc419",
       "code": "3-04",
       "title": "递推",
       "description": "斐波那契、递推公式推导",
@@ -2395,21 +2395,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
       ],
       "dependents": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
       ]
     },
     {
-      "id": "dc69e64e-3e9a-4233-9f03-105fee867fa4",
+      "id": "d2ec4358-1483-47e5-ae2d-24555bf7b71d",
       "code": "3-05",
       "title": "基础排序",
       "description": "冒泡/选择/插入排序",
@@ -2426,31 +2426,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         }
       ],
       "dependents": [
         {
-          "id": "e0b624d8-ae7d-4edc-a322-c500c294587c",
+          "id": "6e2f6518-b09a-4a94-8aa6-d867c0d3ba37",
           "code": "3-06",
           "title": "快速排序"
         },
         {
-          "id": "f5fad932-f285-44ec-b469-dcfbf3730651",
+          "id": "e3ce8bb4-5485-4433-b3af-832d17332c04",
           "code": "3-08",
           "title": "离散化"
         },
         {
-          "id": "438e1425-bb57-46f8-a90b-63032f18ef97",
+          "id": "f57c9eb2-9aa4-4938-b664-f0986cbb5483",
           "code": "6-22",
           "title": "凸包Graham"
         }
       ]
     },
     {
-      "id": "e0b624d8-ae7d-4edc-a322-c500c294587c",
+      "id": "6e2f6518-b09a-4a94-8aa6-d867c0d3ba37",
       "code": "3-06",
       "title": "快速排序",
       "description": "分治思想，竞赛常用",
@@ -2467,31 +2467,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "dc69e64e-3e9a-4233-9f03-105fee867fa4",
+          "id": "d2ec4358-1483-47e5-ae2d-24555bf7b71d",
           "code": "3-05",
           "title": "基础排序"
         },
         {
-          "id": "699af192-a579-4c1c-8497-39667597d75c",
+          "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
           "code": "1-09",
           "title": "递归"
         }
       ],
       "dependents": [
         {
-          "id": "013bfd45-6b28-415b-a29c-f569015ab486",
+          "id": "05711a30-c5fe-4a9b-9dd2-a9b605cb3112",
           "code": "3-07",
           "title": "归并排序"
         },
         {
-          "id": "80e097c3-c688-46dc-aca4-e8eb5d4228af",
+          "id": "f6c16dca-2f8b-4d24-b633-73233e9c0375",
           "code": "6-09",
           "title": "后缀数组SA"
         }
       ]
     },
     {
-      "id": "013bfd45-6b28-415b-a29c-f569015ab486",
+      "id": "05711a30-c5fe-4a9b-9dd2-a9b605cb3112",
       "code": "3-07",
       "title": "归并排序",
       "description": "稳定排序，逆序对统计",
@@ -2508,7 +2508,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "e0b624d8-ae7d-4edc-a322-c500c294587c",
+          "id": "6e2f6518-b09a-4a94-8aa6-d867c0d3ba37",
           "code": "3-06",
           "title": "快速排序"
         }
@@ -2516,7 +2516,7 @@
       "dependents": []
     },
     {
-      "id": "f5fad932-f285-44ec-b469-dcfbf3730651",
+      "id": "e3ce8bb4-5485-4433-b3af-832d17332c04",
       "code": "3-08",
       "title": "离散化",
       "description": "坐标压缩，降低数据范围",
@@ -2533,7 +2533,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "dc69e64e-3e9a-4233-9f03-105fee867fa4",
+          "id": "d2ec4358-1483-47e5-ae2d-24555bf7b71d",
           "code": "3-05",
           "title": "基础排序"
         }
@@ -2541,7 +2541,7 @@
       "dependents": []
     },
     {
-      "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+      "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
       "code": "3-09",
       "title": "DFS深搜",
       "description": "递归深搜、回溯、剪枝基础",
@@ -2558,61 +2558,61 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "699af192-a579-4c1c-8497-39667597d75c",
+          "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
           "code": "1-09",
           "title": "递归"
         }
       ],
       "dependents": [
         {
-          "id": "ee6702a5-dcaa-4934-9452-c417261b5616",
+          "id": "504967ab-e772-43bc-9b5b-2a9cdba697f4",
           "code": "3-11",
           "title": "回溯法"
         },
         {
-          "id": "c4be36b1-4df3-4d5a-8f15-88545c555878",
+          "id": "384841a9-5f4e-4af0-8d99-1a8e8f427004",
           "code": "3-19",
           "title": "迭代加深搜索"
         },
         {
-          "id": "05d077db-d7ca-4f66-8bd0-7a976e528993",
+          "id": "e4a67728-fb4a-4c3d-9683-b653ddcdddce",
           "code": "3-20",
           "title": "高级剪枝"
         },
         {
-          "id": "dfd7474f-852c-4f1f-a3fd-84de0df6e770",
+          "id": "9055203e-4c56-40b8-863c-94c69fe11f8c",
           "code": "3-37",
           "title": "折半搜索"
         },
         {
-          "id": "2c9b3abb-234a-42ed-bbe8-4e705a6691e8",
+          "id": "d90db58f-810d-4e2f-adc4-3f9226c2fc8a",
           "code": "5-03",
           "title": "图DFS遍历"
         },
         {
-          "id": "26dfc868-4a87-42ca-aefc-d1b1822b5ff2",
+          "id": "583e2144-fe4b-4d73-9275-6a9cc3047c77",
           "code": "5-13",
           "title": "二分图匹配"
         },
         {
-          "id": "98da305f-817b-4d8b-9595-a384a8dff146",
+          "id": "6addaa70-52fb-4f1c-9d0c-7db95fcb1a72",
           "code": "5-14",
           "title": "强连通分量Tarjan"
         },
         {
-          "id": "f9139366-8651-450f-903e-e3686849cec0",
+          "id": "ac57893d-cf94-4445-bcbd-525a5d9cab4b",
           "code": "7-01",
           "title": "SG函数"
         },
         {
-          "id": "86812ef0-ec0c-45e6-b889-9cd6348bc916",
+          "id": "4c05eadb-3bea-4b8e-a9b3-b499a7becee5",
           "code": "7-07",
           "title": "Alpha-Beta剪枝"
         }
       ]
     },
     {
-      "id": "2dc5dc2c-6c3c-4f24-9187-048290aa0836",
+      "id": "3da42b72-45c6-4563-9c4b-e237d40c94ec",
       "code": "3-10",
       "title": "BFS广搜",
       "description": "队列实现、最短路径",
@@ -2629,21 +2629,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "23f1b70f-2fff-492d-bb93-be84431c9306",
+          "id": "06a7020b-f0f4-49dc-b3cd-2d3797f3caf2",
           "code": "2-06",
           "title": "STL队列"
         }
       ],
       "dependents": [
         {
-          "id": "6531c76b-dce2-4d9a-9b7b-7548a3dfedf4",
+          "id": "07930b4c-129f-4a18-94ea-abc0935689f5",
           "code": "5-04",
           "title": "图BFS遍历"
         }
       ]
     },
     {
-      "id": "ee6702a5-dcaa-4934-9452-c417261b5616",
+      "id": "504967ab-e772-43bc-9b5b-2a9cdba697f4",
       "code": "3-11",
       "title": "回溯法",
       "description": "组合、排列、子集生成",
@@ -2660,26 +2660,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         }
       ],
       "dependents": [
         {
-          "id": "05d077db-d7ca-4f66-8bd0-7a976e528993",
+          "id": "e4a67728-fb4a-4c3d-9683-b653ddcdddce",
           "code": "3-20",
           "title": "高级剪枝"
         },
         {
-          "id": "31611c52-cff4-4fb7-8099-cd82bfbcbf85",
+          "id": "2cb525cf-eafc-4e21-a5a5-cd63911146eb",
           "code": "4-39",
           "title": "康托展开"
         }
       ]
     },
     {
-      "id": "0065c4a6-55ab-4f18-88f3-5d2d76d88e69",
+      "id": "a362136e-8801-4f08-9d7b-202d07fc3ea5",
       "code": "3-12",
       "title": "分治",
       "description": "分而治之，归并/快排应用",
@@ -2696,31 +2696,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "699af192-a579-4c1c-8497-39667597d75c",
+          "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
           "code": "1-09",
           "title": "递归"
         }
       ],
       "dependents": [
         {
-          "id": "9cd4f2a6-97f2-4086-bd7d-c03b38e6b93c",
+          "id": "d4ac9c44-163e-41bb-a439-7a8e81426bcd",
           "code": "3-29",
           "title": "点分治"
         },
         {
-          "id": "516e7f35-1a0a-4c37-adb4-d6b2f03e121a",
+          "id": "eaa4f551-d097-4f84-8bba-9b4b419df64f",
           "code": "3-31",
           "title": "CDQ分治"
         },
         {
-          "id": "4ac7f392-fdd7-4d0a-bb7c-bd7e6cec9a4f",
+          "id": "0172feb6-ec31-488f-b4ec-e54209144e4c",
           "code": "6-26",
           "title": "平面最近点对"
         }
       ]
     },
     {
-      "id": "fd156aae-e0f6-4dd8-a73b-4cb9fd7f2ae6",
+      "id": "f1a402a2-59ed-4296-98d8-24f9898dbf1e",
       "code": "3-13",
       "title": "二分答案",
       "description": "最大化最小值、最小化最大值",
@@ -2737,26 +2737,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
       ],
       "dependents": [
         {
-          "id": "1a8e294e-0340-4b73-902f-3ba87b0c45c8",
+          "id": "7fa0c507-ad9e-46db-844f-723da24a5d57",
           "code": "3-32",
           "title": "整体二分"
         },
         {
-          "id": "486c53c3-5a5b-4f9c-8c7b-642d59f602ad",
+          "id": "82014534-7d27-488a-b4bd-488e902b9c95",
           "code": "3-45",
           "title": "三分法"
         }
       ]
     },
     {
-      "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+      "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
       "code": "3-14",
       "title": "线性DP",
       "description": "最长上升子序列、最大子段和",
@@ -2773,76 +2773,76 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "437bba76-21d3-4ad2-9f22-98d5392a2096",
+          "id": "222f8c9e-55d6-459a-81d7-b7e2909dc419",
           "code": "3-04",
           "title": "递推"
         }
       ],
       "dependents": [
         {
-          "id": "b3797730-a00f-43d1-9fa5-03b0b7032484",
+          "id": "db7570c2-ebac-4e48-be49-400997777659",
           "code": "3-15",
           "title": "背包DP"
         },
         {
-          "id": "029d684b-b56b-48c0-8ee3-0757da3141bb",
+          "id": "646e8988-2667-4c60-92a4-e9a0b937666a",
           "code": "3-16",
           "title": "区间DP"
         },
         {
-          "id": "47b09657-9150-4b79-b988-882c8530a63d",
+          "id": "aa2f2999-3d4d-41fe-9924-0fa5303a40de",
           "code": "3-21",
           "title": "状态压缩DP"
         },
         {
-          "id": "ff2d0f7a-3c79-4725-ae60-94459a8cf852",
+          "id": "3b7b3b02-6095-4f16-bba3-70c7c5b0da89",
           "code": "3-22",
           "title": "数位DP"
         },
         {
-          "id": "dd6e1ed0-4bf9-4010-8a8f-a46d771d173b",
+          "id": "395a8031-ac6d-4936-8b57-8ab239a9d0c0",
           "code": "3-23",
           "title": "树形DP"
         },
         {
-          "id": "44049103-dccb-46d2-9f12-feb17c5b220a",
+          "id": "da5410f1-4c29-49e0-83af-b3a26819b810",
           "code": "3-24",
           "title": "期望概率DP"
         },
         {
-          "id": "93de40b2-10ee-476a-8178-76f70037ba31",
+          "id": "3a00e466-90b4-4323-8ff2-d4351790c803",
           "code": "3-26",
           "title": "斜率优化DP"
         },
         {
-          "id": "0875a5ad-e359-4137-8dfe-82cf6bc7e34c",
+          "id": "be59d480-e037-4c84-b454-f4c313656ba1",
           "code": "3-27",
           "title": "单调队列优化DP"
         },
         {
-          "id": "7160dd3b-f56e-40a7-83eb-d3e60c46917a",
+          "id": "324431cb-1870-4fc2-a1ef-ca5f40ad4ed3",
           "code": "3-48",
           "title": "在线算法"
         },
         {
-          "id": "af3a7ce7-7d58-49c6-8a15-92b35d83db51",
+          "id": "05fa994c-8efc-45d5-9225-97d4737a08ce",
           "code": "4-37",
           "title": "容斥原理"
         },
         {
-          "id": "82ed8814-0eaf-4571-8157-bb0a74168138",
+          "id": "b49a8c94-d234-4487-86b0-18e372f06c56",
           "code": "4-38",
           "title": "卡特兰数"
         },
         {
-          "id": "379a0ca9-3155-4332-9902-bd36dcf21919",
+          "id": "0c1960a1-1119-494b-a8f6-48588a600648",
           "code": "5-05",
           "title": "Floyd最短路"
         }
       ]
     },
     {
-      "id": "b3797730-a00f-43d1-9fa5-03b0b7032484",
+      "id": "db7570c2-ebac-4e48-be49-400997777659",
       "code": "3-15",
       "title": "背包DP",
       "description": "01背包、完全背包、多重背包",
@@ -2859,7 +2859,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
@@ -2867,7 +2867,7 @@
       "dependents": []
     },
     {
-      "id": "029d684b-b56b-48c0-8ee3-0757da3141bb",
+      "id": "646e8988-2667-4c60-92a4-e9a0b937666a",
       "code": "3-16",
       "title": "区间DP",
       "description": "石子合并、矩阵链乘、回文串",
@@ -2884,21 +2884,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
       ],
       "dependents": [
         {
-          "id": "d97469e2-011e-4e75-9e63-ae7df1837814",
+          "id": "9564e265-1384-4642-8fbc-1ea268033fcf",
           "code": "3-28",
           "title": "四边形不等式优化"
         }
       ]
     },
     {
-      "id": "571053e3-f8b5-43fc-97b3-3a39d991ce8b",
+      "id": "2bbbafd5-7a15-4160-a39a-11173b8cbd6d",
       "code": "3-17",
       "title": "贪心进阶",
       "description": "哈夫曼编码、活动安排",
@@ -2915,7 +2915,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "10427381-1f02-4ac4-8c3e-2da23d90acc8",
+          "id": "78c8b348-dabf-40d7-bb09-f038507b71d4",
           "code": "3-03",
           "title": "贪心简单"
         }
@@ -2923,7 +2923,7 @@
       "dependents": []
     },
     {
-      "id": "c4548f43-e090-49b0-9bcc-5428ca87edf4",
+      "id": "b95f1aba-b08e-4db4-8ea3-139faa28d2dd",
       "code": "3-18",
       "title": "倍增算法",
       "description": "快速幂、LCA预处理",
@@ -2940,31 +2940,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "699af192-a579-4c1c-8497-39667597d75c",
+          "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
           "code": "1-09",
           "title": "递归"
         }
       ],
       "dependents": [
         {
-          "id": "3366cbfb-194b-4617-8be8-cd6c02f91e7d",
+          "id": "dff0bf9e-05aa-424c-84d8-b1caf23bff5c",
           "code": "2-14",
           "title": "ST表"
         },
         {
-          "id": "64f1cdb5-0c12-4861-b5b6-541d5cdfe78b",
+          "id": "950c9262-3df2-48ea-828b-d7234c3754a2",
           "code": "3-46",
           "title": "倍增进阶"
         },
         {
-          "id": "4d74600e-953f-4bbb-8b42-df479144b2d0",
+          "id": "8f02c09d-a636-49b9-bf51-7875c21cd5e9",
           "code": "5-16",
           "title": "LCA倍增"
         }
       ]
     },
     {
-      "id": "c4be36b1-4df3-4d5a-8f15-88545c555878",
+      "id": "384841a9-5f4e-4af0-8d99-1a8e8f427004",
       "code": "3-19",
       "title": "迭代加深搜索",
       "description": "深度限制逐步增加",
@@ -2981,21 +2981,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         }
       ],
       "dependents": [
         {
-          "id": "3d0d2bd5-16b8-44d4-9c95-1677bcb54049",
+          "id": "e46fe5a5-5064-4fa3-9818-757fb996e96d",
           "code": "3-38",
           "title": "IDA*算法"
         }
       ]
     },
     {
-      "id": "05d077db-d7ca-4f66-8bd0-7a976e528993",
+      "id": "e4a67728-fb4a-4c3d-9683-b653ddcdddce",
       "code": "3-20",
       "title": "高级剪枝",
       "description": "可行性剪枝、最优性剪枝",
@@ -3012,26 +3012,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         },
         {
-          "id": "ee6702a5-dcaa-4934-9452-c417261b5616",
+          "id": "504967ab-e772-43bc-9b5b-2a9cdba697f4",
           "code": "3-11",
           "title": "回溯法"
         }
       ],
       "dependents": [
         {
-          "id": "86812ef0-ec0c-45e6-b889-9cd6348bc916",
+          "id": "4c05eadb-3bea-4b8e-a9b3-b499a7becee5",
           "code": "7-07",
           "title": "Alpha-Beta剪枝"
         }
       ]
     },
     {
-      "id": "47b09657-9150-4b79-b988-882c8530a63d",
+      "id": "aa2f2999-3d4d-41fe-9924-0fa5303a40de",
       "code": "3-21",
       "title": "状态压缩DP",
       "description": "二进制状态、旅行商问题",
@@ -3048,31 +3048,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         },
         {
-          "id": "46b62af2-0787-4e65-a307-4c8199ffb7a9",
+          "id": "e655dc09-a999-47d3-b81e-317e4f1cc8de",
           "code": "1-16",
           "title": "位运算"
         }
       ],
       "dependents": [
         {
-          "id": "d5ae7896-f90e-41e6-8337-e2dbf0d95dda",
+          "id": "9b753461-d4d8-4ebd-8c63-61e47a1e3420",
           "code": "3-25",
           "title": "插头DP"
         },
         {
-          "id": "6b45251f-c791-481c-861c-d8df1f70ba8e",
+          "id": "38e0e0a4-c50c-4cdc-8386-f896708877c9",
           "code": "5-32",
           "title": "哈密顿图"
         }
       ]
     },
     {
-      "id": "ff2d0f7a-3c79-4725-ae60-94459a8cf852",
+      "id": "3b7b3b02-6095-4f16-bba3-70c7c5b0da89",
       "code": "3-22",
       "title": "数位DP",
       "description": "数字统计、数位限制问题",
@@ -3089,7 +3089,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
@@ -3097,7 +3097,7 @@
       "dependents": []
     },
     {
-      "id": "dd6e1ed0-4bf9-4010-8a8f-a46d771d173b",
+      "id": "395a8031-ac6d-4936-8b57-8ab239a9d0c0",
       "code": "3-23",
       "title": "树形DP",
       "description": "树的最大独立集、树上背包",
@@ -3114,12 +3114,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         },
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
@@ -3127,7 +3127,7 @@
       "dependents": []
     },
     {
-      "id": "44049103-dccb-46d2-9f12-feb17c5b220a",
+      "id": "da5410f1-4c29-49e0-83af-b3a26819b810",
       "code": "3-24",
       "title": "期望概率DP",
       "description": "期望计算、概率转移",
@@ -3144,7 +3144,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
@@ -3152,7 +3152,7 @@
       "dependents": []
     },
     {
-      "id": "d5ae7896-f90e-41e6-8337-e2dbf0d95dda",
+      "id": "9b753461-d4d8-4ebd-8c63-61e47a1e3420",
       "code": "3-25",
       "title": "插头DP",
       "description": "网格路径、连通性问题",
@@ -3169,7 +3169,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "47b09657-9150-4b79-b988-882c8530a63d",
+          "id": "aa2f2999-3d4d-41fe-9924-0fa5303a40de",
           "code": "3-21",
           "title": "状态压缩DP"
         }
@@ -3177,7 +3177,7 @@
       "dependents": []
     },
     {
-      "id": "93de40b2-10ee-476a-8178-76f70037ba31",
+      "id": "3a00e466-90b4-4323-8ff2-d4351790c803",
       "code": "3-26",
       "title": "斜率优化DP",
       "description": "线性DP优化",
@@ -3194,7 +3194,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
@@ -3202,7 +3202,7 @@
       "dependents": []
     },
     {
-      "id": "0875a5ad-e359-4137-8dfe-82cf6bc7e34c",
+      "id": "be59d480-e037-4c84-b454-f4c313656ba1",
       "code": "3-27",
       "title": "单调队列优化DP",
       "description": "滑动窗口优化DP转移",
@@ -3219,12 +3219,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         },
         {
-          "id": "01cacd31-fe9c-4ef6-949a-c9426d292abc",
+          "id": "839df1b6-0c55-47f1-94f7-e07098d27b2a",
           "code": "2-12",
           "title": "单调队列"
         }
@@ -3232,7 +3232,7 @@
       "dependents": []
     },
     {
-      "id": "d97469e2-011e-4e75-9e63-ae7df1837814",
+      "id": "9564e265-1384-4642-8fbc-1ea268033fcf",
       "code": "3-28",
       "title": "四边形不等式优化",
       "description": "区间DP优化",
@@ -3249,7 +3249,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "029d684b-b56b-48c0-8ee3-0757da3141bb",
+          "id": "646e8988-2667-4c60-92a4-e9a0b937666a",
           "code": "3-16",
           "title": "区间DP"
         }
@@ -3257,7 +3257,7 @@
       "dependents": []
     },
     {
-      "id": "9cd4f2a6-97f2-4086-bd7d-c03b38e6b93c",
+      "id": "d4ac9c44-163e-41bb-a439-7a8e81426bcd",
       "code": "3-29",
       "title": "点分治",
       "description": "树上路径统计，分治思想",
@@ -3274,26 +3274,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "0065c4a6-55ab-4f18-88f3-5d2d76d88e69",
+          "id": "a362136e-8801-4f08-9d7b-202d07fc3ea5",
           "code": "3-12",
           "title": "分治"
         },
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
       ],
       "dependents": [
         {
-          "id": "1c1d2abf-1f99-445b-a287-c3825b36360b",
+          "id": "3ae46d18-2e74-4bb5-bb04-ab0e3e80c335",
           "code": "3-30",
           "title": "边分治"
         }
       ]
     },
     {
-      "id": "1c1d2abf-1f99-445b-a287-c3825b36360b",
+      "id": "3ae46d18-2e74-4bb5-bb04-ab0e3e80c335",
       "code": "3-30",
       "title": "边分治",
       "description": "树上分治变种",
@@ -3310,7 +3310,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9cd4f2a6-97f2-4086-bd7d-c03b38e6b93c",
+          "id": "d4ac9c44-163e-41bb-a439-7a8e81426bcd",
           "code": "3-29",
           "title": "点分治"
         }
@@ -3318,7 +3318,7 @@
       "dependents": []
     },
     {
-      "id": "516e7f35-1a0a-4c37-adb4-d6b2f03e121a",
+      "id": "eaa4f551-d097-4f84-8bba-9b4b419df64f",
       "code": "3-31",
       "title": "CDQ分治",
       "description": "离线处理、DP优化、三维偏序",
@@ -3335,21 +3335,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "0065c4a6-55ab-4f18-88f3-5d2d76d88e69",
+          "id": "a362136e-8801-4f08-9d7b-202d07fc3ea5",
           "code": "3-12",
           "title": "分治"
         }
       ],
       "dependents": [
         {
-          "id": "41176207-29b3-42d5-b15a-aba851273cc2",
+          "id": "369c488f-baea-4819-98c2-327810110554",
           "code": "6-37",
           "title": "几何偏序"
         }
       ]
     },
     {
-      "id": "1a8e294e-0340-4b73-902f-3ba87b0c45c8",
+      "id": "7fa0c507-ad9e-46db-844f-723da24a5d57",
       "code": "3-32",
       "title": "整体二分",
       "description": "区间第k大、多询问处理",
@@ -3366,7 +3366,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fd156aae-e0f6-4dd8-a73b-4cb9fd7f2ae6",
+          "id": "f1a402a2-59ed-4296-98d8-24f9898dbf1e",
           "code": "3-13",
           "title": "二分答案"
         }
@@ -3374,7 +3374,7 @@
       "dependents": []
     },
     {
-      "id": "936f038e-66f8-4f24-ad82-642b2ccb505c",
+      "id": "ef1864d0-2853-4aff-b465-0ef848cc0070",
       "code": "3-33",
       "title": "莫队算法",
       "description": "离线区间查询，根号分块",
@@ -3391,36 +3391,36 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "cf9baf0f-063f-46c7-babd-8d8f539b9085",
+          "id": "fdd176b4-6aaf-432f-a479-f3f6344777fd",
           "code": "2-29",
           "title": "块状数组分块"
         }
       ],
       "dependents": [
         {
-          "id": "623d6cb0-e29b-44c5-b2da-02e9fd38fc7f",
+          "id": "02a04c8c-b581-4dff-9d87-9d94e6ce4fce",
           "code": "3-34",
           "title": "带修改莫队"
         },
         {
-          "id": "d890b38a-5b4c-4789-bac3-d4609605e81b",
+          "id": "93764b6b-2ddd-4e6f-bcc8-5ffe43989894",
           "code": "3-35",
           "title": "树上莫队"
         },
         {
-          "id": "8d501f63-ea52-43de-b031-8e4081931197",
+          "id": "a80ccb46-0dbe-467d-bc07-239fff07833c",
           "code": "3-36",
           "title": "回滚莫队"
         },
         {
-          "id": "7ba3d29e-9957-4c8b-9bd6-dd406ec195bc",
+          "id": "f27d2615-cdf4-4900-88ac-d364b3ef5b78",
           "code": "3-47",
           "title": "离线算法"
         }
       ]
     },
     {
-      "id": "623d6cb0-e29b-44c5-b2da-02e9fd38fc7f",
+      "id": "02a04c8c-b581-4dff-9d87-9d94e6ce4fce",
       "code": "3-34",
       "title": "带修改莫队",
       "description": "支持单点修改的莫队",
@@ -3437,7 +3437,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "936f038e-66f8-4f24-ad82-642b2ccb505c",
+          "id": "ef1864d0-2853-4aff-b465-0ef848cc0070",
           "code": "3-33",
           "title": "莫队算法"
         }
@@ -3445,7 +3445,7 @@
       "dependents": []
     },
     {
-      "id": "d890b38a-5b4c-4789-bac3-d4609605e81b",
+      "id": "93764b6b-2ddd-4e6f-bcc8-5ffe43989894",
       "code": "3-35",
       "title": "树上莫队",
       "description": "树上路径查询",
@@ -3462,12 +3462,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "936f038e-66f8-4f24-ad82-642b2ccb505c",
+          "id": "ef1864d0-2853-4aff-b465-0ef848cc0070",
           "code": "3-33",
           "title": "莫队算法"
         },
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
@@ -3475,7 +3475,7 @@
       "dependents": []
     },
     {
-      "id": "8d501f63-ea52-43de-b031-8e4081931197",
+      "id": "a80ccb46-0dbe-467d-bc07-239fff07833c",
       "code": "3-36",
       "title": "回滚莫队",
       "description": "只增不删，处理不可减信息",
@@ -3492,7 +3492,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "936f038e-66f8-4f24-ad82-642b2ccb505c",
+          "id": "ef1864d0-2853-4aff-b465-0ef848cc0070",
           "code": "3-33",
           "title": "莫队算法"
         }
@@ -3500,7 +3500,7 @@
       "dependents": []
     },
     {
-      "id": "dfd7474f-852c-4f1f-a3fd-84de0df6e770",
+      "id": "9055203e-4c56-40b8-863c-94c69fe11f8c",
       "code": "3-37",
       "title": "折半搜索",
       "description": "搜索空间折半，双向合并",
@@ -3517,7 +3517,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         }
@@ -3525,7 +3525,7 @@
       "dependents": []
     },
     {
-      "id": "3d0d2bd5-16b8-44d4-9c95-1677bcb54049",
+      "id": "e46fe5a5-5064-4fa3-9818-757fb996e96d",
       "code": "3-38",
       "title": "IDA*算法",
       "description": "迭代加深+启发式估价",
@@ -3542,7 +3542,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "c4be36b1-4df3-4d5a-8f15-88545c555878",
+          "id": "384841a9-5f4e-4af0-8d99-1a8e8f427004",
           "code": "3-19",
           "title": "迭代加深搜索"
         }
@@ -3550,7 +3550,7 @@
       "dependents": []
     },
     {
-      "id": "021f4ea3-0abd-4b80-943f-de1f8d4cda7c",
+      "id": "b3617cf7-ba73-4abf-b3f7-eab31fa91623",
       "code": "3-39",
       "title": "扫描线算法",
       "description": "区间覆盖、矩形面积并",
@@ -3567,7 +3567,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "72834722-8d7a-4050-a3c1-9d0c854a76e8",
+          "id": "ecffa8c7-a0d4-4174-97c9-ed39bae38587",
           "code": "2-18",
           "title": "线段树基础"
         }
@@ -3575,7 +3575,7 @@
       "dependents": []
     },
     {
-      "id": "7c228841-3b86-4b6d-9c77-50cec19aca04",
+      "id": "04322688-9b7d-4f8b-bd3d-0f3b615cd139",
       "code": "3-40",
       "title": "启发式合并",
       "description": "合并集合/树，复杂度优化",
@@ -3592,21 +3592,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "93858dd2-5e2c-4907-878b-431447858da0",
+          "id": "60657e18-6eae-4074-83a4-d7ac0f485f5a",
           "code": "2-09",
           "title": "并查集基础"
         }
       ],
       "dependents": [
         {
-          "id": "e6e8e641-78b0-49b7-b18f-873db7a410c5",
+          "id": "c296c0c8-28f8-46ae-8692-eb5757067b49",
           "code": "3-41",
           "title": "DSU on Tree"
         }
       ]
     },
     {
-      "id": "e6e8e641-78b0-49b7-b18f-873db7a410c5",
+      "id": "c296c0c8-28f8-46ae-8692-eb5757067b49",
       "code": "3-41",
       "title": "DSU on Tree",
       "description": "树上子树统计问题",
@@ -3623,12 +3623,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "7c228841-3b86-4b6d-9c77-50cec19aca04",
+          "id": "04322688-9b7d-4f8b-bd3d-0f3b615cd139",
           "code": "3-40",
           "title": "启发式合并"
         },
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
@@ -3636,7 +3636,7 @@
       "dependents": []
     },
     {
-      "id": "82eab1ad-3d40-46e4-a277-1be89a2db5a4",
+      "id": "6555b1eb-dc1d-4720-9c03-3b0bd777894e",
       "code": "3-42",
       "title": "蒙特卡洛算法",
       "description": "概率性算法，近似解求解",
@@ -3653,31 +3653,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fdc7e8df-a91e-4581-be44-dbc8643dd9f6",
+          "id": "9857e808-eb16-4ba9-9af2-ad78833c3a49",
           "code": "3-01",
           "title": "枚举"
         }
       ],
       "dependents": [
         {
-          "id": "b8735316-148a-4698-b49e-6bc9e2571dfb",
+          "id": "fb5e5e0c-a305-4704-9266-e4b47d95786e",
           "code": "3-43",
           "title": "模拟退火"
         },
         {
-          "id": "db9c647e-321e-4caf-a194-c16effbaeb62",
+          "id": "52de3ec5-433d-4537-8940-1d6a292cfe9e",
           "code": "3-44",
           "title": "爬山算法"
         },
         {
-          "id": "c9b97a1a-134f-4ce0-acf8-6edc5663f7e5",
+          "id": "78f51aba-bae9-4926-ac73-2e64476b97e6",
           "code": "3-49",
           "title": "近似算法"
         }
       ]
     },
     {
-      "id": "b8735316-148a-4698-b49e-6bc9e2571dfb",
+      "id": "fb5e5e0c-a305-4704-9266-e4b47d95786e",
       "code": "3-43",
       "title": "模拟退火",
       "description": "随机化优化，求解最优解",
@@ -3694,7 +3694,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "82eab1ad-3d40-46e4-a277-1be89a2db5a4",
+          "id": "6555b1eb-dc1d-4720-9c03-3b0bd777894e",
           "code": "3-42",
           "title": "蒙特卡洛算法"
         }
@@ -3702,7 +3702,7 @@
       "dependents": []
     },
     {
-      "id": "db9c647e-321e-4caf-a194-c16effbaeb62",
+      "id": "52de3ec5-433d-4537-8940-1d6a292cfe9e",
       "code": "3-44",
       "title": "爬山算法",
       "description": "局部最优解搜索",
@@ -3719,7 +3719,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "82eab1ad-3d40-46e4-a277-1be89a2db5a4",
+          "id": "6555b1eb-dc1d-4720-9c03-3b0bd777894e",
           "code": "3-42",
           "title": "蒙特卡洛算法"
         }
@@ -3727,7 +3727,7 @@
       "dependents": []
     },
     {
-      "id": "486c53c3-5a5b-4f9c-8c7b-642d59f602ad",
+      "id": "82014534-7d27-488a-b4bd-488e902b9c95",
       "code": "3-45",
       "title": "三分法",
       "description": "单峰函数极值",
@@ -3744,7 +3744,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fd156aae-e0f6-4dd8-a73b-4cb9fd7f2ae6",
+          "id": "f1a402a2-59ed-4296-98d8-24f9898dbf1e",
           "code": "3-13",
           "title": "二分答案"
         }
@@ -3752,7 +3752,7 @@
       "dependents": []
     },
     {
-      "id": "64f1cdb5-0c12-4861-b5b6-541d5cdfe78b",
+      "id": "950c9262-3df2-48ea-828b-d7234c3754a2",
       "code": "3-46",
       "title": "倍增进阶",
       "description": "树上倍增、RMQ问题",
@@ -3769,7 +3769,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "c4548f43-e090-49b0-9bcc-5428ca87edf4",
+          "id": "b95f1aba-b08e-4db4-8ea3-139faa28d2dd",
           "code": "3-18",
           "title": "倍增算法"
         }
@@ -3777,7 +3777,7 @@
       "dependents": []
     },
     {
-      "id": "7ba3d29e-9957-4c8b-9bd6-dd406ec195bc",
+      "id": "f27d2615-cdf4-4900-88ac-d364b3ef5b78",
       "code": "3-47",
       "title": "离线算法",
       "description": "把所有询问收集后统一处理",
@@ -3794,7 +3794,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "936f038e-66f8-4f24-ad82-642b2ccb505c",
+          "id": "ef1864d0-2853-4aff-b465-0ef848cc0070",
           "code": "3-33",
           "title": "莫队算法"
         }
@@ -3802,7 +3802,7 @@
       "dependents": []
     },
     {
-      "id": "7160dd3b-f56e-40a7-83eb-d3e60c46917a",
+      "id": "324431cb-1870-4fc2-a1ef-ca5f40ad4ed3",
       "code": "3-48",
       "title": "在线算法",
       "description": "边读入边处理，无后效性",
@@ -3819,7 +3819,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
@@ -3827,7 +3827,7 @@
       "dependents": []
     },
     {
-      "id": "c9b97a1a-134f-4ce0-acf8-6edc5663f7e5",
+      "id": "78f51aba-bae9-4926-ac73-2e64476b97e6",
       "code": "3-49",
       "title": "近似算法",
       "description": "非精确解，时间换精度",
@@ -3844,7 +3844,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "82eab1ad-3d40-46e4-a277-1be89a2db5a4",
+          "id": "6555b1eb-dc1d-4720-9c03-3b0bd777894e",
           "code": "3-42",
           "title": "蒙特卡洛算法"
         }
@@ -3852,7 +3852,7 @@
       "dependents": []
     },
     {
-      "id": "9e06a71e-d502-404f-a098-6464dba7a7b5",
+      "id": "4d207a83-a926-4643-80ad-6ac2a3cac3ba",
       "code": "4-01",
       "title": "进制转换",
       "description": "进制运算、位权理解",
@@ -3869,7 +3869,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "94aeb740-89b3-478d-b0df-c770e7d1c055",
+          "id": "104467e4-a57e-4be0-b579-10bc9d6ae3f6",
           "code": "1-02",
           "title": "运算符与表达式"
         }
@@ -3877,7 +3877,7 @@
       "dependents": []
     },
     {
-      "id": "21e8c8b7-6059-4c9d-b7b4-ed33b5c3f6be",
+      "id": "b4f4dd8a-3160-47f8-8777-e0e3545590c8",
       "code": "4-02",
       "title": "GCD/LCM",
       "description": "欧几里得算法、辗转相除法",
@@ -3894,21 +3894,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
       ],
       "dependents": [
         {
-          "id": "39bd0ec1-69a9-4415-bc84-a6b852c145c5",
+          "id": "ff9fb156-f0dc-4f4f-9da1-ff6fb4817854",
           "code": "4-07",
           "title": "同余定理"
         }
       ]
     },
     {
-      "id": "78c4a721-9678-4908-833f-ea53fadcf548",
+      "id": "c30fb13e-6801-4d7a-ac64-5060ca0eaeb8",
       "code": "4-03",
       "title": "质数判断",
       "description": "试除法判断质数",
@@ -3925,26 +3925,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
       ],
       "dependents": [
         {
-          "id": "0dee5335-bcd7-414f-9239-d9883648dd5a",
+          "id": "c6c5e3fe-ed57-4e16-81dc-22e571325609",
           "code": "4-05",
           "title": "分解质因数"
         },
         {
-          "id": "bebc6d2d-206b-410a-b9f5-b9390ad0e2e5",
+          "id": "43632d3a-66b6-49c3-a25d-b1bcb707a24d",
           "code": "4-09",
           "title": "埃氏筛"
         }
       ]
     },
     {
-      "id": "d473f446-75d3-48c1-b48f-da55c77f1238",
+      "id": "36392875-0c36-4e70-9c40-d510c996951b",
       "code": "4-04",
       "title": "因数倍数",
       "description": "因数分解、因数个数统计",
@@ -3961,7 +3961,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "287617db-c5d1-4cf4-9720-150db67cade2",
+          "id": "c8d76dec-e1c6-4af1-8809-c31c8fd1fd0a",
           "code": "1-05",
           "title": "循环结构"
         }
@@ -3969,7 +3969,7 @@
       "dependents": []
     },
     {
-      "id": "0dee5335-bcd7-414f-9239-d9883648dd5a",
+      "id": "c6c5e3fe-ed57-4e16-81dc-22e571325609",
       "code": "4-05",
       "title": "分解质因数",
       "description": "质因数分解、唯一分解定理",
@@ -3986,21 +3986,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "78c4a721-9678-4908-833f-ea53fadcf548",
+          "id": "c30fb13e-6801-4d7a-ac64-5060ca0eaeb8",
           "code": "4-03",
           "title": "质数判断"
         }
       ],
       "dependents": [
         {
-          "id": "94acec5d-0998-4e61-8036-31a64f2c7d58",
+          "id": "4ccfbf6c-7d3f-47f0-9488-1066714e47fe",
           "code": "4-08",
           "title": "欧拉函数"
         }
       ]
     },
     {
-      "id": "d10b015d-060b-4098-9c84-f14cd7bfdaab",
+      "id": "e1ae1cd5-3723-4ab2-971d-04378c45d3ec",
       "code": "4-06",
       "title": "快速幂",
       "description": "模运算下的幂/乘法优化",
@@ -4017,46 +4017,46 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "699af192-a579-4c1c-8497-39667597d75c",
+          "id": "e3d44ca9-55be-47b2-8447-716ab6642afd",
           "code": "1-09",
           "title": "递归"
         }
       ],
       "dependents": [
         {
-          "id": "47553263-68a4-4fdf-9c34-14f131bd43f2",
+          "id": "dd834091-c4b2-40b8-b557-a8aba35425b6",
           "code": "4-11",
           "title": "逆元费马"
         },
         {
-          "id": "1324df54-a227-4549-aead-4766739b8a45",
+          "id": "7d5ed860-496e-408f-a2f7-35f453cf9de7",
           "code": "4-21",
           "title": "矩阵快速幂"
         },
         {
-          "id": "13687abc-ede2-4de3-888b-b54e845c6f71",
+          "id": "74589a26-52bb-410b-b95e-123537030e0d",
           "code": "4-23",
           "title": "BSGS算法"
         },
         {
-          "id": "41f96d23-daa8-4921-988d-5ca58b34d540",
+          "id": "68a9dfbf-b19d-4e5c-8500-5409068098a8",
           "code": "4-24",
           "title": "Miller-Rabin"
         },
         {
-          "id": "9886542d-cc7e-4543-8bb9-0be8696a4710",
+          "id": "0f03ca48-0ad4-472c-9235-9b25872bffbb",
           "code": "4-31",
           "title": "FFT"
         },
         {
-          "id": "4faa38b4-fe4a-483d-8a6b-f3251db80da9",
+          "id": "cf65b593-f2d7-4cb6-8bf6-a92bd65f95af",
           "code": "4-42",
           "title": "拉格朗日插值"
         }
       ]
     },
     {
-      "id": "39bd0ec1-69a9-4415-bc84-a6b852c145c5",
+      "id": "ff9fb156-f0dc-4f4f-9da1-ff6fb4817854",
       "code": "4-07",
       "title": "同余定理",
       "description": "同余性质、模运算规则",
@@ -4073,26 +4073,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "21e8c8b7-6059-4c9d-b7b4-ed33b5c3f6be",
+          "id": "b4f4dd8a-3160-47f8-8777-e0e3545590c8",
           "code": "4-02",
           "title": "GCD/LCM"
         }
       ],
       "dependents": [
         {
-          "id": "47553263-68a4-4fdf-9c34-14f131bd43f2",
+          "id": "dd834091-c4b2-40b8-b557-a8aba35425b6",
           "code": "4-11",
           "title": "逆元费马"
         },
         {
-          "id": "cb08febe-fd09-4753-8cda-56ad7a8c6c5d",
+          "id": "c8fb92f8-8a5d-415b-bf26-141990ec8fbb",
           "code": "4-13",
           "title": "中国剩余定理"
         }
       ]
     },
     {
-      "id": "94acec5d-0998-4e61-8036-31a64f2c7d58",
+      "id": "4ccfbf6c-7d3f-47f0-9488-1066714e47fe",
       "code": "4-08",
       "title": "欧拉函数",
       "description": "欧拉函数定义、计算",
@@ -4109,26 +4109,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "0dee5335-bcd7-414f-9239-d9883648dd5a",
+          "id": "c6c5e3fe-ed57-4e16-81dc-22e571325609",
           "code": "4-05",
           "title": "分解质因数"
         }
       ],
       "dependents": [
         {
-          "id": "69d57354-ed7b-489c-855b-9057c037cc22",
+          "id": "d1ae8c4e-bc25-4627-82ee-e83ad2acab8b",
           "code": "4-17",
           "title": "莫比乌斯函数"
         },
         {
-          "id": "e474a272-9551-4fa6-bcfb-5db534b6254e",
+          "id": "26c4ac6c-9b22-4120-849d-fc84c6abdb2a",
           "code": "4-28",
           "title": "原根指数"
         }
       ]
     },
     {
-      "id": "bebc6d2d-206b-410a-b9f5-b9390ad0e2e5",
+      "id": "43632d3a-66b6-49c3-a25d-b1bcb707a24d",
       "code": "4-09",
       "title": "埃氏筛",
       "description": "批量找质数",
@@ -4145,21 +4145,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "78c4a721-9678-4908-833f-ea53fadcf548",
+          "id": "c30fb13e-6801-4d7a-ac64-5060ca0eaeb8",
           "code": "4-03",
           "title": "质数判断"
         }
       ],
       "dependents": [
         {
-          "id": "c8a5ad02-2fda-428e-b341-0eb5c17e61a9",
+          "id": "0e1e9b12-4705-46ab-a2bd-5b301f773357",
           "code": "4-10",
           "title": "线性筛"
         }
       ]
     },
     {
-      "id": "c8a5ad02-2fda-428e-b341-0eb5c17e61a9",
+      "id": "0e1e9b12-4705-46ab-a2bd-5b301f773357",
       "code": "4-10",
       "title": "线性筛",
       "description": "线性时间找质数，同时求欧拉函数",
@@ -4176,7 +4176,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "bebc6d2d-206b-410a-b9f5-b9390ad0e2e5",
+          "id": "43632d3a-66b6-49c3-a25d-b1bcb707a24d",
           "code": "4-09",
           "title": "埃氏筛"
         }
@@ -4184,7 +4184,7 @@
       "dependents": []
     },
     {
-      "id": "47553263-68a4-4fdf-9c34-14f131bd43f2",
+      "id": "dd834091-c4b2-40b8-b557-a8aba35425b6",
       "code": "4-11",
       "title": "逆元费马",
       "description": "模运算除法转换为乘法",
@@ -4201,36 +4201,36 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "d10b015d-060b-4098-9c84-f14cd7bfdaab",
+          "id": "e1ae1cd5-3723-4ab2-971d-04378c45d3ec",
           "code": "4-06",
           "title": "快速幂"
         },
         {
-          "id": "39bd0ec1-69a9-4415-bc84-a6b852c145c5",
+          "id": "ff9fb156-f0dc-4f4f-9da1-ff6fb4817854",
           "code": "4-07",
           "title": "同余定理"
         }
       ],
       "dependents": [
         {
-          "id": "85484a72-7fc9-456d-b48d-806aad224cf1",
+          "id": "483bcbdd-f5bf-4fa8-a846-8b8b7ead3310",
           "code": "4-12",
           "title": "逆元扩欧"
         },
         {
-          "id": "8b40653d-c0bc-4f3b-87f9-6c15a27cf949",
+          "id": "8c6c9316-76aa-4026-8087-110afea31dbb",
           "code": "4-15",
           "title": "卢卡斯定理"
         },
         {
-          "id": "719ce427-123d-44aa-a0b1-084bd810ae48",
+          "id": "908a3f6b-65f6-47c0-88dd-635c429aa386",
           "code": "4-27",
           "title": "二次剩余"
         }
       ]
     },
     {
-      "id": "85484a72-7fc9-456d-b48d-806aad224cf1",
+      "id": "483bcbdd-f5bf-4fa8-a846-8b8b7ead3310",
       "code": "4-12",
       "title": "逆元扩欧",
       "description": "非质数模数下的逆元求解",
@@ -4247,7 +4247,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "47553263-68a4-4fdf-9c34-14f131bd43f2",
+          "id": "dd834091-c4b2-40b8-b557-a8aba35425b6",
           "code": "4-11",
           "title": "逆元费马"
         }
@@ -4255,7 +4255,7 @@
       "dependents": []
     },
     {
-      "id": "cb08febe-fd09-4753-8cda-56ad7a8c6c5d",
+      "id": "c8fb92f8-8a5d-415b-bf26-141990ec8fbb",
       "code": "4-13",
       "title": "中国剩余定理",
       "description": "多模数同余方程求解",
@@ -4272,21 +4272,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "39bd0ec1-69a9-4415-bc84-a6b852c145c5",
+          "id": "ff9fb156-f0dc-4f4f-9da1-ff6fb4817854",
           "code": "4-07",
           "title": "同余定理"
         }
       ],
       "dependents": [
         {
-          "id": "52cae0ee-cbb5-45c3-95c8-cf7ca9777237",
+          "id": "9aefef29-baf3-4e90-8628-7fa8d1c70a47",
           "code": "4-14",
           "title": "扩展中国剩余定理"
         }
       ]
     },
     {
-      "id": "52cae0ee-cbb5-45c3-95c8-cf7ca9777237",
+      "id": "9aefef29-baf3-4e90-8628-7fa8d1c70a47",
       "code": "4-14",
       "title": "扩展中国剩余定理",
       "description": "模数不互质的同余方程求解",
@@ -4303,21 +4303,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "cb08febe-fd09-4753-8cda-56ad7a8c6c5d",
+          "id": "c8fb92f8-8a5d-415b-bf26-141990ec8fbb",
           "code": "4-13",
           "title": "中国剩余定理"
         }
       ],
       "dependents": [
         {
-          "id": "048768fe-ad3f-4fa2-9f0a-aaa9b78f40b6",
+          "id": "6f295bf2-c10c-45ad-8fcf-edfe71b12178",
           "code": "4-16",
           "title": "扩展卢卡斯"
         }
       ]
     },
     {
-      "id": "8b40653d-c0bc-4f3b-87f9-6c15a27cf949",
+      "id": "8c6c9316-76aa-4026-8087-110afea31dbb",
       "code": "4-15",
       "title": "卢卡斯定理",
       "description": "大组合数取模（模数为质数）",
@@ -4334,21 +4334,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "47553263-68a4-4fdf-9c34-14f131bd43f2",
+          "id": "dd834091-c4b2-40b8-b557-a8aba35425b6",
           "code": "4-11",
           "title": "逆元费马"
         }
       ],
       "dependents": [
         {
-          "id": "048768fe-ad3f-4fa2-9f0a-aaa9b78f40b6",
+          "id": "6f295bf2-c10c-45ad-8fcf-edfe71b12178",
           "code": "4-16",
           "title": "扩展卢卡斯"
         }
       ]
     },
     {
-      "id": "048768fe-ad3f-4fa2-9f0a-aaa9b78f40b6",
+      "id": "6f295bf2-c10c-45ad-8fcf-edfe71b12178",
       "code": "4-16",
       "title": "扩展卢卡斯",
       "description": "大组合数取模（模数为合数）",
@@ -4365,12 +4365,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8b40653d-c0bc-4f3b-87f9-6c15a27cf949",
+          "id": "8c6c9316-76aa-4026-8087-110afea31dbb",
           "code": "4-15",
           "title": "卢卡斯定理"
         },
         {
-          "id": "52cae0ee-cbb5-45c3-95c8-cf7ca9777237",
+          "id": "9aefef29-baf3-4e90-8628-7fa8d1c70a47",
           "code": "4-14",
           "title": "扩展中国剩余定理"
         }
@@ -4378,7 +4378,7 @@
       "dependents": []
     },
     {
-      "id": "69d57354-ed7b-489c-855b-9057c037cc22",
+      "id": "d1ae8c4e-bc25-4627-82ee-e83ad2acab8b",
       "code": "4-17",
       "title": "莫比乌斯函数",
       "description": "莫比乌斯函数定义、性质",
@@ -4395,26 +4395,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "94acec5d-0998-4e61-8036-31a64f2c7d58",
+          "id": "4ccfbf6c-7d3f-47f0-9488-1066714e47fe",
           "code": "4-08",
           "title": "欧拉函数"
         }
       ],
       "dependents": [
         {
-          "id": "5be0bb8d-520d-4d69-a160-8f8e323f1f96",
+          "id": "a70b72bb-564a-4665-b97c-6095e03f7703",
           "code": "4-18",
           "title": "莫比乌斯反演"
         },
         {
-          "id": "e1695c86-c16a-47ed-9f18-1c78d98e87bf",
+          "id": "142b0d6d-e675-4aba-ba02-76f3a7916aed",
           "code": "4-20",
           "title": "积性函数"
         }
       ]
     },
     {
-      "id": "5be0bb8d-520d-4d69-a160-8f8e323f1f96",
+      "id": "a70b72bb-564a-4665-b97c-6095e03f7703",
       "code": "4-18",
       "title": "莫比乌斯反演",
       "description": "数论统计问题",
@@ -4431,21 +4431,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "69d57354-ed7b-489c-855b-9057c037cc22",
+          "id": "d1ae8c4e-bc25-4627-82ee-e83ad2acab8b",
           "code": "4-17",
           "title": "莫比乌斯函数"
         }
       ],
       "dependents": [
         {
-          "id": "e94845a0-6a85-42d9-8ec1-4985848c6c9d",
+          "id": "bba2106f-2c20-4308-9caf-bc837336626a",
           "code": "4-19",
           "title": "杜教筛"
         }
       ]
     },
     {
-      "id": "e94845a0-6a85-42d9-8ec1-4985848c6c9d",
+      "id": "bba2106f-2c20-4308-9caf-bc837336626a",
       "code": "4-19",
       "title": "杜教筛",
       "description": "快速求积性函数前缀和",
@@ -4462,21 +4462,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "5be0bb8d-520d-4d69-a160-8f8e323f1f96",
+          "id": "a70b72bb-564a-4665-b97c-6095e03f7703",
           "code": "4-18",
           "title": "莫比乌斯反演"
         }
       ],
       "dependents": [
         {
-          "id": "df9fdaa9-b3d2-4e12-bdd4-bed1eb95c5c4",
+          "id": "93a7d2a3-1ea8-4895-a06b-ccddba95dcb5",
           "code": "4-30",
           "title": "Min_25筛"
         }
       ]
     },
     {
-      "id": "e1695c86-c16a-47ed-9f18-1c78d98e87bf",
+      "id": "142b0d6d-e675-4aba-ba02-76f3a7916aed",
       "code": "4-20",
       "title": "积性函数",
       "description": "狄利克雷卷积",
@@ -4493,7 +4493,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "69d57354-ed7b-489c-855b-9057c037cc22",
+          "id": "d1ae8c4e-bc25-4627-82ee-e83ad2acab8b",
           "code": "4-17",
           "title": "莫比乌斯函数"
         }
@@ -4501,7 +4501,7 @@
       "dependents": []
     },
     {
-      "id": "1324df54-a227-4549-aead-4766739b8a45",
+      "id": "7d5ed860-496e-408f-a2f7-35f453cf9de7",
       "code": "4-21",
       "title": "矩阵快速幂",
       "description": "线性递推优化、DP优化",
@@ -4518,7 +4518,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "d10b015d-060b-4098-9c84-f14cd7bfdaab",
+          "id": "e1ae1cd5-3723-4ab2-971d-04378c45d3ec",
           "code": "4-06",
           "title": "快速幂"
         }
@@ -4526,7 +4526,7 @@
       "dependents": []
     },
     {
-      "id": "17e886f3-ae73-4d0d-b1d6-ba2d9a8971a7",
+      "id": "9a7d4b19-ae9c-4c2f-9bae-72d2a3e7eee1",
       "code": "4-22",
       "title": "高斯消元",
       "description": "线性方程组求解",
@@ -4543,21 +4543,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         }
       ],
       "dependents": [
         {
-          "id": "0d3c314b-d949-4d61-abc7-bb46dfbda578",
+          "id": "4bd4402c-dca8-42d8-a10c-dd7638973dad",
           "code": "4-29",
           "title": "矩阵求逆"
         }
       ]
     },
     {
-      "id": "13687abc-ede2-4de3-888b-b54e845c6f71",
+      "id": "74589a26-52bb-410b-b95e-123537030e0d",
       "code": "4-23",
       "title": "BSGS算法",
       "description": "离散对数求解",
@@ -4574,7 +4574,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "d10b015d-060b-4098-9c84-f14cd7bfdaab",
+          "id": "e1ae1cd5-3723-4ab2-971d-04378c45d3ec",
           "code": "4-06",
           "title": "快速幂"
         }
@@ -4582,7 +4582,7 @@
       "dependents": []
     },
     {
-      "id": "41f96d23-daa8-4921-988d-5ca58b34d540",
+      "id": "68a9dfbf-b19d-4e5c-8500-5409068098a8",
       "code": "4-24",
       "title": "Miller-Rabin",
       "description": "大数素性判断，概率算法",
@@ -4599,21 +4599,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "d10b015d-060b-4098-9c84-f14cd7bfdaab",
+          "id": "e1ae1cd5-3723-4ab2-971d-04378c45d3ec",
           "code": "4-06",
           "title": "快速幂"
         }
       ],
       "dependents": [
         {
-          "id": "eb54dee7-ba75-480e-b999-6ce34fa6479a",
+          "id": "b5747ac2-c675-48c0-9c30-b6e37e5453b6",
           "code": "4-26",
           "title": "Pollard-Rho"
         }
       ]
     },
     {
-      "id": "7e057bd0-7df7-4145-80c6-e39148909188",
+      "id": "832cd7f1-2b44-4081-be0f-6af60a1e3453",
       "code": "4-25",
       "title": "线性基",
       "description": "异或空间、极大无关组",
@@ -4630,7 +4630,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "46b62af2-0787-4e65-a307-4c8199ffb7a9",
+          "id": "e655dc09-a999-47d3-b81e-317e4f1cc8de",
           "code": "1-16",
           "title": "位运算"
         }
@@ -4638,7 +4638,7 @@
       "dependents": []
     },
     {
-      "id": "eb54dee7-ba75-480e-b999-6ce34fa6479a",
+      "id": "b5747ac2-c675-48c0-9c30-b6e37e5453b6",
       "code": "4-26",
       "title": "Pollard-Rho",
       "description": "大数分解",
@@ -4655,7 +4655,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "41f96d23-daa8-4921-988d-5ca58b34d540",
+          "id": "68a9dfbf-b19d-4e5c-8500-5409068098a8",
           "code": "4-24",
           "title": "Miller-Rabin"
         }
@@ -4663,7 +4663,7 @@
       "dependents": []
     },
     {
-      "id": "719ce427-123d-44aa-a0b1-084bd810ae48",
+      "id": "908a3f6b-65f6-47c0-88dd-635c429aa386",
       "code": "4-27",
       "title": "二次剩余",
       "description": "模运算下的平方根求解",
@@ -4680,7 +4680,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "47553263-68a4-4fdf-9c34-14f131bd43f2",
+          "id": "dd834091-c4b2-40b8-b557-a8aba35425b6",
           "code": "4-11",
           "title": "逆元费马"
         }
@@ -4688,7 +4688,7 @@
       "dependents": []
     },
     {
-      "id": "e474a272-9551-4fa6-bcfb-5db534b6254e",
+      "id": "26c4ac6c-9b22-4120-849d-fc84c6abdb2a",
       "code": "4-28",
       "title": "原根指数",
       "description": "高级数论，离散对数问题",
@@ -4705,7 +4705,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "94acec5d-0998-4e61-8036-31a64f2c7d58",
+          "id": "4ccfbf6c-7d3f-47f0-9488-1066714e47fe",
           "code": "4-08",
           "title": "欧拉函数"
         }
@@ -4713,7 +4713,7 @@
       "dependents": []
     },
     {
-      "id": "0d3c314b-d949-4d61-abc7-bb46dfbda578",
+      "id": "4bd4402c-dca8-42d8-a10c-dd7638973dad",
       "code": "4-29",
       "title": "矩阵求逆",
       "description": "矩阵逆、线性变换",
@@ -4730,7 +4730,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "17e886f3-ae73-4d0d-b1d6-ba2d9a8971a7",
+          "id": "9a7d4b19-ae9c-4c2f-9bae-72d2a3e7eee1",
           "code": "4-22",
           "title": "高斯消元"
         }
@@ -4738,7 +4738,7 @@
       "dependents": []
     },
     {
-      "id": "df9fdaa9-b3d2-4e12-bdd4-bed1eb95c5c4",
+      "id": "93a7d2a3-1ea8-4895-a06b-ccddba95dcb5",
       "code": "4-30",
       "title": "Min_25筛",
       "description": "快速求积性函数前缀和",
@@ -4755,7 +4755,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "e94845a0-6a85-42d9-8ec1-4985848c6c9d",
+          "id": "bba2106f-2c20-4308-9caf-bc837336626a",
           "code": "4-19",
           "title": "杜教筛"
         }
@@ -4763,7 +4763,7 @@
       "dependents": []
     },
     {
-      "id": "9886542d-cc7e-4543-8bb9-0be8696a4710",
+      "id": "0f03ca48-0ad4-472c-9235-9b25872bffbb",
       "code": "4-31",
       "title": "FFT",
       "description": "多项式乘法，O(n log n)",
@@ -4780,26 +4780,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "d10b015d-060b-4098-9c84-f14cd7bfdaab",
+          "id": "e1ae1cd5-3723-4ab2-971d-04378c45d3ec",
           "code": "4-06",
           "title": "快速幂"
         }
       ],
       "dependents": [
         {
-          "id": "6caccbc2-1e2c-4909-ba45-79565ee05039",
+          "id": "9a2b5113-2571-48ec-9e8c-439ec14af7b0",
           "code": "4-32",
           "title": "NTT"
         },
         {
-          "id": "aacf0cb6-da21-4f61-9a8d-bc0e47417d27",
+          "id": "638c55fa-fb1b-4b06-9b0a-465d38546f26",
           "code": "4-36",
           "title": "生成函数"
         }
       ]
     },
     {
-      "id": "6caccbc2-1e2c-4909-ba45-79565ee05039",
+      "id": "9a2b5113-2571-48ec-9e8c-439ec14af7b0",
       "code": "4-32",
       "title": "NTT",
       "description": "模意义下的FFT",
@@ -4816,21 +4816,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9886542d-cc7e-4543-8bb9-0be8696a4710",
+          "id": "0f03ca48-0ad4-472c-9235-9b25872bffbb",
           "code": "4-31",
           "title": "FFT"
         }
       ],
       "dependents": [
         {
-          "id": "e5b40f05-b7f0-4569-9352-c0dc54bcace0",
+          "id": "2f468a97-bb5a-427b-a898-ec1222adaa6b",
           "code": "4-33",
           "title": "多项式求逆"
         }
       ]
     },
     {
-      "id": "e5b40f05-b7f0-4569-9352-c0dc54bcace0",
+      "id": "2f468a97-bb5a-427b-a898-ec1222adaa6b",
       "code": "4-33",
       "title": "多项式求逆",
       "description": "多项式除法基础",
@@ -4847,26 +4847,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "6caccbc2-1e2c-4909-ba45-79565ee05039",
+          "id": "9a2b5113-2571-48ec-9e8c-439ec14af7b0",
           "code": "4-32",
           "title": "NTT"
         }
       ],
       "dependents": [
         {
-          "id": "269dc877-fa8f-469a-8b20-f812f79034f9",
+          "id": "f1cbf510-4c41-4251-825e-e34c6eb7edda",
           "code": "4-34",
           "title": "多项式开根"
         },
         {
-          "id": "035c7a83-899e-46a6-ac6a-3c0b47bd55a2",
+          "id": "df8b0715-6317-48bc-a3c0-095b028ea0bf",
           "code": "4-35",
           "title": "多项式ln/exp"
         }
       ]
     },
     {
-      "id": "269dc877-fa8f-469a-8b20-f812f79034f9",
+      "id": "f1cbf510-4c41-4251-825e-e34c6eb7edda",
       "code": "4-34",
       "title": "多项式开根",
       "description": "牛顿迭代法",
@@ -4883,7 +4883,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "e5b40f05-b7f0-4569-9352-c0dc54bcace0",
+          "id": "2f468a97-bb5a-427b-a898-ec1222adaa6b",
           "code": "4-33",
           "title": "多项式求逆"
         }
@@ -4891,7 +4891,7 @@
       "dependents": []
     },
     {
-      "id": "035c7a83-899e-46a6-ac6a-3c0b47bd55a2",
+      "id": "df8b0715-6317-48bc-a3c0-095b028ea0bf",
       "code": "4-35",
       "title": "多项式ln/exp",
       "description": "高级多项式运算",
@@ -4908,7 +4908,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "e5b40f05-b7f0-4569-9352-c0dc54bcace0",
+          "id": "2f468a97-bb5a-427b-a898-ec1222adaa6b",
           "code": "4-33",
           "title": "多项式求逆"
         }
@@ -4916,7 +4916,7 @@
       "dependents": []
     },
     {
-      "id": "aacf0cb6-da21-4f61-9a8d-bc0e47417d27",
+      "id": "638c55fa-fb1b-4b06-9b0a-465d38546f26",
       "code": "4-36",
       "title": "生成函数",
       "description": "组合计数重要工具",
@@ -4933,7 +4933,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9886542d-cc7e-4543-8bb9-0be8696a4710",
+          "id": "0f03ca48-0ad4-472c-9235-9b25872bffbb",
           "code": "4-31",
           "title": "FFT"
         }
@@ -4941,7 +4941,7 @@
       "dependents": []
     },
     {
-      "id": "af3a7ce7-7d58-49c6-8a15-92b35d83db51",
+      "id": "05fa994c-8efc-45d5-9225-97d4737a08ce",
       "code": "4-37",
       "title": "容斥原理",
       "description": "计数问题去重",
@@ -4958,26 +4958,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
       ],
       "dependents": [
         {
-          "id": "0f590091-9a1a-478c-a547-f3f72e6cf3f1",
+          "id": "a77237a3-7424-4743-b931-ee0d8e102eeb",
           "code": "4-40",
           "title": "斯特林数"
         },
         {
-          "id": "4fe20107-e2d6-4dcb-8adc-20dc67248581",
+          "id": "c7ecd436-d380-476a-a29c-74d49a1a944e",
           "code": "4-43",
           "title": "Burnside/Polya"
         }
       ]
     },
     {
-      "id": "82ed8814-0eaf-4571-8157-bb0a74168138",
+      "id": "b49a8c94-d234-4487-86b0-18e372f06c56",
       "code": "4-38",
       "title": "卡特兰数",
       "description": "括号匹配、路径计数",
@@ -4994,7 +4994,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
@@ -5002,7 +5002,7 @@
       "dependents": []
     },
     {
-      "id": "31611c52-cff4-4fb7-8099-cd82bfbcbf85",
+      "id": "2cb525cf-eafc-4e21-a5a5-cd63911146eb",
       "code": "4-39",
       "title": "康托展开",
       "description": "排列与序号的双向映射",
@@ -5019,7 +5019,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ee6702a5-dcaa-4934-9452-c417261b5616",
+          "id": "504967ab-e772-43bc-9b5b-2a9cdba697f4",
           "code": "3-11",
           "title": "回溯法"
         }
@@ -5027,7 +5027,7 @@
       "dependents": []
     },
     {
-      "id": "0f590091-9a1a-478c-a547-f3f72e6cf3f1",
+      "id": "a77237a3-7424-4743-b931-ee0d8e102eeb",
       "code": "4-40",
       "title": "斯特林数",
       "description": "排列/划分计数",
@@ -5044,21 +5044,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "af3a7ce7-7d58-49c6-8a15-92b35d83db51",
+          "id": "05fa994c-8efc-45d5-9225-97d4737a08ce",
           "code": "4-37",
           "title": "容斥原理"
         }
       ],
       "dependents": [
         {
-          "id": "b0079daf-3d5a-4854-ae59-727da78435c9",
+          "id": "adabd124-d788-41fa-b23b-a856e57d466b",
           "code": "4-41",
           "title": "贝尔数"
         }
       ]
     },
     {
-      "id": "b0079daf-3d5a-4854-ae59-727da78435c9",
+      "id": "adabd124-d788-41fa-b23b-a856e57d466b",
       "code": "4-41",
       "title": "贝尔数",
       "description": "集合划分计数",
@@ -5075,7 +5075,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "0f590091-9a1a-478c-a547-f3f72e6cf3f1",
+          "id": "a77237a3-7424-4743-b931-ee0d8e102eeb",
           "code": "4-40",
           "title": "斯特林数"
         }
@@ -5083,7 +5083,7 @@
       "dependents": []
     },
     {
-      "id": "4faa38b4-fe4a-483d-8a6b-f3251db80da9",
+      "id": "cf65b593-f2d7-4cb6-8bf6-a92bd65f95af",
       "code": "4-42",
       "title": "拉格朗日插值",
       "description": "多项式插值、求和公式",
@@ -5100,7 +5100,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "d10b015d-060b-4098-9c84-f14cd7bfdaab",
+          "id": "e1ae1cd5-3723-4ab2-971d-04378c45d3ec",
           "code": "4-06",
           "title": "快速幂"
         }
@@ -5108,7 +5108,7 @@
       "dependents": []
     },
     {
-      "id": "4fe20107-e2d6-4dcb-8adc-20dc67248581",
+      "id": "c7ecd436-d380-476a-a29c-74d49a1a944e",
       "code": "4-43",
       "title": "Burnside/Polya",
       "description": "等价类计数、染色问题",
@@ -5125,7 +5125,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "af3a7ce7-7d58-49c6-8a15-92b35d83db51",
+          "id": "05fa994c-8efc-45d5-9225-97d4737a08ce",
           "code": "4-37",
           "title": "容斥原理"
         }
@@ -5133,7 +5133,7 @@
       "dependents": []
     },
     {
-      "id": "46a26693-8351-4948-ad2a-6fc70086f044",
+      "id": "e3aac91e-467e-4dee-a30e-98802e01a788",
       "code": "4-44",
       "title": "鸽巢原理",
       "description": "存在性证明、构造问题",
@@ -5150,7 +5150,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fdc7e8df-a91e-4581-be44-dbc8643dd9f6",
+          "id": "9857e808-eb16-4ba9-9af2-ad78833c3a49",
           "code": "3-01",
           "title": "枚举"
         }
@@ -5158,7 +5158,7 @@
       "dependents": []
     },
     {
-      "id": "c0be3139-cebc-4c97-996e-f62bb711331c",
+      "id": "05f33882-c8ce-4d8b-8a75-df25123c4ab9",
       "code": "5-01",
       "title": "邻接矩阵",
       "description": "二维数组存储，适合稠密图",
@@ -5175,21 +5175,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         }
       ],
       "dependents": [
         {
-          "id": "379a0ca9-3155-4332-9902-bd36dcf21919",
+          "id": "0c1960a1-1119-494b-a8f6-48588a600648",
           "code": "5-05",
           "title": "Floyd最短路"
         }
       ]
     },
     {
-      "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+      "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
       "code": "5-02",
       "title": "邻接表",
       "description": "数组+链表存储，适合稀疏图",
@@ -5206,71 +5206,71 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9d7dae57-9749-492d-a4af-0b045f0e0206",
+          "id": "9d140fa0-51b6-46f4-8785-319decebff97",
           "code": "1-06",
           "title": "数组"
         },
         {
-          "id": "a8e4da54-e63b-47d9-874c-556addbef0b4",
+          "id": "0132695b-113f-4533-99d1-21fa85bac181",
           "code": "2-03",
           "title": "静态链表"
         }
       ],
       "dependents": [
         {
-          "id": "2c9b3abb-234a-42ed-bbe8-4e705a6691e8",
+          "id": "d90db58f-810d-4e2f-adc4-3f9226c2fc8a",
           "code": "5-03",
           "title": "图DFS遍历"
         },
         {
-          "id": "6531c76b-dce2-4d9a-9b7b-7548a3dfedf4",
+          "id": "07930b4c-129f-4a18-94ea-abc0935689f5",
           "code": "5-04",
           "title": "图BFS遍历"
         },
         {
-          "id": "c97f4bf5-26a7-4088-81a0-0dff5f723e6c",
+          "id": "1f175335-c72b-4bbb-bbe9-8093be6a5dae",
           "code": "5-06",
           "title": "Dijkstra最短路"
         },
         {
-          "id": "efab340f-8987-4f31-a32f-acb2eb0c33c4",
+          "id": "0a1aa1a6-2033-4d5e-b153-eeb1dc204f1c",
           "code": "5-07",
           "title": "SPFA最短路"
         },
         {
-          "id": "a6921cbc-9e3b-4006-83fb-9dc69eb384c8",
+          "id": "dcbe8342-2494-4689-9270-314c05b39552",
           "code": "5-08",
           "title": "Bellman-Ford"
         },
         {
-          "id": "3ea6facc-0dc9-4a24-892a-9b21d491e499",
+          "id": "9539e757-fce6-4532-a904-54deb52dd94d",
           "code": "5-11",
           "title": "Prim最小生成树"
         },
         {
-          "id": "c2ae281e-fa11-4aab-afac-dfff3879038c",
+          "id": "4a2c1abc-cda9-49dc-b044-df5d18d12612",
           "code": "5-12",
           "title": "拓扑排序"
         },
         {
-          "id": "26dfc868-4a87-42ca-aefc-d1b1822b5ff2",
+          "id": "583e2144-fe4b-4d73-9275-6a9cc3047c77",
           "code": "5-13",
           "title": "二分图匹配"
         },
         {
-          "id": "98da305f-817b-4d8b-9595-a384a8dff146",
+          "id": "6addaa70-52fb-4f1c-9d0c-7db95fcb1a72",
           "code": "5-14",
           "title": "强连通分量Tarjan"
         },
         {
-          "id": "84a04be3-e764-427f-8c5e-f70eadb8d72a",
+          "id": "e6014428-e429-4cf5-a177-3fbb8206feed",
           "code": "5-36",
           "title": "平面图"
         }
       ]
     },
     {
-      "id": "2c9b3abb-234a-42ed-bbe8-4e705a6691e8",
+      "id": "d90db58f-810d-4e2f-adc4-3f9226c2fc8a",
       "code": "5-03",
       "title": "图DFS遍历",
       "description": "连通性、环检测",
@@ -5287,41 +5287,41 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         },
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         }
       ],
       "dependents": [
         {
-          "id": "8abf88cd-18b6-4fa4-b375-57eee522fe7b",
+          "id": "ea96afb8-475b-4852-8933-6efbcc16ad63",
           "code": "5-27",
           "title": "基环树"
         },
         {
-          "id": "f0be3d11-0642-4feb-be76-6f37410b67de",
+          "id": "3666243e-5352-488d-b653-80e2ba2d59a5",
           "code": "5-28",
           "title": "树的直径"
         },
         {
-          "id": "898cf5a2-594a-4036-881e-481c0737e54d",
+          "id": "68a62c65-0177-47e5-9f29-1a243f49acb5",
           "code": "5-29",
           "title": "树的重心"
         },
         {
-          "id": "add28662-341d-4e7e-ba9a-7ab4a8f15c71",
+          "id": "307724f1-35e1-4943-a424-d13877efc8fc",
           "code": "5-31",
           "title": "欧拉图"
         }
       ]
     },
     {
-      "id": "6531c76b-dce2-4d9a-9b7b-7548a3dfedf4",
+      "id": "07930b4c-129f-4a18-94ea-abc0935689f5",
       "code": "5-04",
       "title": "图BFS遍历",
       "description": "无权图最短路径",
@@ -5338,26 +5338,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "2dc5dc2c-6c3c-4f24-9187-048290aa0836",
+          "id": "3da42b72-45c6-4563-9c4b-e237d40c94ec",
           "code": "3-10",
           "title": "BFS广搜"
         },
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         }
       ],
       "dependents": [
         {
-          "id": "fde6e242-6649-4b53-a529-06900907b15d",
+          "id": "f14272da-9c89-4e9b-a3bd-551cd77ba48e",
           "code": "5-18",
           "title": "最大流EK"
         }
       ]
     },
     {
-      "id": "379a0ca9-3155-4332-9902-bd36dcf21919",
+      "id": "0c1960a1-1119-494b-a8f6-48588a600648",
       "code": "5-05",
       "title": "Floyd最短路",
       "description": "多源最短路，O(n³)",
@@ -5374,12 +5374,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "c0be3139-cebc-4c97-996e-f62bb711331c",
+          "id": "05f33882-c8ce-4d8b-8a75-df25123c4ab9",
           "code": "5-01",
           "title": "邻接矩阵"
         },
         {
-          "id": "ae10d657-d61a-46fe-abd3-f5546eb1d1cf",
+          "id": "f7c450e0-c11b-41bc-bd36-6ed9c4737ac6",
           "code": "3-14",
           "title": "线性DP"
         }
@@ -5387,7 +5387,7 @@
       "dependents": []
     },
     {
-      "id": "c97f4bf5-26a7-4088-81a0-0dff5f723e6c",
+      "id": "1f175335-c72b-4bbb-bbe9-8093be6a5dae",
       "code": "5-06",
       "title": "Dijkstra最短路",
       "description": "单源最短路，堆优化",
@@ -5404,26 +5404,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         },
         {
-          "id": "9e9b4124-26fd-491a-ae1f-a267c3647de3",
+          "id": "28c028d4-fbd7-47cf-a2d2-0e00d3e35f0e",
           "code": "2-08",
           "title": "堆/优先队列"
         }
       ],
       "dependents": [
         {
-          "id": "aabb414f-80ca-4361-aa32-3271dc11bb1c",
+          "id": "20a7e4be-bb8b-47e8-aaff-92a033d973ed",
           "code": "5-09",
           "title": "Johnson最短路"
         }
       ]
     },
     {
-      "id": "efab340f-8987-4f31-a32f-acb2eb0c33c4",
+      "id": "0a1aa1a6-2033-4d5e-b153-eeb1dc204f1c",
       "code": "5-07",
       "title": "SPFA最短路",
       "description": "处理负权边，判负环",
@@ -5440,36 +5440,36 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         },
         {
-          "id": "23f1b70f-2fff-492d-bb93-be84431c9306",
+          "id": "06a7020b-f0f4-49dc-b3cd-2d3797f3caf2",
           "code": "2-06",
           "title": "STL队列"
         }
       ],
       "dependents": [
         {
-          "id": "aabb414f-80ca-4361-aa32-3271dc11bb1c",
+          "id": "20a7e4be-bb8b-47e8-aaff-92a033d973ed",
           "code": "5-09",
           "title": "Johnson最短路"
         },
         {
-          "id": "109a06f7-5cef-4eb0-8663-11f7c4137710",
+          "id": "85066520-0648-41cd-a7cd-7d1cc298e6e3",
           "code": "5-15",
           "title": "差分约束"
         },
         {
-          "id": "767c909f-4242-4d6a-a251-db0589d203cc",
+          "id": "4801ac01-dcc7-49d0-bb67-e88c485c76df",
           "code": "5-21",
           "title": "费用流"
         }
       ]
     },
     {
-      "id": "a6921cbc-9e3b-4006-83fb-9dc69eb384c8",
+      "id": "dcbe8342-2494-4689-9270-314c05b39552",
       "code": "5-08",
       "title": "Bellman-Ford",
       "description": "基础负权边最短路",
@@ -5486,7 +5486,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         }
@@ -5494,7 +5494,7 @@
       "dependents": []
     },
     {
-      "id": "aabb414f-80ca-4361-aa32-3271dc11bb1c",
+      "id": "20a7e4be-bb8b-47e8-aaff-92a033d973ed",
       "code": "5-09",
       "title": "Johnson最短路",
       "description": "带负权边的全源最短路",
@@ -5511,12 +5511,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "c97f4bf5-26a7-4088-81a0-0dff5f723e6c",
+          "id": "1f175335-c72b-4bbb-bbe9-8093be6a5dae",
           "code": "5-06",
           "title": "Dijkstra最短路"
         },
         {
-          "id": "efab340f-8987-4f31-a32f-acb2eb0c33c4",
+          "id": "0a1aa1a6-2033-4d5e-b153-eeb1dc204f1c",
           "code": "5-07",
           "title": "SPFA最短路"
         }
@@ -5524,7 +5524,7 @@
       "dependents": []
     },
     {
-      "id": "0392790c-77db-4569-aab4-cd73e644735d",
+      "id": "4bd37030-19a6-4b49-9b5d-947164392889",
       "code": "5-10",
       "title": "Kruskal最小生成树",
       "description": "贪心+并查集",
@@ -5541,12 +5541,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "93858dd2-5e2c-4907-878b-431447858da0",
+          "id": "60657e18-6eae-4074-83a4-d7ac0f485f5a",
           "code": "2-09",
           "title": "并查集基础"
         },
         {
-          "id": "10427381-1f02-4ac4-8c3e-2da23d90acc8",
+          "id": "78c8b348-dabf-40d7-bb09-f038507b71d4",
           "code": "3-03",
           "title": "贪心简单"
         }
@@ -5554,7 +5554,7 @@
       "dependents": []
     },
     {
-      "id": "3ea6facc-0dc9-4a24-892a-9b21d491e499",
+      "id": "9539e757-fce6-4532-a904-54deb52dd94d",
       "code": "5-11",
       "title": "Prim最小生成树",
       "description": "适合稠密图，堆优化",
@@ -5571,12 +5571,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9e9b4124-26fd-491a-ae1f-a267c3647de3",
+          "id": "28c028d4-fbd7-47cf-a2d2-0e00d3e35f0e",
           "code": "2-08",
           "title": "堆/优先队列"
         },
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         }
@@ -5584,7 +5584,7 @@
       "dependents": []
     },
     {
-      "id": "c2ae281e-fa11-4aab-afac-dfff3879038c",
+      "id": "4a2c1abc-cda9-49dc-b044-df5d18d12612",
       "code": "5-12",
       "title": "拓扑排序",
       "description": "DAG排序，判环",
@@ -5601,12 +5601,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         },
         {
-          "id": "23f1b70f-2fff-492d-bb93-be84431c9306",
+          "id": "06a7020b-f0f4-49dc-b3cd-2d3797f3caf2",
           "code": "2-06",
           "title": "STL队列"
         }
@@ -5614,7 +5614,7 @@
       "dependents": []
     },
     {
-      "id": "26dfc868-4a87-42ca-aefc-d1b1822b5ff2",
+      "id": "583e2144-fe4b-4d73-9275-6a9cc3047c77",
       "code": "5-13",
       "title": "二分图匹配",
       "description": "匈牙利算法，最大匹配",
@@ -5631,31 +5631,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         },
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         }
       ],
       "dependents": [
         {
-          "id": "d18e4621-34fb-4cc7-8a53-4c82af0584cc",
+          "id": "956bd497-731c-46e7-b9ab-9c4642e11fde",
           "code": "5-23",
           "title": "KM算法"
         },
         {
-          "id": "5aab6193-cf5d-4ba9-b1d9-112e6d30316e",
+          "id": "1a2f43f1-73cd-4cb8-84b5-68ee5d538c76",
           "code": "5-24",
           "title": "多重匹配"
         }
       ]
     },
     {
-      "id": "98da305f-817b-4d8b-9595-a384a8dff146",
+      "id": "6addaa70-52fb-4f1c-9d0c-7db95fcb1a72",
       "code": "5-14",
       "title": "强连通分量Tarjan",
       "description": "缩点、DAG转化",
@@ -5672,41 +5672,41 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         },
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         }
       ],
       "dependents": [
         {
-          "id": "283c36a0-8735-4c63-9ea6-5ab99570303d",
+          "id": "3d3a3eb1-2389-4d5f-9d69-9f05ccad4af8",
           "code": "5-25",
           "title": "2-SAT"
         },
         {
-          "id": "d380c3f4-78c9-45d6-88a6-e7f60b190953",
+          "id": "860dfc99-27a2-459c-9940-efda9b6e76c1",
           "code": "5-26",
           "title": "缩点缩边"
         },
         {
-          "id": "2d386182-9496-4d36-8768-a8036f4ccb34",
+          "id": "773c51fb-e840-40a8-8bf7-7f50d6178555",
           "code": "5-33",
           "title": "双连通分量"
         },
         {
-          "id": "e8ec26a6-8ec0-4580-8932-fd74f912f626",
+          "id": "a8cd3dbc-0fd6-423a-acd2-38d88c7dd329",
           "code": "5-35",
           "title": "支配树"
         }
       ]
     },
     {
-      "id": "109a06f7-5cef-4eb0-8663-11f7c4137710",
+      "id": "85066520-0648-41cd-a7cd-7d1cc298e6e3",
       "code": "5-15",
       "title": "差分约束",
       "description": "不等式系统转最短路",
@@ -5723,7 +5723,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "efab340f-8987-4f31-a32f-acb2eb0c33c4",
+          "id": "0a1aa1a6-2033-4d5e-b153-eeb1dc204f1c",
           "code": "5-07",
           "title": "SPFA最短路"
         }
@@ -5731,7 +5731,7 @@
       "dependents": []
     },
     {
-      "id": "4d74600e-953f-4bbb-8b42-df479144b2d0",
+      "id": "8f02c09d-a636-49b9-bf51-7875c21cd5e9",
       "code": "5-16",
       "title": "LCA倍增",
       "description": "树上两点最近公共祖先",
@@ -5748,12 +5748,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "c4548f43-e090-49b0-9bcc-5428ca87edf4",
+          "id": "b95f1aba-b08e-4db4-8ea3-139faa28d2dd",
           "code": "3-18",
           "title": "倍增算法"
         },
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
@@ -5761,7 +5761,7 @@
       "dependents": []
     },
     {
-      "id": "39e56537-f7c1-46ff-a66e-60aa00c40118",
+      "id": "a810052b-91a5-4007-8061-b77d60a5d29a",
       "code": "5-17",
       "title": "LCA树剖",
       "description": "结合树链剖分求解",
@@ -5778,7 +5778,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "10b3b498-e4b1-45fe-80a3-7b8463b2341c",
+          "id": "4ba841d0-485f-4c23-8eab-4f0e5283f242",
           "code": "2-26",
           "title": "树链剖分"
         }
@@ -5786,7 +5786,7 @@
       "dependents": []
     },
     {
-      "id": "fde6e242-6649-4b53-a529-06900907b15d",
+      "id": "f14272da-9c89-4e9b-a3bd-551cd77ba48e",
       "code": "5-18",
       "title": "最大流EK",
       "description": "增广路算法",
@@ -5803,21 +5803,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "6531c76b-dce2-4d9a-9b7b-7548a3dfedf4",
+          "id": "07930b4c-129f-4a18-94ea-abc0935689f5",
           "code": "5-04",
           "title": "图BFS遍历"
         }
       ],
       "dependents": [
         {
-          "id": "2ea10fc8-d7d2-427b-a0a6-7e48c6968e78",
+          "id": "dcf9ab60-f7d1-4f4b-aca4-3d349f0d8fbf",
           "code": "5-19",
           "title": "最大流Dinic"
         }
       ]
     },
     {
-      "id": "2ea10fc8-d7d2-427b-a0a6-7e48c6968e78",
+      "id": "dcf9ab60-f7d1-4f4b-aca4-3d349f0d8fbf",
       "code": "5-19",
       "title": "最大流Dinic",
       "description": "分层图+DFS",
@@ -5834,31 +5834,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fde6e242-6649-4b53-a529-06900907b15d",
+          "id": "f14272da-9c89-4e9b-a3bd-551cd77ba48e",
           "code": "5-18",
           "title": "最大流EK"
         }
       ],
       "dependents": [
         {
-          "id": "58392199-65f3-46ac-9cb6-2273fa680c8f",
+          "id": "fd74954e-5790-4419-82e2-f3aeb336770c",
           "code": "5-20",
           "title": "最小割"
         },
         {
-          "id": "767c909f-4242-4d6a-a251-db0589d203cc",
+          "id": "4801ac01-dcc7-49d0-bb67-e88c485c76df",
           "code": "5-21",
           "title": "费用流"
         },
         {
-          "id": "9ed5bb75-27ce-4631-959b-02722be094a8",
+          "id": "555e4be8-30f5-4df9-968d-a1fba87f16f8",
           "code": "5-22",
           "title": "上下界网络流"
         }
       ]
     },
     {
-      "id": "58392199-65f3-46ac-9cb6-2273fa680c8f",
+      "id": "fd74954e-5790-4419-82e2-f3aeb336770c",
       "code": "5-20",
       "title": "最小割",
       "description": "最大流最小割定理",
@@ -5875,7 +5875,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "2ea10fc8-d7d2-427b-a0a6-7e48c6968e78",
+          "id": "dcf9ab60-f7d1-4f4b-aca4-3d349f0d8fbf",
           "code": "5-19",
           "title": "最大流Dinic"
         }
@@ -5883,7 +5883,7 @@
       "dependents": []
     },
     {
-      "id": "767c909f-4242-4d6a-a251-db0589d203cc",
+      "id": "4801ac01-dcc7-49d0-bb67-e88c485c76df",
       "code": "5-21",
       "title": "费用流",
       "description": "最小费用最大流",
@@ -5900,12 +5900,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "2ea10fc8-d7d2-427b-a0a6-7e48c6968e78",
+          "id": "dcf9ab60-f7d1-4f4b-aca4-3d349f0d8fbf",
           "code": "5-19",
           "title": "最大流Dinic"
         },
         {
-          "id": "efab340f-8987-4f31-a32f-acb2eb0c33c4",
+          "id": "0a1aa1a6-2033-4d5e-b153-eeb1dc204f1c",
           "code": "5-07",
           "title": "SPFA最短路"
         }
@@ -5913,7 +5913,7 @@
       "dependents": []
     },
     {
-      "id": "9ed5bb75-27ce-4631-959b-02722be094a8",
+      "id": "555e4be8-30f5-4df9-968d-a1fba87f16f8",
       "code": "5-22",
       "title": "上下界网络流",
       "description": "有上下界的流网络",
@@ -5930,7 +5930,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "2ea10fc8-d7d2-427b-a0a6-7e48c6968e78",
+          "id": "dcf9ab60-f7d1-4f4b-aca4-3d349f0d8fbf",
           "code": "5-19",
           "title": "最大流Dinic"
         }
@@ -5938,7 +5938,7 @@
       "dependents": []
     },
     {
-      "id": "d18e4621-34fb-4cc7-8a53-4c82af0584cc",
+      "id": "956bd497-731c-46e7-b9ab-9c4642e11fde",
       "code": "5-23",
       "title": "KM算法",
       "description": "带权二分图匹配",
@@ -5955,7 +5955,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "26dfc868-4a87-42ca-aefc-d1b1822b5ff2",
+          "id": "583e2144-fe4b-4d73-9275-6a9cc3047c77",
           "code": "5-13",
           "title": "二分图匹配"
         }
@@ -5963,7 +5963,7 @@
       "dependents": []
     },
     {
-      "id": "5aab6193-cf5d-4ba9-b1d9-112e6d30316e",
+      "id": "1a2f43f1-73cd-4cb8-84b5-68ee5d538c76",
       "code": "5-24",
       "title": "多重匹配",
       "description": "多对多匹配问题",
@@ -5980,7 +5980,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "26dfc868-4a87-42ca-aefc-d1b1822b5ff2",
+          "id": "583e2144-fe4b-4d73-9275-6a9cc3047c77",
           "code": "5-13",
           "title": "二分图匹配"
         }
@@ -5988,7 +5988,7 @@
       "dependents": []
     },
     {
-      "id": "283c36a0-8735-4c63-9ea6-5ab99570303d",
+      "id": "3d3a3eb1-2389-4d5f-9d69-9f05ccad4af8",
       "code": "5-25",
       "title": "2-SAT",
       "description": "布尔可满足性",
@@ -6005,7 +6005,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "98da305f-817b-4d8b-9595-a384a8dff146",
+          "id": "6addaa70-52fb-4f1c-9d0c-7db95fcb1a72",
           "code": "5-14",
           "title": "强连通分量Tarjan"
         }
@@ -6013,7 +6013,7 @@
       "dependents": []
     },
     {
-      "id": "d380c3f4-78c9-45d6-88a6-e7f60b190953",
+      "id": "860dfc99-27a2-459c-9940-efda9b6e76c1",
       "code": "5-26",
       "title": "缩点缩边",
       "description": "图的简化",
@@ -6030,7 +6030,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "98da305f-817b-4d8b-9595-a384a8dff146",
+          "id": "6addaa70-52fb-4f1c-9d0c-7db95fcb1a72",
           "code": "5-14",
           "title": "强连通分量Tarjan"
         }
@@ -6038,7 +6038,7 @@
       "dependents": []
     },
     {
-      "id": "8abf88cd-18b6-4fa4-b375-57eee522fe7b",
+      "id": "ea96afb8-475b-4852-8933-6efbcc16ad63",
       "code": "5-27",
       "title": "基环树",
       "description": "树+环，找环、拆环处理",
@@ -6055,26 +6055,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "2c9b3abb-234a-42ed-bbe8-4e705a6691e8",
+          "id": "d90db58f-810d-4e2f-adc4-3f9226c2fc8a",
           "code": "5-03",
           "title": "图DFS遍历"
         },
         {
-          "id": "8cce0793-26e5-44a2-900f-18d786800aea",
+          "id": "7d7c0307-f46c-43f6-9e29-cf79321fdabf",
           "code": "2-07",
           "title": "二叉树基础"
         }
       ],
       "dependents": [
         {
-          "id": "2d7a5e40-2449-410b-a0ae-538dc6b8f5df",
+          "id": "83038a67-a3e0-4497-b124-d586003c7438",
           "code": "5-34",
           "title": "仙人掌图"
         }
       ]
     },
     {
-      "id": "f0be3d11-0642-4feb-be76-6f37410b67de",
+      "id": "3666243e-5352-488d-b653-80e2ba2d59a5",
       "code": "5-28",
       "title": "树的直径",
       "description": "树上最长路径",
@@ -6091,21 +6091,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "2c9b3abb-234a-42ed-bbe8-4e705a6691e8",
+          "id": "d90db58f-810d-4e2f-adc4-3f9226c2fc8a",
           "code": "5-03",
           "title": "图DFS遍历"
         }
       ],
       "dependents": [
         {
-          "id": "f1a2efd8-3dff-4d10-a166-92448597c368",
+          "id": "bf857103-7c2e-4674-bf21-a83173d1cb11",
           "code": "5-30",
           "title": "树的中心"
         }
       ]
     },
     {
-      "id": "898cf5a2-594a-4036-881e-481c0737e54d",
+      "id": "68a62c65-0177-47e5-9f29-1a243f49acb5",
       "code": "5-29",
       "title": "树的重心",
       "description": "树的中心节点",
@@ -6122,7 +6122,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "2c9b3abb-234a-42ed-bbe8-4e705a6691e8",
+          "id": "d90db58f-810d-4e2f-adc4-3f9226c2fc8a",
           "code": "5-03",
           "title": "图DFS遍历"
         }
@@ -6130,7 +6130,7 @@
       "dependents": []
     },
     {
-      "id": "f1a2efd8-3dff-4d10-a166-92448597c368",
+      "id": "bf857103-7c2e-4674-bf21-a83173d1cb11",
       "code": "5-30",
       "title": "树的中心",
       "description": "到所有节点距离最小的点",
@@ -6147,7 +6147,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f0be3d11-0642-4feb-be76-6f37410b67de",
+          "id": "3666243e-5352-488d-b653-80e2ba2d59a5",
           "code": "5-28",
           "title": "树的直径"
         }
@@ -6155,7 +6155,7 @@
       "dependents": []
     },
     {
-      "id": "add28662-341d-4e7e-ba9a-7ab4a8f15c71",
+      "id": "307724f1-35e1-4943-a424-d13877efc8fc",
       "code": "5-31",
       "title": "欧拉图",
       "description": "欧拉路径、欧拉回路",
@@ -6172,7 +6172,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "2c9b3abb-234a-42ed-bbe8-4e705a6691e8",
+          "id": "d90db58f-810d-4e2f-adc4-3f9226c2fc8a",
           "code": "5-03",
           "title": "图DFS遍历"
         }
@@ -6180,7 +6180,7 @@
       "dependents": []
     },
     {
-      "id": "6b45251f-c791-481c-861c-d8df1f70ba8e",
+      "id": "38e0e0a4-c50c-4cdc-8386-f896708877c9",
       "code": "5-32",
       "title": "哈密顿图",
       "description": "哈密顿路径、回路判断",
@@ -6197,7 +6197,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "47b09657-9150-4b79-b988-882c8530a63d",
+          "id": "aa2f2999-3d4d-41fe-9924-0fa5303a40de",
           "code": "3-21",
           "title": "状态压缩DP"
         }
@@ -6205,7 +6205,7 @@
       "dependents": []
     },
     {
-      "id": "2d386182-9496-4d36-8768-a8036f4ccb34",
+      "id": "773c51fb-e840-40a8-8bf7-7f50d6178555",
       "code": "5-33",
       "title": "双连通分量",
       "description": "图的连通性进阶",
@@ -6222,7 +6222,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "98da305f-817b-4d8b-9595-a384a8dff146",
+          "id": "6addaa70-52fb-4f1c-9d0c-7db95fcb1a72",
           "code": "5-14",
           "title": "强连通分量Tarjan"
         }
@@ -6230,7 +6230,7 @@
       "dependents": []
     },
     {
-      "id": "2d7a5e40-2449-410b-a0ae-538dc6b8f5df",
+      "id": "83038a67-a3e0-4497-b124-d586003c7438",
       "code": "5-34",
       "title": "仙人掌图",
       "description": "每个边最多在一个环中",
@@ -6247,7 +6247,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8abf88cd-18b6-4fa4-b375-57eee522fe7b",
+          "id": "ea96afb8-475b-4852-8933-6efbcc16ad63",
           "code": "5-27",
           "title": "基环树"
         }
@@ -6255,7 +6255,7 @@
       "dependents": []
     },
     {
-      "id": "e8ec26a6-8ec0-4580-8932-fd74f912f626",
+      "id": "a8cd3dbc-0fd6-423a-acd2-38d88c7dd329",
       "code": "5-35",
       "title": "支配树",
       "description": "图的支配关系",
@@ -6272,7 +6272,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "98da305f-817b-4d8b-9595-a384a8dff146",
+          "id": "6addaa70-52fb-4f1c-9d0c-7db95fcb1a72",
           "code": "5-14",
           "title": "强连通分量Tarjan"
         }
@@ -6280,7 +6280,7 @@
       "dependents": []
     },
     {
-      "id": "84a04be3-e764-427f-8c5e-f70eadb8d72a",
+      "id": "e6014428-e429-4cf5-a177-3fbb8206feed",
       "code": "5-36",
       "title": "平面图",
       "description": "平面图判定、欧拉公式",
@@ -6297,7 +6297,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "7fea142b-39b8-4037-bb5f-f3f2dad68dbb",
+          "id": "b9207482-414a-42b7-8d2e-a912c84d1421",
           "code": "5-02",
           "title": "邻接表"
         }
@@ -6305,7 +6305,7 @@
       "dependents": []
     },
     {
-      "id": "bb5d1311-3d0f-443e-aab6-66758987e388",
+      "id": "d68e6ad1-ed6e-4f09-a0cc-bc42eea23e5b",
       "code": "6-01",
       "title": "字符串暴力匹配",
       "description": "逐个字符比对",
@@ -6322,21 +6322,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fc11066a-45b2-42e5-a368-d903335a1ecc",
+          "id": "e249f60f-2280-455e-8a4c-36388aec50d0",
           "code": "1-07",
           "title": "字符串"
         }
       ],
       "dependents": [
         {
-          "id": "101faf7f-3c90-4817-b9ce-baae63ad3743",
+          "id": "1d0fae84-28f1-42f9-985c-053f52fe56fa",
           "code": "6-03",
           "title": "KMP算法"
         }
       ]
     },
     {
-      "id": "b93489ea-74a3-4ae9-8983-9ad2b36d1d8d",
+      "id": "124010ce-d408-47a2-91ee-2be4de911ad3",
       "code": "6-02",
       "title": "字符串操作",
       "description": "string类常用操作",
@@ -6353,7 +6353,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fc11066a-45b2-42e5-a368-d903335a1ecc",
+          "id": "e249f60f-2280-455e-8a4c-36388aec50d0",
           "code": "1-07",
           "title": "字符串"
         }
@@ -6361,7 +6361,7 @@
       "dependents": []
     },
     {
-      "id": "101faf7f-3c90-4817-b9ce-baae63ad3743",
+      "id": "1d0fae84-28f1-42f9-985c-053f52fe56fa",
       "code": "6-03",
       "title": "KMP算法",
       "description": "模式匹配，失配函数",
@@ -6378,36 +6378,36 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "bb5d1311-3d0f-443e-aab6-66758987e388",
+          "id": "d68e6ad1-ed6e-4f09-a0cc-bc42eea23e5b",
           "code": "6-01",
           "title": "字符串暴力匹配"
         }
       ],
       "dependents": [
         {
-          "id": "a33f6cd5-968e-427e-a07e-2a57f837a803",
+          "id": "44b0345c-969b-4a9e-b61d-40776618c03c",
           "code": "6-04",
           "title": "KMP进阶"
         },
         {
-          "id": "9cd63e8c-6c29-461e-ab86-17f21ae1ea95",
+          "id": "f1c77277-7461-4330-92a9-445a8f1b14ac",
           "code": "6-06",
           "title": "AC自动机"
         },
         {
-          "id": "1c27a492-dfb1-4429-9734-6c2b1648c1a1",
+          "id": "452167b6-7627-43d2-a238-513ddd24cf75",
           "code": "6-13",
           "title": "最小表示法"
         },
         {
-          "id": "d0451bdf-2ab5-4645-a21c-d11691955177",
+          "id": "25970f92-7ee1-4530-8486-5596d33f7be3",
           "code": "6-14",
           "title": "扩展KMP"
         }
       ]
     },
     {
-      "id": "a33f6cd5-968e-427e-a07e-2a57f837a803",
+      "id": "44b0345c-969b-4a9e-b61d-40776618c03c",
       "code": "6-04",
       "title": "KMP进阶",
       "description": "循环节、最小表示法",
@@ -6424,7 +6424,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "101faf7f-3c90-4817-b9ce-baae63ad3743",
+          "id": "1d0fae84-28f1-42f9-985c-053f52fe56fa",
           "code": "6-03",
           "title": "KMP算法"
         }
@@ -6432,7 +6432,7 @@
       "dependents": []
     },
     {
-      "id": "39b4ba91-ae2c-4dc7-8a40-131a7b5be917",
+      "id": "501a4eb3-9184-442a-a4fb-cd52905f3892",
       "code": "6-05",
       "title": "字符串哈希",
       "description": "快速比较字符串",
@@ -6449,12 +6449,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fc11066a-45b2-42e5-a368-d903335a1ecc",
+          "id": "e249f60f-2280-455e-8a4c-36388aec50d0",
           "code": "1-07",
           "title": "字符串"
         },
         {
-          "id": "08bada00-71d8-456d-aa03-dab658e66d3a",
+          "id": "db3c56e0-aa6f-4835-a753-ffc6edc441b3",
           "code": "2-04",
           "title": "简单哈希表"
         }
@@ -6462,7 +6462,7 @@
       "dependents": []
     },
     {
-      "id": "9cd63e8c-6c29-461e-ab86-17f21ae1ea95",
+      "id": "f1c77277-7461-4330-92a9-445a8f1b14ac",
       "code": "6-06",
       "title": "AC自动机",
       "description": "多模式匹配，Trie+KMP",
@@ -6479,26 +6479,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ca8481c6-1304-4944-a2d0-4df198e7eaad",
+          "id": "69bcf076-0407-47ba-a3a9-9f8a5865badd",
           "code": "2-13",
           "title": "字典树Trie"
         },
         {
-          "id": "101faf7f-3c90-4817-b9ce-baae63ad3743",
+          "id": "1d0fae84-28f1-42f9-985c-053f52fe56fa",
           "code": "6-03",
           "title": "KMP算法"
         }
       ],
       "dependents": [
         {
-          "id": "d8284791-99de-4f20-9b0f-5df3593e8cd8",
+          "id": "15d128e8-c9f7-4658-a3b0-5a027f547a95",
           "code": "6-07",
           "title": "AC自动机进阶"
         }
       ]
     },
     {
-      "id": "d8284791-99de-4f20-9b0f-5df3593e8cd8",
+      "id": "15d128e8-c9f7-4658-a3b0-5a027f547a95",
       "code": "6-07",
       "title": "AC自动机进阶",
       "description": "fail树遍历",
@@ -6515,7 +6515,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9cd63e8c-6c29-461e-ab86-17f21ae1ea95",
+          "id": "f1c77277-7461-4330-92a9-445a8f1b14ac",
           "code": "6-06",
           "title": "AC自动机"
         }
@@ -6523,7 +6523,7 @@
       "dependents": []
     },
     {
-      "id": "02e0890b-2168-44c8-9a25-8a1d8c74aa2e",
+      "id": "9b373ec7-96ed-4e61-9a2c-d650b963a575",
       "code": "6-08",
       "title": "Manacher",
       "description": "最长回文子串",
@@ -6540,7 +6540,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fc11066a-45b2-42e5-a368-d903335a1ecc",
+          "id": "e249f60f-2280-455e-8a4c-36388aec50d0",
           "code": "1-07",
           "title": "字符串"
         }
@@ -6548,7 +6548,7 @@
       "dependents": []
     },
     {
-      "id": "80e097c3-c688-46dc-aca4-e8eb5d4228af",
+      "id": "f6c16dca-2f8b-4d24-b633-73233e9c0375",
       "code": "6-09",
       "title": "后缀数组SA",
       "description": "后缀排序、height数组",
@@ -6565,26 +6565,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "e0b624d8-ae7d-4edc-a322-c500c294587c",
+          "id": "6e2f6518-b09a-4a94-8aa6-d867c0d3ba37",
           "code": "3-06",
           "title": "快速排序"
         },
         {
-          "id": "fc11066a-45b2-42e5-a368-d903335a1ecc",
+          "id": "e249f60f-2280-455e-8a4c-36388aec50d0",
           "code": "1-07",
           "title": "字符串"
         }
       ],
       "dependents": [
         {
-          "id": "56f9ffa2-8565-4be2-937c-cae4b10c0660",
+          "id": "05c7d0f6-67ea-4a06-b9b1-7b78cb529a90",
           "code": "6-10",
           "title": "后缀数组应用"
         }
       ]
     },
     {
-      "id": "56f9ffa2-8565-4be2-937c-cae4b10c0660",
+      "id": "05c7d0f6-67ea-4a06-b9b1-7b78cb529a90",
       "code": "6-10",
       "title": "后缀数组应用",
       "description": "最长公共前缀",
@@ -6601,7 +6601,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "80e097c3-c688-46dc-aca4-e8eb5d4228af",
+          "id": "f6c16dca-2f8b-4d24-b633-73233e9c0375",
           "code": "6-09",
           "title": "后缀数组SA"
         }
@@ -6609,7 +6609,7 @@
       "dependents": []
     },
     {
-      "id": "8747e0f5-6a94-4336-af0e-27e3eddf6103",
+      "id": "bbfaf5e9-d189-4d65-9291-12db0be1d721",
       "code": "6-11",
       "title": "后缀自动机SAM",
       "description": "子串统计、最长公共子串",
@@ -6626,31 +6626,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "ca8481c6-1304-4944-a2d0-4df198e7eaad",
+          "id": "69bcf076-0407-47ba-a3a9-9f8a5865badd",
           "code": "2-13",
           "title": "字典树Trie"
         }
       ],
       "dependents": [
         {
-          "id": "70f86161-92c4-433b-ae5f-6f16ef0b54af",
+          "id": "005449ad-7bc8-4850-9eea-fd80f427e559",
           "code": "6-12",
           "title": "回文自动机PAM"
         },
         {
-          "id": "f77c5834-a7ed-49b8-9f75-1aa21d67055c",
+          "id": "6708aa3c-ff2b-49da-abdc-2901780f6ead",
           "code": "6-15",
           "title": "后缀树"
         },
         {
-          "id": "b9b94218-af69-47b0-9cc6-6e4f22bcc769",
+          "id": "7f51ce94-bcf0-4819-bbad-3b2128231d12",
           "code": "6-16",
           "title": "广义后缀自动机"
         }
       ]
     },
     {
-      "id": "70f86161-92c4-433b-ae5f-6f16ef0b54af",
+      "id": "005449ad-7bc8-4850-9eea-fd80f427e559",
       "code": "6-12",
       "title": "回文自动机PAM",
       "description": "回文子串统计",
@@ -6667,7 +6667,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8747e0f5-6a94-4336-af0e-27e3eddf6103",
+          "id": "bbfaf5e9-d189-4d65-9291-12db0be1d721",
           "code": "6-11",
           "title": "后缀自动机SAM"
         }
@@ -6675,7 +6675,7 @@
       "dependents": []
     },
     {
-      "id": "1c27a492-dfb1-4429-9734-6c2b1648c1a1",
+      "id": "452167b6-7627-43d2-a238-513ddd24cf75",
       "code": "6-13",
       "title": "最小表示法",
       "description": "字符串最小循环表示",
@@ -6692,7 +6692,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "101faf7f-3c90-4817-b9ce-baae63ad3743",
+          "id": "1d0fae84-28f1-42f9-985c-053f52fe56fa",
           "code": "6-03",
           "title": "KMP算法"
         }
@@ -6700,7 +6700,7 @@
       "dependents": []
     },
     {
-      "id": "d0451bdf-2ab5-4645-a21c-d11691955177",
+      "id": "25970f92-7ee1-4530-8486-5596d33f7be3",
       "code": "6-14",
       "title": "扩展KMP",
       "description": "Z算法",
@@ -6717,7 +6717,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "101faf7f-3c90-4817-b9ce-baae63ad3743",
+          "id": "1d0fae84-28f1-42f9-985c-053f52fe56fa",
           "code": "6-03",
           "title": "KMP算法"
         }
@@ -6725,7 +6725,7 @@
       "dependents": []
     },
     {
-      "id": "f77c5834-a7ed-49b8-9f75-1aa21d67055c",
+      "id": "6708aa3c-ff2b-49da-abdc-2901780f6ead",
       "code": "6-15",
       "title": "后缀树",
       "description": "多模式匹配、子串查询",
@@ -6742,7 +6742,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8747e0f5-6a94-4336-af0e-27e3eddf6103",
+          "id": "bbfaf5e9-d189-4d65-9291-12db0be1d721",
           "code": "6-11",
           "title": "后缀自动机SAM"
         }
@@ -6750,7 +6750,7 @@
       "dependents": []
     },
     {
-      "id": "b9b94218-af69-47b0-9cc6-6e4f22bcc769",
+      "id": "7f51ce94-bcf0-4819-bbad-3b2128231d12",
       "code": "6-16",
       "title": "广义后缀自动机",
       "description": "多字符串后缀自动机",
@@ -6767,7 +6767,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "8747e0f5-6a94-4336-af0e-27e3eddf6103",
+          "id": "bbfaf5e9-d189-4d65-9291-12db0be1d721",
           "code": "6-11",
           "title": "后缀自动机SAM"
         }
@@ -6775,7 +6775,7 @@
       "dependents": []
     },
     {
-      "id": "754d04ba-806e-47a1-9cc5-c7b68e565c7b",
+      "id": "75d30dbf-eeb2-420a-af5a-d98d02033da9",
       "code": "6-17",
       "title": "字符串压缩",
       "description": "Run-Length编码",
@@ -6792,7 +6792,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "fc11066a-45b2-42e5-a368-d903335a1ecc",
+          "id": "e249f60f-2280-455e-8a4c-36388aec50d0",
           "code": "1-07",
           "title": "字符串"
         }
@@ -6800,7 +6800,7 @@
       "dependents": []
     },
     {
-      "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+      "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
       "code": "6-18",
       "title": "点与向量",
       "description": "点坐标、向量运算",
@@ -6817,56 +6817,56 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "7e524d43-68ed-4b61-a21a-c838efb2cee6",
+          "id": "b590d58c-df76-4659-ac06-5fa203c73bc2",
           "code": "1-10",
           "title": "结构体与枚举"
         }
       ],
       "dependents": [
         {
-          "id": "3546b5f2-e34a-4dc5-80f6-5ff16c695108",
+          "id": "12c5d60b-f7d3-435d-a385-d87e99f5b324",
           "code": "6-19",
           "title": "距离计算"
         },
         {
-          "id": "e645ed5e-0e8f-42f5-a504-539d923d2420",
+          "id": "2772beb9-3041-428e-adfa-724306c2e91e",
           "code": "6-20",
           "title": "线段相交"
         },
         {
-          "id": "d0660506-10da-4ac4-b584-6e6c80f5736f",
+          "id": "819b2894-e0e4-4580-8691-0986e530e8f6",
           "code": "6-21",
           "title": "斜率截距"
         },
         {
-          "id": "438e1425-bb57-46f8-a90b-63032f18ef97",
+          "id": "f57c9eb2-9aa4-4938-b664-f0986cbb5483",
           "code": "6-22",
           "title": "凸包Graham"
         },
         {
-          "id": "00c4d590-8045-47a9-8765-75e7956965ff",
+          "id": "46d1a984-9ef8-46f0-99a5-e18dc8aac4ee",
           "code": "6-27",
           "title": "几何变换"
         },
         {
-          "id": "3cff27b3-3a60-46ec-b538-1f64363a4968",
+          "id": "f76cd983-8c16-4f59-af8d-30c705c037b6",
           "code": "6-28",
           "title": "多边形面积"
         },
         {
-          "id": "b009d712-9320-403a-b95d-abd5f7fed1e3",
+          "id": "43477896-8f92-453d-9baa-5f95002e664d",
           "code": "6-32",
           "title": "三维点向量"
         },
         {
-          "id": "41176207-29b3-42d5-b15a-aba851273cc2",
+          "id": "369c488f-baea-4819-98c2-327810110554",
           "code": "6-37",
           "title": "几何偏序"
         }
       ]
     },
     {
-      "id": "3546b5f2-e34a-4dc5-80f6-5ff16c695108",
+      "id": "12c5d60b-f7d3-435d-a385-d87e99f5b324",
       "code": "6-19",
       "title": "距离计算",
       "description": "欧几里得/曼哈顿距离",
@@ -6883,26 +6883,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+          "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
           "code": "6-18",
           "title": "点与向量"
         }
       ],
       "dependents": [
         {
-          "id": "4ac7f392-fdd7-4d0a-bb7c-bd7e6cec9a4f",
+          "id": "0172feb6-ec31-488f-b4ec-e54209144e4c",
           "code": "6-26",
           "title": "平面最近点对"
         },
         {
-          "id": "ce64aa8c-d706-4aa7-960d-9f3db9b4b69e",
+          "id": "49311e14-1e99-4a48-863d-ad11af729656",
           "code": "6-36",
           "title": "最小圆覆盖"
         }
       ]
     },
     {
-      "id": "e645ed5e-0e8f-42f5-a504-539d923d2420",
+      "id": "2772beb9-3041-428e-adfa-724306c2e91e",
       "code": "6-20",
       "title": "线段相交",
       "description": "线段相交判断",
@@ -6919,31 +6919,31 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+          "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
           "code": "6-18",
           "title": "点与向量"
         }
       ],
       "dependents": [
         {
-          "id": "38a43439-ebe6-4e42-a333-35842083f0ad",
+          "id": "f715091c-dd2f-4920-8af6-167a03c90d01",
           "code": "6-29",
           "title": "点在多边形内"
         },
         {
-          "id": "f0c13b8e-286c-4f69-8f19-eacc4c7ab262",
+          "id": "8593509b-1105-49ed-b3db-300941b6c35d",
           "code": "6-30",
           "title": "圆与直线相交"
         },
         {
-          "id": "f2c6bc67-68f0-4ee7-8175-f428644b90ad",
+          "id": "8dce9554-9052-4c75-a853-c848f33c5666",
           "code": "6-34",
           "title": "平面分割"
         }
       ]
     },
     {
-      "id": "d0660506-10da-4ac4-b584-6e6c80f5736f",
+      "id": "819b2894-e0e4-4580-8691-0986e530e8f6",
       "code": "6-21",
       "title": "斜率截距",
       "description": "直线斜率、截距",
@@ -6960,7 +6960,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+          "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
           "code": "6-18",
           "title": "点与向量"
         }
@@ -6968,7 +6968,7 @@
       "dependents": []
     },
     {
-      "id": "438e1425-bb57-46f8-a90b-63032f18ef97",
+      "id": "f57c9eb2-9aa4-4938-b664-f0986cbb5483",
       "code": "6-22",
       "title": "凸包Graham",
       "description": "极角排序，求凸包",
@@ -6985,46 +6985,46 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+          "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
           "code": "6-18",
           "title": "点与向量"
         },
         {
-          "id": "dc69e64e-3e9a-4233-9f03-105fee867fa4",
+          "id": "d2ec4358-1483-47e5-ae2d-24555bf7b71d",
           "code": "3-05",
           "title": "基础排序"
         }
       ],
       "dependents": [
         {
-          "id": "eb640205-f39e-4faa-a285-f484c21a752d",
+          "id": "77cba714-c4f9-4e97-9fc9-3a945809c561",
           "code": "6-23",
           "title": "凸包Andrew"
         },
         {
-          "id": "82081862-ff05-4002-8451-dabbff56f0b2",
+          "id": "66173bd3-ab14-4f44-9713-a7a215852e96",
           "code": "6-24",
           "title": "旋转卡壳"
         },
         {
-          "id": "c88aef1b-faee-422e-a9d6-80abae46c6bc",
+          "id": "6c402c6e-f75a-42a7-acbd-2a9f75e5c885",
           "code": "6-25",
           "title": "半平面交"
         },
         {
-          "id": "393fb563-d3d7-4f62-a3e1-d91ac67e7e88",
+          "id": "a42cc8a1-54aa-4271-b487-9cff172be693",
           "code": "6-33",
           "title": "三维凸包"
         },
         {
-          "id": "ef623f9d-fe57-4ca5-a260-651d084f4ecb",
+          "id": "6e692f40-24c6-4d25-acf4-a721049db660",
           "code": "6-38",
           "title": "闵可夫斯基和"
         }
       ]
     },
     {
-      "id": "eb640205-f39e-4faa-a285-f484c21a752d",
+      "id": "77cba714-c4f9-4e97-9fc9-3a945809c561",
       "code": "6-23",
       "title": "凸包Andrew",
       "description": "排序+单调栈",
@@ -7041,12 +7041,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "438e1425-bb57-46f8-a90b-63032f18ef97",
+          "id": "f57c9eb2-9aa4-4938-b664-f0986cbb5483",
           "code": "6-22",
           "title": "凸包Graham"
         },
         {
-          "id": "47928bfc-b297-470b-9fc9-995f38eda9c3",
+          "id": "655f7352-e4e0-4204-8a4b-70998ecc6bcd",
           "code": "2-11",
           "title": "单调栈"
         }
@@ -7054,7 +7054,7 @@
       "dependents": []
     },
     {
-      "id": "82081862-ff05-4002-8451-dabbff56f0b2",
+      "id": "66173bd3-ab14-4f44-9713-a7a215852e96",
       "code": "6-24",
       "title": "旋转卡壳",
       "description": "凸包直径、最远点对",
@@ -7071,7 +7071,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "438e1425-bb57-46f8-a90b-63032f18ef97",
+          "id": "f57c9eb2-9aa4-4938-b664-f0986cbb5483",
           "code": "6-22",
           "title": "凸包Graham"
         }
@@ -7079,7 +7079,7 @@
       "dependents": []
     },
     {
-      "id": "c88aef1b-faee-422e-a9d6-80abae46c6bc",
+      "id": "6c402c6e-f75a-42a7-acbd-2a9f75e5c885",
       "code": "6-25",
       "title": "半平面交",
       "description": "多边形裁剪",
@@ -7096,7 +7096,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "438e1425-bb57-46f8-a90b-63032f18ef97",
+          "id": "f57c9eb2-9aa4-4938-b664-f0986cbb5483",
           "code": "6-22",
           "title": "凸包Graham"
         }
@@ -7104,7 +7104,7 @@
       "dependents": []
     },
     {
-      "id": "4ac7f392-fdd7-4d0a-bb7c-bd7e6cec9a4f",
+      "id": "0172feb6-ec31-488f-b4ec-e54209144e4c",
       "code": "6-26",
       "title": "平面最近点对",
       "description": "分治求解",
@@ -7121,12 +7121,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "0065c4a6-55ab-4f18-88f3-5d2d76d88e69",
+          "id": "a362136e-8801-4f08-9d7b-202d07fc3ea5",
           "code": "3-12",
           "title": "分治"
         },
         {
-          "id": "3546b5f2-e34a-4dc5-80f6-5ff16c695108",
+          "id": "12c5d60b-f7d3-435d-a385-d87e99f5b324",
           "code": "6-19",
           "title": "距离计算"
         }
@@ -7134,7 +7134,7 @@
       "dependents": []
     },
     {
-      "id": "00c4d590-8045-47a9-8765-75e7956965ff",
+      "id": "46d1a984-9ef8-46f0-99a5-e18dc8aac4ee",
       "code": "6-27",
       "title": "几何变换",
       "description": "平移/旋转/缩放",
@@ -7151,7 +7151,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+          "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
           "code": "6-18",
           "title": "点与向量"
         }
@@ -7159,7 +7159,7 @@
       "dependents": []
     },
     {
-      "id": "3cff27b3-3a60-46ec-b538-1f64363a4968",
+      "id": "f76cd983-8c16-4f59-af8d-30c705c037b6",
       "code": "6-28",
       "title": "多边形面积",
       "description": "叉积求和",
@@ -7176,21 +7176,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+          "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
           "code": "6-18",
           "title": "点与向量"
         }
       ],
       "dependents": [
         {
-          "id": "99eeb8e3-f21a-4351-a0a3-06386e1c6b37",
+          "id": "ccaaa608-4082-4cf3-8268-00bb495fc057",
           "code": "6-35",
           "title": "三角剖分"
         }
       ]
     },
     {
-      "id": "38a43439-ebe6-4e42-a333-35842083f0ad",
+      "id": "f715091c-dd2f-4920-8af6-167a03c90d01",
       "code": "6-29",
       "title": "点在多边形内",
       "description": "射线法",
@@ -7207,7 +7207,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "e645ed5e-0e8f-42f5-a504-539d923d2420",
+          "id": "2772beb9-3041-428e-adfa-724306c2e91e",
           "code": "6-20",
           "title": "线段相交"
         }
@@ -7215,7 +7215,7 @@
       "dependents": []
     },
     {
-      "id": "f0c13b8e-286c-4f69-8f19-eacc4c7ab262",
+      "id": "8593509b-1105-49ed-b3db-300941b6c35d",
       "code": "6-30",
       "title": "圆与直线相交",
       "description": "交点计算、相切判断",
@@ -7232,21 +7232,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "e645ed5e-0e8f-42f5-a504-539d923d2420",
+          "id": "2772beb9-3041-428e-adfa-724306c2e91e",
           "code": "6-20",
           "title": "线段相交"
         }
       ],
       "dependents": [
         {
-          "id": "e1fb8142-b37f-4db7-9f3c-a679bea70528",
+          "id": "3628e267-09c1-44db-bf8d-353576e3716f",
           "code": "6-31",
           "title": "圆与圆相交"
         }
       ]
     },
     {
-      "id": "e1fb8142-b37f-4db7-9f3c-a679bea70528",
+      "id": "3628e267-09c1-44db-bf8d-353576e3716f",
       "code": "6-31",
       "title": "圆与圆相交",
       "description": "交点计算",
@@ -7263,7 +7263,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f0c13b8e-286c-4f69-8f19-eacc4c7ab262",
+          "id": "8593509b-1105-49ed-b3db-300941b6c35d",
           "code": "6-30",
           "title": "圆与直线相交"
         }
@@ -7271,7 +7271,7 @@
       "dependents": []
     },
     {
-      "id": "b009d712-9320-403a-b95d-abd5f7fed1e3",
+      "id": "43477896-8f92-453d-9baa-5f95002e664d",
       "code": "6-32",
       "title": "三维点向量",
       "description": "三维坐标、点积/叉积",
@@ -7288,21 +7288,21 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+          "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
           "code": "6-18",
           "title": "点与向量"
         }
       ],
       "dependents": [
         {
-          "id": "393fb563-d3d7-4f62-a3e1-d91ac67e7e88",
+          "id": "a42cc8a1-54aa-4271-b487-9cff172be693",
           "code": "6-33",
           "title": "三维凸包"
         }
       ]
     },
     {
-      "id": "393fb563-d3d7-4f62-a3e1-d91ac67e7e88",
+      "id": "a42cc8a1-54aa-4271-b487-9cff172be693",
       "code": "6-33",
       "title": "三维凸包",
       "description": "三维点集的凸包",
@@ -7319,12 +7319,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "438e1425-bb57-46f8-a90b-63032f18ef97",
+          "id": "f57c9eb2-9aa4-4938-b664-f0986cbb5483",
           "code": "6-22",
           "title": "凸包Graham"
         },
         {
-          "id": "b009d712-9320-403a-b95d-abd5f7fed1e3",
+          "id": "43477896-8f92-453d-9baa-5f95002e664d",
           "code": "6-32",
           "title": "三维点向量"
         }
@@ -7332,7 +7332,7 @@
       "dependents": []
     },
     {
-      "id": "f2c6bc67-68f0-4ee7-8175-f428644b90ad",
+      "id": "8dce9554-9052-4c75-a853-c848f33c5666",
       "code": "6-34",
       "title": "平面分割",
       "description": "直线/圆分割平面",
@@ -7349,7 +7349,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "e645ed5e-0e8f-42f5-a504-539d923d2420",
+          "id": "2772beb9-3041-428e-adfa-724306c2e91e",
           "code": "6-20",
           "title": "线段相交"
         }
@@ -7357,7 +7357,7 @@
       "dependents": []
     },
     {
-      "id": "99eeb8e3-f21a-4351-a0a3-06386e1c6b37",
+      "id": "ccaaa608-4082-4cf3-8268-00bb495fc057",
       "code": "6-35",
       "title": "三角剖分",
       "description": "多边形三角剖分",
@@ -7374,7 +7374,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "3cff27b3-3a60-46ec-b538-1f64363a4968",
+          "id": "f76cd983-8c16-4f59-af8d-30c705c037b6",
           "code": "6-28",
           "title": "多边形面积"
         }
@@ -7382,7 +7382,7 @@
       "dependents": []
     },
     {
-      "id": "ce64aa8c-d706-4aa7-960d-9f3db9b4b69e",
+      "id": "49311e14-1e99-4a48-863d-ad11af729656",
       "code": "6-36",
       "title": "最小圆覆盖",
       "description": "覆盖点集的最小圆",
@@ -7399,7 +7399,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "3546b5f2-e34a-4dc5-80f6-5ff16c695108",
+          "id": "12c5d60b-f7d3-435d-a385-d87e99f5b324",
           "code": "6-19",
           "title": "距离计算"
         }
@@ -7407,7 +7407,7 @@
       "dependents": []
     },
     {
-      "id": "41176207-29b3-42d5-b15a-aba851273cc2",
+      "id": "369c488f-baea-4819-98c2-327810110554",
       "code": "6-37",
       "title": "几何偏序",
       "description": "点集的偏序关系",
@@ -7424,12 +7424,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "516e7f35-1a0a-4c37-adb4-d6b2f03e121a",
+          "id": "eaa4f551-d097-4f84-8bba-9b4b419df64f",
           "code": "3-31",
           "title": "CDQ分治"
         },
         {
-          "id": "f5a3f6ad-dab9-4aae-bf4f-a184710a444f",
+          "id": "c230f3cf-0eba-4050-aae6-4de8500b6a38",
           "code": "6-18",
           "title": "点与向量"
         }
@@ -7437,7 +7437,7 @@
       "dependents": []
     },
     {
-      "id": "ef623f9d-fe57-4ca5-a260-651d084f4ecb",
+      "id": "6e692f40-24c6-4d25-acf4-a721049db660",
       "code": "6-38",
       "title": "闵可夫斯基和",
       "description": "凸包加法",
@@ -7454,7 +7454,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "438e1425-bb57-46f8-a90b-63032f18ef97",
+          "id": "f57c9eb2-9aa4-4938-b664-f0986cbb5483",
           "code": "6-22",
           "title": "凸包Graham"
         }
@@ -7462,7 +7462,7 @@
       "dependents": []
     },
     {
-      "id": "f9139366-8651-450f-903e-e3686849cec0",
+      "id": "ac57893d-cf94-4445-bcbd-525a5d9cab4b",
       "code": "7-01",
       "title": "SG函数",
       "description": "博弈论核心，组合游戏通用方法",
@@ -7479,26 +7479,26 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         }
       ],
       "dependents": [
         {
-          "id": "667c542c-af8e-443a-b2f4-4aa110789baf",
+          "id": "c3e1489e-e90c-4f64-8884-d76c2e2e2b0a",
           "code": "7-02",
           "title": "Nim游戏"
         },
         {
-          "id": "2f9615d6-40d7-47d1-85e4-bb1ef3ff5a7e",
+          "id": "14ac35c4-0d1f-44f2-a580-11536380b9ca",
           "code": "7-04",
           "title": "巴什博弈"
         }
       ]
     },
     {
-      "id": "667c542c-af8e-443a-b2f4-4aa110789baf",
+      "id": "c3e1489e-e90c-4f64-8884-d76c2e2e2b0a",
       "code": "7-02",
       "title": "Nim游戏",
       "description": "异或和、必胜/必败态",
@@ -7515,36 +7515,36 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f9139366-8651-450f-903e-e3686849cec0",
+          "id": "ac57893d-cf94-4445-bcbd-525a5d9cab4b",
           "code": "7-01",
           "title": "SG函数"
         },
         {
-          "id": "46b62af2-0787-4e65-a307-4c8199ffb7a9",
+          "id": "e655dc09-a999-47d3-b81e-317e4f1cc8de",
           "code": "1-16",
           "title": "位运算"
         }
       ],
       "dependents": [
         {
-          "id": "0d6666ff-7f7f-4676-9004-7672e016eac1",
+          "id": "53fa7f0c-ea55-4a26-b4f6-205b0e8321dd",
           "code": "7-03",
           "title": "阶梯博弈"
         },
         {
-          "id": "5bee07b4-945d-4733-bfb1-e3e4858cd06a",
+          "id": "fb6e1459-0515-49dc-b4dd-31d7d19e9112",
           "code": "7-05",
           "title": "威佐夫博弈"
         },
         {
-          "id": "08a0221a-2693-4279-9e99-e2db2322083c",
+          "id": "ebd36c1f-8eb3-401a-9e21-b938c7ea74f4",
           "code": "7-06",
           "title": "反Nim游戏"
         }
       ]
     },
     {
-      "id": "0d6666ff-7f7f-4676-9004-7672e016eac1",
+      "id": "53fa7f0c-ea55-4a26-b4f6-205b0e8321dd",
       "code": "7-03",
       "title": "阶梯博弈",
       "description": "阶梯上的Nim游戏",
@@ -7561,7 +7561,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "667c542c-af8e-443a-b2f4-4aa110789baf",
+          "id": "c3e1489e-e90c-4f64-8884-d76c2e2e2b0a",
           "code": "7-02",
           "title": "Nim游戏"
         }
@@ -7569,7 +7569,7 @@
       "dependents": []
     },
     {
-      "id": "2f9615d6-40d7-47d1-85e4-bb1ef3ff5a7e",
+      "id": "14ac35c4-0d1f-44f2-a580-11536380b9ca",
       "code": "7-04",
       "title": "巴什博弈",
       "description": "取石子游戏，模运算求解",
@@ -7586,7 +7586,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "f9139366-8651-450f-903e-e3686849cec0",
+          "id": "ac57893d-cf94-4445-bcbd-525a5d9cab4b",
           "code": "7-01",
           "title": "SG函数"
         }
@@ -7594,7 +7594,7 @@
       "dependents": []
     },
     {
-      "id": "5bee07b4-945d-4733-bfb1-e3e4858cd06a",
+      "id": "fb6e1459-0515-49dc-b4dd-31d7d19e9112",
       "code": "7-05",
       "title": "威佐夫博弈",
       "description": "两堆石子，黄金分割数",
@@ -7611,7 +7611,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "667c542c-af8e-443a-b2f4-4aa110789baf",
+          "id": "c3e1489e-e90c-4f64-8884-d76c2e2e2b0a",
           "code": "7-02",
           "title": "Nim游戏"
         }
@@ -7619,7 +7619,7 @@
       "dependents": []
     },
     {
-      "id": "08a0221a-2693-4279-9e99-e2db2322083c",
+      "id": "ebd36c1f-8eb3-401a-9e21-b938c7ea74f4",
       "code": "7-06",
       "title": "反Nim游戏",
       "description": "取最后一个者输",
@@ -7636,7 +7636,7 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "667c542c-af8e-443a-b2f4-4aa110789baf",
+          "id": "c3e1489e-e90c-4f64-8884-d76c2e2e2b0a",
           "code": "7-02",
           "title": "Nim游戏"
         }
@@ -7644,7 +7644,7 @@
       "dependents": []
     },
     {
-      "id": "86812ef0-ec0c-45e6-b889-9cd6348bc916",
+      "id": "4c05eadb-3bea-4b8e-a9b3-b499a7becee5",
       "code": "7-07",
       "title": "Alpha-Beta剪枝",
       "description": "对抗搜索、极大极小算法",
@@ -7661,12 +7661,12 @@
       "estimatedTime": null,
       "prerequisites": [
         {
-          "id": "9706f335-3dfd-4093-96d1-f1f06a47b637",
+          "id": "a43baa5b-7a40-4251-af78-12154e29c7d3",
           "code": "3-09",
           "title": "DFS深搜"
         },
         {
-          "id": "05d077db-d7ca-4f66-8bd0-7a976e528993",
+          "id": "e4a67728-fb4a-4c3d-9683-b653ddcdddce",
           "code": "3-20",
           "title": "高级剪枝"
         }

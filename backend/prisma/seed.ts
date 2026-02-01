@@ -17,6 +17,10 @@ import { exercisesM1L12 } from './data/exercises-M1-L12';
 import { exercisesM1L13 } from './data/exercises-M1-L13';
 import { exercisesM1L14 } from './data/exercises-M1-L14';
 import { exercisesM1L15 } from './data/exercises-M1-L15';
+import learningContent_1_01 from './data/learning-content-1-01.json';
+import learningContent_1_02 from './data/learning-content-1-02.json';
+import learningContent_1_03 from './data/learning-content-1-03.json';
+import learningContent_1_04 from './data/learning-content-1-04.json';
 
 const prisma = new PrismaClient();
 
@@ -122,6 +126,76 @@ async function seedSkillTreeV2() {
     }
   }
   console.log(`   共创建 ${allKnowledgePoints.length} 个知识点`);
+
+  // 3.5 更新知识点学习内容
+  console.log('\n3.5 更新知识点学习内容...');
+  const unit_1_01 = codeToIdMap.get('1-01');
+  if (unit_1_01) {
+    await prisma.skillUnit.update({
+      where: { id: unit_1_01 },
+      data: {
+        content: learningContent_1_01.content,
+        codeExamples: learningContent_1_01.codeExamples,
+        videoUrl: learningContent_1_01.videoUrl,
+        references: learningContent_1_01.references,
+        tips: learningContent_1_01.tips,
+        commonMistakes: learningContent_1_01.commonMistakes,
+        estimatedTime: learningContent_1_01.estimatedTime,
+      },
+    });
+    console.log(`   已更新知识点 1-01 的学习内容`);
+  }
+
+  const unit_1_02 = codeToIdMap.get('1-02');
+  if (unit_1_02) {
+    await prisma.skillUnit.update({
+      where: { id: unit_1_02 },
+      data: {
+        content: learningContent_1_02.content,
+        codeExamples: learningContent_1_02.codeExamples,
+        videoUrl: learningContent_1_02.videoUrl,
+        references: learningContent_1_02.references,
+        tips: learningContent_1_02.tips,
+        commonMistakes: learningContent_1_02.commonMistakes,
+        estimatedTime: learningContent_1_02.estimatedTime,
+      },
+    });
+    console.log(`   已更新知识点 1-02 的学习内容`);
+  }
+
+  const unit_1_03 = codeToIdMap.get('1-03');
+  if (unit_1_03) {
+    await prisma.skillUnit.update({
+      where: { id: unit_1_03 },
+      data: {
+        content: learningContent_1_03.content,
+        codeExamples: learningContent_1_03.codeExamples,
+        videoUrl: learningContent_1_03.videoUrl,
+        references: learningContent_1_03.references,
+        tips: learningContent_1_03.tips,
+        commonMistakes: learningContent_1_03.commonMistakes,
+        estimatedTime: learningContent_1_03.estimatedTime,
+      },
+    });
+    console.log(`   已更新知识点 1-03 的学习内容`);
+  }
+
+  const unit_1_04 = codeToIdMap.get('1-04');
+  if (unit_1_04) {
+    await prisma.skillUnit.update({
+      where: { id: unit_1_04 },
+      data: {
+        content: learningContent_1_04.content,
+        codeExamples: learningContent_1_04.codeExamples,
+        videoUrl: learningContent_1_04.videoUrl,
+        references: learningContent_1_04.references,
+        tips: learningContent_1_04.tips,
+        commonMistakes: learningContent_1_04.commonMistakes,
+        estimatedTime: learningContent_1_04.estimatedTime,
+      },
+    });
+    console.log(`   已更新知识点 1-04 的学习内容`);
+  }
 
   // 4. 创建依赖关系
   console.log('\n4. 创建依赖关系...');
