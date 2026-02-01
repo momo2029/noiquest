@@ -142,7 +142,16 @@ router.post('/:exerciseId/answer', authenticate, async (req: AuthRequest, res: R
 
       case 'MATCHING': {
         const questionData = exercise.questionData as any;
-        const correctPairs = questionData?.pairs || [];
+        // 支持两种格式：pairs (字符串ID) 或 correctPairs (数字索引)
+        let correctPairs: [string, string][] = [];
+        if (questionData?.pairs) {
+          correctPairs = questionData.pairs;
+        } else if (questionData?.correctPairs) {
+          // 数据库格式：correctPairs 是数字索引，转换为字符串
+          correctPairs = questionData.correctPairs.map(
+            ([l, r]: [number, number]) => [String(l), String(r)] as [string, string]
+          );
+        }
         const userPairs = answer as [string, string][];
 
         // 检查每个配对是否正确

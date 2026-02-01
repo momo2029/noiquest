@@ -8,8 +8,34 @@ interface MatchingQuestionProps {
   disabled?: boolean;
 }
 
+// 数据库格式
+interface DBMatchingData {
+  leftItems: string[];
+  rightItems: string[];
+  correctPairs: [number, number][];
+  explanation?: string;
+}
+
+// 转换数据库格式到前端格式
+function normalizeMatchingData(raw: MatchingData | DBMatchingData): MatchingData | null {
+  // 已经是前端格式
+  if ('left' in raw && 'right' in raw && Array.isArray(raw.left)) {
+    return raw as MatchingData;
+  }
+  // 数据库格式，需要转换
+  const dbData = raw as DBMatchingData;
+  if (!dbData.leftItems || !dbData.rightItems) return null;
+
+  return {
+    left: dbData.leftItems.map((text, i) => ({ id: String(i), text })),
+    right: dbData.rightItems.map((text, i) => ({ id: String(i), text })),
+    pairs: dbData.correctPairs?.map(([l, r]) => [String(l), String(r)] as [string, string]) || [],
+  };
+}
+
 export default function MatchingQuestion({ exercise, onSubmit, disabled }: MatchingQuestionProps) {
-  const data = exercise.questionData as MatchingData;
+  const rawData = exercise.questionData as MatchingData | DBMatchingData;
+  const data = normalizeMatchingData(rawData);
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
   const [pairs, setPairs] = useState<[string, string][]>([]);
 
@@ -24,10 +50,8 @@ export default function MatchingQuestion({ exercise, onSubmit, disabled }: Match
 
   const handleRightClick = (id: string) => {
     if (disabled || !selectedLeft) return;
-    // 检查是否已配对
-    if (pairs.some(p => p[1] === id)) return;
 
-    // 添加配对
+    // 添加配对（允许多对一，右侧项可重复选择）
     setPairs([...pairs, [selectedLeft, id]]);
     setSelectedLeft(null);
   };
@@ -40,10 +64,6 @@ export default function MatchingQuestion({ exercise, onSubmit, disabled }: Match
   const getPairedRight = (leftId: string) => {
     const pair = pairs.find(p => p[0] === leftId);
     return pair ? pair[1] : null;
-  };
-
-  const isRightPaired = (rightId: string) => {
-    return pairs.some(p => p[1] === rightId);
   };
 
   const handleSubmit = () => {
@@ -114,22 +134,16 @@ export default function MatchingQuestion({ exercise, onSubmit, disabled }: Match
         <div className="flex-1 space-y-3">
           <h4 className="text-white/50 text-sm mb-2">代码</h4>
           {data.right.map((item) => {
-            const isPaired = isRightPaired(item.id);
-            const pairIndex = pairs.findIndex(p => p[1] === item.id);
-            const color = pairIndex >= 0 ? pairColors[pairIndex % pairColors.length] : '';
-
             return (
               <button
                 key={item.id}
                 onClick={() => handleRightClick(item.id)}
-                disabled={disabled || isPaired || !selectedLeft}
+                disabled={disabled || !selectedLeft}
                 className={`
                   w-full p-4 rounded-xl border-2 text-left transition-all font-mono text-sm
-                  ${isPaired
-                    ? `border-transparent ${color}/20 opacity-50`
-                    : selectedLeft
-                      ? 'border-white/30 bg-white/10 hover:border-blue-500 cursor-pointer'
-                      : 'border-white/10 bg-white/5'
+                  ${selectedLeft
+                    ? 'border-white/30 bg-white/10 hover:border-blue-500 cursor-pointer'
+                    : 'border-white/10 bg-white/5'
                   }
                   ${disabled ? 'cursor-not-allowed' : ''}
                 `}
