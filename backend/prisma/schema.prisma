@@ -150,6 +150,7 @@ model Class {
 
   students    User[]
   homework    Homework[]
+  inviteCodes InviteCode[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -766,7 +767,7 @@ model MistakeRecord {
 model InviteCode {
   id          String    @id @default(uuid())
   code        String    @unique
-  createdBy   String?   // 创建者ID（管理员）
+  createdBy   String?   // 创建者ID（管理员或教师）
   usedBy      String?   // 使用者ID
   usedAt      DateTime?
   expiresAt   DateTime?
@@ -774,12 +775,16 @@ model InviteCode {
   usedCount   Int       @default(0)  // 已使用次数
   type        String    @default("STUDENT")  // STUDENT, TEACHER, ADMIN
   note        String?   // 备注
+  classId     String?   // 关联班级ID（班级邀请码）
+
+  class       Class?    @relation(fields: [classId], references: [id], onDelete: SetNull)
 
   createdAt   DateTime  @default(now())
 
   @@index([code])
   @@index([createdBy])
   @@index([type])
+  @@index([classId])
 }
 
 // AI 使用记录表（用于限制每日调用次数）

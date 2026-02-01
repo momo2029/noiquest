@@ -37,6 +37,7 @@
     "analytics": "Analytics",
     "progress": "Progress",
     "dashboard": "Dashboard",
+    "classes": "Classes",
     "students": "Students",
     "assignments": "Assignments"
   },
@@ -123,7 +124,8 @@
     "invalidInviteCode": "Invalid invite code",
     "codeAutoFilled": "Verification code auto-filled: {{code}}",
     "enterNameError": "Please enter your name",
-    "enter6DigitCode": "Please enter 6-digit verification code"
+    "enter6DigitCode": "Please enter 6-digit verification code",
+    "joiningClass": "You will join the class after registration"
   },
   "skillTree": {
     "title": "NOI Knowledge Map",

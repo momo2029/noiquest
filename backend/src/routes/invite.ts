@@ -93,6 +93,15 @@ router.post('/verify', async (req, res: Response, next) => {
 
     const inviteCode = await prisma.inviteCode.findUnique({
       where: { code: code.toUpperCase() },
+      include: {
+        class: {
+          select: {
+            id: true,
+            name: true,
+            teacherId: true,
+          },
+        },
+      },
     });
 
     if (!inviteCode) {
@@ -107,9 +116,24 @@ router.post('/verify', async (req, res: Response, next) => {
       throw new AppError('邀请码已被使用', 400);
     }
 
+    // 如果有关联班级，获取教师信息
+    let classInfo = null;
+    if (inviteCode.class) {
+      const teacher = await prisma.user.findUnique({
+        where: { id: inviteCode.class.teacherId },
+        select: { name: true },
+      });
+      classInfo = {
+        id: inviteCode.class.id,
+        name: inviteCode.class.name,
+        teacherName: teacher?.name || '未知',
+      };
+    }
+
     res.json({
       valid: true,
       type: inviteCode.type,
+      classInfo,
     });
   } catch (error) {
     next(error);
@@ -117,12 +141,11 @@ router.post('/verify', async (req, res: Response, next) => {
 });
 
 // 使用邀请码（内部调用，注册时使用）
-export async function useInviteCode(code: string): Promise<{ valid: boolean; type: string; error?: string }> {
+export async function useInviteCode(code: string): Promise<{ valid: boolean; type: string; classId?: string | null; error?: string }> {
   const inviteCode = await prisma.inviteCode.findUnique({
     where: { code: code.toUpperCase() },
   });
 
-  console.log(inviteCode+'-----');
   if (!inviteCode) {
     return { valid: false, type: '', error: '邀请码不存在' };
   }
@@ -144,7 +167,7 @@ export async function useInviteCode(code: string): Promise<{ valid: boolean; typ
     },
   });
 
-  return { valid: true, type: inviteCode.type };
+  return { valid: true, type: inviteCode.type, classId: inviteCode.classId };
 }
 
 // 获取邀请码列表（仅管理员）

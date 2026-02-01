@@ -15,6 +15,7 @@ import ProgressTracker from './components/Learning/ProgressTracker';
 import Dashboard from './components/Teacher/Dashboard';
 import StudentList from './components/Teacher/StudentList';
 import AssignmentManager from './components/Teacher/AssignmentManager';
+import ClassManager from './components/Teacher/ClassManager';
 import LearningCenter from './components/SkillTree/LearningCenter';
 import LessonSession from './components/SkillTree/LessonSession';
 import ReviewDashboard from './components/Review/ReviewDashboard';
@@ -45,7 +46,7 @@ import { useUserFiles } from './hooks/useUserFiles';
 // 学生可用的视图
 const STUDENT_VIEWS = ['knowledge-map', 'skill-tree', 'review', 'editor', 'exercises', 'progress', 'leaderboard', 'achievements', 'analytics'];
 // 教师可用的视图
-const TEACHER_VIEWS = ['dashboard', 'students', 'assignments'];
+const TEACHER_VIEWS = ['dashboard', 'classes', 'students', 'assignments'];
 // 公开可访问的视图（不需要登录）
 const PUBLIC_VIEWS = ['knowledge-map', 'editor'];
 
@@ -461,6 +462,8 @@ function MainApp() {
       switch (currentView) {
         case 'dashboard':
           return <Dashboard students={students} assignments={assignments} />;
+        case 'classes':
+          return <ClassManager />;
         case 'students':
           return (
             <StudentList

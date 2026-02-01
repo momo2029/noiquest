@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { v4 as uuidv4 } from 'uuid';
 
 const router = Router();
 
@@ -105,14 +106,87 @@ router.get('/:id/students', authenticate, requireRole('TEACHER', 'ADMIN'), async
   }
 });
 
+// 搜索未分班学生
+router.get('/search/students', authenticate, requireRole('TEACHER', 'ADMIN'), async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { q } = req.query;
+
+    if (!q || typeof q !== 'string' || q.trim().length < 2) {
+      return res.json({ users: [] });
+    }
+
+    const keyword = q.trim();
+
+    const users = await prisma.user.findMany({
+      where: {
+        role: 'STUDENT',
+        classId: null, // 只搜索未分班的学生
+        OR: [
+          { email: { contains: keyword, mode: 'insensitive' } },
+          { username: { contains: keyword, mode: 'insensitive' } },
+          { name: { contains: keyword, mode: 'insensitive' } },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        username: true,
+        avatar: true,
+      },
+      take: 10,
+    });
+
+    res.json({ users });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // 添加学生到班级
 router.post('/:id/students', authenticate, requireRole('TEACHER', 'ADMIN'), async (req: AuthRequest, res: Response, next) => {
   try {
     const { studentId } = req.body;
+    const classId = req.params.id;
+
+    if (!studentId) {
+      throw new AppError('请提供学生ID', 400);
+    }
+
+    // 检查学生是否存在
+    const student = await prisma.user.findUnique({
+      where: { id: studentId },
+      select: { id: true, classId: true, role: true },
+    });
+
+    if (!student) {
+      throw new AppError('学生不存在', 404);
+    }
+
+    if (student.role !== 'STUDENT') {
+      throw new AppError('只能添加学生角色的用户', 400);
+    }
+
+    if (student.classId) {
+      throw new AppError('该学生已在其他班级，请先将其移出原班级', 400);
+    }
+
+    // 验证班级存在且属于当前教师
+    const classInfo = await prisma.class.findUnique({
+      where: { id: classId },
+    });
+
+    if (!classInfo) {
+      throw new AppError('班级不存在', 404);
+    }
+
+    if (classInfo.teacherId !== req.user!.id && req.user!.role !== 'ADMIN') {
+      throw new AppError('无权操作此班级', 403);
+    }
 
     await prisma.user.update({
       where: { id: studentId },
-      data: { classId: req.params.id },
+      data: { classId },
     });
 
     res.json({ success: true });
@@ -149,6 +223,118 @@ router.delete('/:id', authenticate, requireRole('TEACHER', 'ADMIN'), async (req:
     });
 
     res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ==================== 班级邀请码管理 ====================
+
+// 获取班级的邀请码列表
+router.get('/:id/invite-codes', authenticate, requireRole('TEACHER', 'ADMIN'), async (req: AuthRequest, res: Response, next) => {
+  try {
+    const classId = req.params.id;
+
+    // 验证班级存在且属于当前教师
+    const classInfo = await prisma.class.findUnique({
+      where: { id: classId },
+    });
+
+    if (!classInfo) {
+      throw new AppError('班级不存在', 404);
+    }
+
+    if (classInfo.teacherId !== req.user!.id && req.user!.role !== 'ADMIN') {
+      throw new AppError('无权访问此班级', 403);
+    }
+
+    const codes = await prisma.inviteCode.findMany({
+      where: { classId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    res.json({ codes });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 为班级生成邀请码
+router.post('/:id/invite-codes', authenticate, requireRole('TEACHER', 'ADMIN'), async (req: AuthRequest, res: Response, next) => {
+  try {
+    const classId = req.params.id;
+    const { expiresInDays, maxUses = 50, note } = req.body;
+
+    // 验证班级存在且属于当前教师
+    const classInfo = await prisma.class.findUnique({
+      where: { id: classId },
+    });
+
+    if (!classInfo) {
+      throw new AppError('班级不存在', 404);
+    }
+
+    if (classInfo.teacherId !== req.user!.id && req.user!.role !== 'ADMIN') {
+      throw new AppError('无权操作此班级', 403);
+    }
+
+    // 生成邀请码
+    const code = uuidv4().replace(/-/g, '').substring(0, 8).toUpperCase();
+    const expiresAt = expiresInDays ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000) : null;
+
+    const inviteCode = await prisma.inviteCode.create({
+      data: {
+        code,
+        createdBy: req.user!.id,
+        type: 'STUDENT',
+        maxUses,
+        expiresAt,
+        note,
+        classId,
+      },
+    });
+
+    res.status(201).json({
+      ...inviteCode,
+      className: classInfo.name,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 删除班级邀请码
+router.delete('/:id/invite-codes/:codeId', authenticate, requireRole('TEACHER', 'ADMIN'), async (req: AuthRequest, res: Response, next) => {
+  try {
+    const { id: classId, codeId } = req.params;
+
+    // 验证班级存在且属于当前教师
+    const classInfo = await prisma.class.findUnique({
+      where: { id: classId },
+    });
+
+    if (!classInfo) {
+      throw new AppError('班级不存在', 404);
+    }
+
+    if (classInfo.teacherId !== req.user!.id && req.user!.role !== 'ADMIN') {
+      throw new AppError('无权操作此班级', 403);
+    }
+
+    // 验证邀请码属于该班级
+    const inviteCode = await prisma.inviteCode.findUnique({
+      where: { id: codeId },
+    });
+
+    if (!inviteCode || inviteCode.classId !== classId) {
+      throw new AppError('邀请码不存在', 404);
+    }
+
+    await prisma.inviteCode.delete({
+      where: { id: codeId },
+    });
+
+    res.json({ success: true, message: '邀请码已删除' });
   } catch (error) {
     next(error);
   }

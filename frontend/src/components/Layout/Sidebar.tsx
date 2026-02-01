@@ -12,7 +12,8 @@ import {
   Trophy,
   Award,
   LineChart,
-  GitBranch
+  GitBranch,
+  School
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -39,6 +40,7 @@ export default function Sidebar({ role, currentView, onViewChange }: SidebarProp
 
   const teacherMenuItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: t('nav.dashboard'), color: 'blue' },
+    { id: 'classes', icon: School, label: t('nav.classes'), color: 'cyan' },
     { id: 'students', icon: Users, label: t('nav.students'), color: 'green' },
     { id: 'assignments', icon: ClipboardList, label: t('nav.assignments'), color: 'purple' },
   ];

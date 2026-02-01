@@ -37,6 +37,7 @@
     "analytics": "学习报告",
     "progress": "学习进度",
     "dashboard": "仪表盘",
+    "classes": "班级管理",
     "students": "学生管理",
     "assignments": "作业管理"
   },
@@ -123,7 +124,8 @@
     "invalidInviteCode": "邀请码无效",
     "codeAutoFilled": "验证码已自动填充: {{code}}",
     "enterNameError": "请输入姓名",
-    "enter6DigitCode": "请输入6位验证码"
+    "enter6DigitCode": "请输入6位验证码",
+    "joiningClass": "注册后将加入班级"
   },
   "skillTree": {
     "title": "NOI 知识图谱",

@@ -748,6 +748,73 @@ class ApiService {
     });
   }
 
+  // ==================== 教师班级管理 API ====================
+
+  async getTeacherClasses(): Promise<any> {
+    return this.request('/classes');
+  }
+
+  async createTeacherClass(data: { name: string; description?: string }): Promise<any> {
+    return this.request('/classes', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getTeacherClassDetail(classId: string): Promise<any> {
+    return this.request(`/classes/${classId}`);
+  }
+
+  async getTeacherClassStudents(classId: string): Promise<any> {
+    return this.request(`/classes/${classId}/students`);
+  }
+
+  async addStudentToClass(classId: string, studentId: string): Promise<any> {
+    return this.request(`/classes/${classId}/students`, {
+      method: 'POST',
+      body: JSON.stringify({ studentId }),
+    });
+  }
+
+  async removeStudentFromClass(classId: string, studentId: string): Promise<any> {
+    return this.request(`/classes/${classId}/students/${studentId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async deleteTeacherClass(classId: string): Promise<any> {
+    return this.request(`/classes/${classId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // 搜索未分班学生
+  async searchUnassignedStudents(keyword: string): Promise<{ users: any[] }> {
+    return this.request(`/classes/search/students?q=${encodeURIComponent(keyword)}`);
+  }
+
+  // 班级邀请码管理
+  async getClassInviteCodes(classId: string): Promise<{ codes: any[] }> {
+    return this.request(`/classes/${classId}/invite-codes`);
+  }
+
+  async createClassInviteCode(classId: string, data: {
+    expiresInDays?: number;
+    maxUses?: number;
+    note?: string;
+  }): Promise<any> {
+    return this.request(`/classes/${classId}/invite-codes`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteClassInviteCode(classId: string, codeId: string): Promise<any> {
+    return this.request(`/classes/${classId}/invite-codes/${codeId}`, {
+      method: 'DELETE',
+    });
+  }
+
   // ==================== 邀请码 API ====================
 
   async getInviteCodes(params?: { used?: boolean }): Promise<any> {
@@ -782,7 +849,15 @@ class ApiService {
     });
   }
 
-  async verifyInviteCode(code: string): Promise<{ valid: boolean; type: string }> {
+  async verifyInviteCode(code: string): Promise<{
+    valid: boolean;
+    type: string;
+    classInfo?: {
+      id: string;
+      name: string;
+      teacherName: string;
+    } | null;
+  }> {
     return this.request('/invite/verify', {
       method: 'POST',
       body: JSON.stringify({ code }),

@@ -143,6 +143,8 @@ router.post('/register', async (req, res, next) => {
   try {
     const { email, password, name, role, inviteCode } = registerSchema.parse(req.body);
 
+    let classId: string | null = null;
+
     // 检查是否需要邀请码
     if (config.invite.required) {
       if (!inviteCode) {
@@ -153,6 +155,11 @@ router.post('/register', async (req, res, next) => {
       const inviteResult = await useInviteCode(inviteCode);
       if (!inviteResult.valid) {
         throw new AppError(inviteResult.error || '邀请码无效', 400);
+      }
+
+      // 如果邀请码关联了班级，记录 classId
+      if (inviteResult.classId) {
+        classId = inviteResult.classId;
       }
     }
 
@@ -184,7 +191,8 @@ router.post('/register', async (req, res, next) => {
         role: role || 'STUDENT',
         inviteCode: inviteCode?.toUpperCase(),
         tokenVersion: 1,
-        gems: ACTIVATION_BONUS_GEMS, // 邮箱验证激活奖励
+        gems: ACTIVATION_BONUS_GEMS,
+        classId, // 自动加入班级
       },
       select: {
         id: true,
@@ -200,6 +208,7 @@ router.post('/register', async (req, res, next) => {
         hearts: true,
         gems: true,
         tokenVersion: true,
+        classId: true,
       },
     });
 

@@ -1,9 +1,15 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, School, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserRole } from '../../types';
 import { api } from '../../services/api';
+
+interface ClassInfo {
+  id: string;
+  name: string;
+  teacherName: string;
+}
 
 interface EmailRegisterProps {
   onBack: () => void;
@@ -21,6 +27,7 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [classInfo, setClassInfo] = useState<ClassInfo | null>(null);
   const { emailRegister } = useAuth();
 
   const validateEmail = (email: string): boolean => {
@@ -40,7 +47,14 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
     setLoading(true);
     setError('');
     try {
-      await api.verifyInviteCode(inviteCode.trim());
+      const result = await api.verifyInviteCode(inviteCode.trim());
+      // 如果邀请码关联了班级，保存班级信息并自动设置为学生角色
+      if (result.classInfo) {
+        setClassInfo(result.classInfo);
+        setRole('student');
+      } else {
+        setClassInfo(null);
+      }
       setStep(2);
     } catch (err) {
       setError((err as Error).message || t('auth.invalidInviteCode'));
@@ -157,6 +171,27 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
           {step === 2 && (
             <>
               <div className="space-y-4">
+                {/* 班级信息提示 */}
+                {classInfo && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <School size={20} className="text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-blue-600 font-medium">
+                          {t('auth.joiningClass')}
+                        </p>
+                        <p className="text-blue-800 font-semibold">{classInfo.name}</p>
+                        <p className="text-xs text-blue-600 flex items-center gap-1 mt-0.5">
+                          <User size={12} />
+                          {t('auth.teacher')}: {classInfo.teacherName}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* 密码 */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -211,34 +246,36 @@ export default function EmailRegister({ onBack }: EmailRegisterProps) {
                   />
                 </div>
 
-                {/* 角色选择 */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('auth.role')}
-                  </label>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setRole('student')}
-                      className={`flex-1 py-3 rounded-xl font-medium transition-all ${
-                        role === 'student'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {t('auth.student')}
-                    </button>
-                    <button
-                      onClick={() => setRole('teacher')}
-                      className={`flex-1 py-3 rounded-xl font-medium transition-all ${
-                        role === 'teacher'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {t('auth.teacher')}
-                    </button>
+                {/* 角色选择 - 班级邀请码自动设为学生，不显示选择器 */}
+                {!classInfo && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('auth.role')}
+                    </label>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setRole('student')}
+                        className={`flex-1 py-3 rounded-xl font-medium transition-all ${
+                          role === 'student'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {t('auth.student')}
+                      </button>
+                      <button
+                        onClick={() => setRole('teacher')}
+                        className={`flex-1 py-3 rounded-xl font-medium transition-all ${
+                          role === 'teacher'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {t('auth.teacher')}
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <button
                   onClick={handleRegister}
