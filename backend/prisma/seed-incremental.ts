@@ -436,7 +436,123 @@ async function seedIncremental() {
   }
   console.log(`   新建 ${createdExercises} 道，更新 ${updatedExercises} 道练习题`);
 
-  // 6. 统计信息
+  // 6. 更新每日任务模板
+  console.log('\n6. 更新每日任务模板...');
+  const dailyQuestTemplates = [
+    {
+      id: 'dq-complete-5',
+      title: '完成5道练习题',
+      description: '今天完成5道任意练习题',
+      questType: 'complete_exercises',
+      targetValue: 5,
+      xpReward: 20,
+      gemsReward: 1,
+    },
+    {
+      id: 'dq-complete-10',
+      title: '完成10道练习题',
+      description: '今天完成10道任意练习题',
+      questType: 'complete_exercises',
+      targetValue: 10,
+      xpReward: 40,
+      gemsReward: 2,
+    },
+    {
+      id: 'dq-complete-20',
+      title: '完成20道练习题',
+      description: '今天完成20道任意练习题',
+      questType: 'complete_exercises',
+      targetValue: 20,
+      xpReward: 80,
+      gemsReward: 5,
+    },
+    {
+      id: 'dq-perfect-1',
+      title: '完美完成1个课时',
+      description: '在一个课时中全部答对',
+      questType: 'perfect_lessons',
+      targetValue: 1,
+      xpReward: 30,
+      gemsReward: 2,
+    },
+    {
+      id: 'dq-perfect-3',
+      title: '完美完成3个课时',
+      description: '在3个课时中全部答对',
+      questType: 'perfect_lessons',
+      targetValue: 3,
+      xpReward: 100,
+      gemsReward: 5,
+    },
+    {
+      id: 'dq-study-15',
+      title: '学习15分钟',
+      description: '今天累计学习15分钟',
+      questType: 'study_minutes',
+      targetValue: 15,
+      xpReward: 15,
+      gemsReward: 1,
+    },
+    {
+      id: 'dq-study-30',
+      title: '学习30分钟',
+      description: '今天累计学习30分钟',
+      questType: 'study_minutes',
+      targetValue: 30,
+      xpReward: 30,
+      gemsReward: 2,
+    },
+    {
+      id: 'dq-study-60',
+      title: '学习60分钟',
+      description: '今天累计学习60分钟',
+      questType: 'study_minutes',
+      targetValue: 60,
+      xpReward: 60,
+      gemsReward: 3,
+    },
+  ];
+
+  let createdTemplates = 0;
+  let updatedTemplates = 0;
+  for (const template of dailyQuestTemplates) {
+    const existing = await prisma.dailyQuestTemplate.findUnique({
+      where: { id: template.id },
+    });
+
+    if (existing) {
+      await prisma.dailyQuestTemplate.update({
+        where: { id: template.id },
+        data: {
+          title: template.title,
+          description: template.description,
+          questType: template.questType,
+          targetValue: template.targetValue,
+          xpReward: template.xpReward,
+          gemsReward: template.gemsReward,
+          active: true,
+        },
+      });
+      updatedTemplates++;
+    } else {
+      await prisma.dailyQuestTemplate.create({
+        data: {
+          id: template.id,
+          title: template.title,
+          description: template.description,
+          questType: template.questType,
+          targetValue: template.targetValue,
+          xpReward: template.xpReward,
+          gemsReward: template.gemsReward,
+          active: true,
+        },
+      });
+      createdTemplates++;
+    }
+  }
+  console.log(`   ✓ 新建 ${createdTemplates} 个，更新 ${updatedTemplates} 个每日任务模板`);
+
+  // 7. 统计信息
   console.log('\n========== 增量更新完成 ==========');
 
   const userCount = await prisma.user.count();
@@ -444,6 +560,7 @@ async function seedIncremental() {
   const unitCount = await prisma.skillUnit.count();
   const courseCount = await prisma.course.count();
   const exerciseCount = await prisma.exercise.count();
+  const templateCount = await prisma.dailyQuestTemplate.count();
 
   console.log(`\n数据统计:`);
   console.log(`  用户数量: ${userCount} (已保留)`);
@@ -451,6 +568,7 @@ async function seedIncremental() {
   console.log(`  知识点数量: ${unitCount}`);
   console.log(`  课程数量: ${courseCount}`);
   console.log(`  练习题数量: ${exerciseCount}`);
+  console.log(`  每日任务模板: ${templateCount}`);
 }
 
 // 运行

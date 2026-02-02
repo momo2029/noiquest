@@ -3,6 +3,7 @@ import prisma from '../config/database.js';
 import { authenticate, AuthRequest, requireRole } from '../middleware/auth.js';
 import { runTestCases } from '../services/cppExec.js';
 import { recordTransaction, TransactionSource } from '../utils/currencyTransaction.js';
+import { updateUserStreak } from '../utils/streak.js';
 
 const router = Router();
 
@@ -700,6 +701,9 @@ router.post('/:id/submit', authenticate, async (req: AuthRequest, res: Response,
         totalXp: { increment: xpEarned },
       },
     });
+
+    // 更新连续学习天数
+    await updateUserStreak(userId);
 
     // 记录经验值交易明细
     if (xpEarned > 0) {
