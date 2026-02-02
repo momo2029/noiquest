@@ -37,6 +37,7 @@ import {
   saveCurrentView,
 } from './utils/storage';
 import { useUserFiles } from './hooks/useUserFiles';
+import { useStudyTracker } from './hooks/useStudyTracker';
 
 // 学生可用的视图
 const STUDENT_VIEWS = ['knowledge-map', 'skill-tree', 'review', 'editor', 'exercises', 'progress', 'leaderboard', 'achievements', 'analytics'];
@@ -89,6 +90,11 @@ function MainApp() {
     // 初始化时只读取 localStorage 中保存的视图，不做复杂判断
     return getCurrentView('knowledge-map');
   });
+
+  // 学习时间追踪 - 仅在登录且在学习相关页面时启用
+  const STUDY_VIEWS = ['skill-tree', 'exercises', 'review', 'editor'];
+  const isStudying = isAuthenticated && STUDY_VIEWS.includes(currentView);
+  useStudyTracker(isStudying);
 
   // 包装 setCurrentView 以同时保存到 localStorage
   const setCurrentView = useCallback((view: string) => {

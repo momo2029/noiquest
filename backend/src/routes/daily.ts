@@ -144,12 +144,39 @@ router.get('/quests', authenticate, async (req: AuthRequest, res: Response, next
 
     // 如果没有今日任务，从模板生成
     if (quests.length === 0) {
-      const templates = await prisma.dailyQuestTemplate.findMany({
+      // 按任务类型分组获取模板
+      const allTemplates = await prisma.dailyQuestTemplate.findMany({
         where: { active: true },
-        take: 3, // 每天 3 个任务
       });
 
-      for (const template of templates) {
+      // 按 questType 分组
+      const templatesByType: Record<string, typeof allTemplates> = {};
+      for (const template of allTemplates) {
+        if (!templatesByType[template.questType]) {
+          templatesByType[template.questType] = [];
+        }
+        templatesByType[template.questType].push(template);
+      }
+
+      // 从每个类型中随机选一个
+      const selectedTemplates: typeof allTemplates = [];
+      for (const type of Object.keys(templatesByType)) {
+        const typeTemplates = templatesByType[type];
+        const randomIndex = Math.floor(Math.random() * typeTemplates.length);
+        selectedTemplates.push(typeTemplates[randomIndex]);
+      }
+
+      // 如果不足3个类型，随机补充（避免重复）
+      if (selectedTemplates.length < 3 && allTemplates.length >= 3) {
+        const selectedIds = new Set(selectedTemplates.map(t => t.id));
+        const remaining = allTemplates.filter(t => !selectedIds.has(t.id));
+        while (selectedTemplates.length < 3 && remaining.length > 0) {
+          const randomIndex = Math.floor(Math.random() * remaining.length);
+          selectedTemplates.push(remaining.splice(randomIndex, 1)[0]);
+        }
+      }
+
+      for (const template of selectedTemplates) {
         await prisma.userDailyQuest.create({
           data: {
             userId,
@@ -322,6 +349,64 @@ router.get('/history', authenticate, async (req: AuthRequest, res: Response, nex
       xpEarned: r.xpEarned,
       goalMet: r.goalMet,
     })));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 学习时间心跳上报
+router.post('/study-heartbeat', authenticate, async (req: AuthRequest, res: Response, next) => {
+  try {
+    const userId = req.user!.id;
+    const { minutes = 1 } = req.body; // 默认每次上报 1 分钟
+
+    // 限制单次上报最多 5 分钟，防止异常数据
+    const validMinutes = Math.min(Math.max(1, minutes), 5);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 更新每日学习时长
+    const dailyRecord = await prisma.dailyXpRecord.upsert({
+      where: { userId_date: { userId, date: today } },
+      update: { studyMinutes: { increment: validMinutes } },
+      create: {
+        userId,
+        date: today,
+        xpEarned: 0,
+        goalMet: false,
+        studyMinutes: validMinutes,
+      },
+    });
+
+    // 更新 study_minutes 类型的每日任务进度
+    const studyQuests = await prisma.userDailyQuest.findMany({
+      where: {
+        userId,
+        date: today,
+        template: { questType: 'study_minutes' },
+        completed: false,
+      },
+      include: { template: true },
+    });
+
+    for (const quest of studyQuests) {
+      const newValue = Math.min(quest.currentValue + validMinutes, quest.targetValue);
+      const completed = newValue >= quest.targetValue;
+
+      await prisma.userDailyQuest.update({
+        where: { id: quest.id },
+        data: {
+          currentValue: newValue,
+          completed,
+        },
+      });
+    }
+
+    res.json({
+      studyMinutes: dailyRecord.studyMinutes,
+      added: validMinutes,
+    });
   } catch (error) {
     next(error);
   }

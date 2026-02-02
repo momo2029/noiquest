@@ -317,6 +317,13 @@ class ApiService {
     return this.request<{ date: string; xpEarned: number; goalMet: boolean }[]>(`/daily/history?days=${days}`);
   }
 
+  async sendStudyHeartbeat(minutes: number = 1): Promise<{ studyMinutes: number; added: number }> {
+    return this.request<{ studyMinutes: number; added: number }>('/daily/study-heartbeat', {
+      method: 'POST',
+      body: JSON.stringify({ minutes }),
+    });
+  }
+
   // ==================== 复习系统 API ====================
 
   async getReviewStatus(): Promise<ReviewStatus> {

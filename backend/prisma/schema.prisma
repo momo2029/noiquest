@@ -695,11 +695,12 @@ model UserDailyQuest {
 
 // 每日 XP 记录
 model DailyXpRecord {
-  id       String   @id @default(uuid())
-  userId   String
-  date     DateTime @db.Date
-  xpEarned Int      @default(0)
-  goalMet  Boolean  @default(false)
+  id           String   @id @default(uuid())
+  userId       String
+  date         DateTime @db.Date
+  xpEarned     Int      @default(0)
+  goalMet      Boolean  @default(false)
+  studyMinutes Int      @default(0) // 学习时长（分钟）
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
