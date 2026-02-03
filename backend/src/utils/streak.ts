@@ -17,8 +17,21 @@ export async function updateUserStreak(userId: string): Promise<{ streak: number
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const lastStudy = user.lastStudyDate ? new Date(user.lastStudyDate) : null;
-  if (lastStudy) {
+  let lastStudy = user.lastStudyDate ? new Date(user.lastStudyDate) : null;
+  
+  // 当 lastStudyDate 为空时，检查最近的学习记录
+  if (!lastStudy) {
+    const recentProgress = await prisma.exerciseProgress.findFirst({
+      where: { userId },
+      orderBy: { completedAt: 'desc' },
+      select: { completedAt: true }
+    });
+    
+    if (recentProgress) {
+      lastStudy = new Date(recentProgress.completedAt);
+      lastStudy.setHours(0, 0, 0, 0);
+    }
+  } else {
     lastStudy.setHours(0, 0, 0, 0);
   }
 
@@ -35,8 +48,22 @@ export async function updateUserStreak(userId: string): Promise<{ streak: number
   if (lastStudy && lastStudy.getTime() === yesterday.getTime()) {
     // 昨天学习过，连续天数 +1
     newStreak = user.streak + 1;
+  } else if (lastStudy) {
+    // 检查是否连续学习
+    const daysSinceLastStudy = Math.floor((today.getTime() - lastStudy.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysSinceLastStudy === 0) {
+      // 同一天学习，不增加 streak
+      newStreak = user.streak;
+    } else if (daysSinceLastStudy === 1) {
+      // 昨天学习过，连续天数 +1
+      newStreak = user.streak + 1;
+    } else {
+      // 中断了，重新开始
+      newStreak = 1;
+    }
   } else {
-    // 从未学习过，或者中断了，重新开始
+    // 从未学习过，重新开始
     newStreak = 1;
   }
 
