@@ -3,12 +3,14 @@
 # NOI Quest 全新服务器安装脚本
 # 从本地执行，通过 SSH 远程操作服务器
 # 前提：已运行 get-ssl-cert.sh 获取证书
+# 注意：数据库使用远程 10.0.0.1:5432，不在本地部署
 
 set -e
 
 echo "=========================================="
 echo "  NOI Quest 全新安装脚本"
 echo "  警告: 将删除服务器上所有现有数据!"
+echo "  数据库: 使用远程 10.0.0.1:5432"
 echo "=========================================="
 
 # 颜色定义
@@ -29,6 +31,7 @@ REMOTE_BLOG_DIR="/var/www/blog"
 
 echo "本地项目目录: $PROJECT_DIR"
 echo "目标服务器: $SERVER:$REMOTE_DIR"
+echo "数据库地址: 10.0.0.1:5432"
 echo ""
 
 # 检查本地文件
@@ -50,8 +53,9 @@ fi
 # 确认操作
 echo -e "${RED}警告: 此操作将删除服务器上的以下内容:${NC}"
 echo "  - 所有 Docker 容器和数据卷"
-echo "  - 数据库及所有数据"
 echo "  - 项目目录 $REMOTE_DIR"
+echo ""
+echo -e "${YELLOW}注意: 数据库使用远程 10.0.0.1:5432，请确保数据库可访问${NC}"
 echo ""
 read -p "确定要继续吗? (输入 'yes' 确认): " confirm
 if [ "$confirm" != "yes" ]; then
