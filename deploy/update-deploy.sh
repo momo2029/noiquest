@@ -22,7 +22,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # 配置
-SERVER="root@noiquest.com"
+SERVER="root@hkyun"
 REMOTE_DIR="/opt/noiquest"
 DOMAIN="noiquest.com"
 REMOTE_BLOG_DIR="/var/www/blog"
