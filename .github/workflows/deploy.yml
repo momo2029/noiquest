@@ -11,8 +11,8 @@ on:
         default: true
 
 env:
-  REGISTRY: ${{ secrets.REGISTRY }}
-  NAMESPACE: ${{ secrets.NAMESPACE }}
+  REGISTRY: crpi-1e1v7t6udr8xqx6k.cn-beijing.personal.cr.aliyuncs.com
+  NAMESPACE: cobola
   IMAGE_NAME: noiquest
   REMOTE_DIR: /opt/noiquest
 
