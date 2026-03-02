@@ -1,0 +1,40 @@
+services:
+  noiquest-blue:
+    image: ${REGISTRY}/${NAMESPACE}/${IMAGE_NAME}:latest
+    container_name: noiquest-blue
+    restart: unless-stopped
+    ports:
+      - "3201:3001"
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - noiquest_network
+
+  noiquest-green:
+    image: ${REGISTRY}/${NAMESPACE}/${IMAGE_NAME}:latest
+    container_name: noiquest-green
+    restart: unless-stopped
+    ports:
+      - "3202:3001"
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - noiquest_network
+
+networks:
+  noiquest_network:
+    driver: bridge
