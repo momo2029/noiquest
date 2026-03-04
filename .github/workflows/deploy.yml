@@ -40,12 +40,6 @@ jobs:
             --exclude='frontend/.env' \
             ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ env.REMOTE_DIR }}/
 
-      - name: Write .env file
-        run: |
-          echo "${{ secrets.ENV_FILE }}" | base64 -d > .env
-          scp .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ env.REMOTE_DIR }}/deploy/.env
-          rm .env
-
       - name: Deploy
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /opt/noiquest/deploy && docker compose down && docker compose up -d --build"
