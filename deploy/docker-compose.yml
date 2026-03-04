@@ -13,19 +13,6 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@10.0.0.1:5432/${POSTGRES_DB}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
-      DOUBAO_API_KEY: ${DOUBAO_API_KEY}
-      DOUBAO_API_URL: ${DOUBAO_API_URL}
-      DOUBAO_MODEL: ${DOUBAO_MODEL}
-      CPPEXEC: ${CPPEXEC}
-      CPPEXEC_KEY: ${CPPEXEC_KEY}
-      CORS_ORIGIN: ${CORS_ORIGIN}
-      EMAIL_HOST: ${EMAIL_HOST}
-      EMAIL_PORT: ${EMAIL_PORT}
-      EMAIL_USER: ${EMAIL_USER}
-      EMAIL_PASS: ${EMAIL_PASS}
     networks:
       - noiquest_network
     expose:
