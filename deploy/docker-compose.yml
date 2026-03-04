@@ -43,29 +43,6 @@ services:
     expose:
       - "80"
 
-  # Nginx 反向代理
-  nginx:
-    image: nginx:alpine
-    container_name: noiquest_nginx
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
-      - ./certbot-webroot:/var/www/certbot:ro
-      - /opt/noiquest/blog:/var/www/blog
-      - /opt/noiquest/recall_ai:/var/www/recall_ai
-    depends_on:
-      - backend
-      - frontend
-    networks:
-      - noiquest_network
-
-volumes:
-  postgres_data:
-
 networks:
   noiquest_network:
     driver: bridge
