@@ -42,19 +42,15 @@ jobs:
 
       - name: Write .env file
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ${{ env.REMOTE_DIR }} && cat > ${{ env.REMOTE_DIR }}/.env << 'ENVEOF'
-          ${{ secrets.ENV_FILE }}
-          ENVEOF"
+          echo "${{ secrets.ENV_FILE }}" > .env
+          scp .env ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ env.REMOTE_DIR }}/deploy/.env
+          rm .env
 
       - name: Deploy
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            cd /opt/noiquest/deploy
-            docker compose down
-            docker compose up -d --build
-            sleep 10
-            docker compose ps
-          EOF
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /opt/noiquest/deploy && docker compose down && docker compose up -d --build"
+          sleep 10
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /opt/noiquest/deploy && docker compose ps"
 
       - name: Send notification
         if: always()
