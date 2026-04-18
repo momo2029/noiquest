@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\\\")",
+      "Read(//Users/jf/code/server-tools/all-config/**)",
+      "Read(//Users/jf/code/workspace/noiquest/../**)"
+    ]
+  },
+  "$version": 3
+}
