@@ -8,7 +8,24 @@
       "Bash(./update-deploy.sh)",
       "Bash(npm run *)",
       "Bash(chmod *)",
-      "Bash(npx *)"
+      "Bash(npx *)",
+      "Bash(-- *)",
+      "Bash(create *)",
+      "Bash('anonymous', *)",
+      "Bash(alter *)",
+      "Bash(add *)",
+      "Bash(3)",
+      "Bash(update *)",
+      "Bash(set)",
+      "Bash(\"authtype\" *)",
+      "Bash(\"isactivated\" *)",
+      "Bash(\"activationmethod\" *)",
+      "Bash(\"activatedat\" *)",
+      "Bash(\"authtype\")",
+      "Bash(\"isactivated\")",
+      "Bash(\"email\")",
+      "Bash(eof)",
+      "WebFetch(noiquest.com)"
     ]
   },
   "$version": 3
