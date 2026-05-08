@@ -1,9 +1,76 @@
-import { Router, Response } from 'express';
+import { Router, Response, Request } from 'express';
+import jwt from 'jsonwebtoken';
 import prisma from '../config/database.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { config } from '../config/index.js';
 
 const router = Router();
+
+// 确保用户存在（自动创建匿名用户）
+router.post('/ensure', async (req: Request, res: Response, next) => {
+  try {
+    // 尝试从 cookie 或 header 获取 token
+    const token = req.cookies?.auth_token || req.headers.authorization?.replace('Bearer ', '');
+
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, config.jwt.secret) as any;
+        const user = await prisma.user.findUnique({
+          where: { id: decoded.id },
+          select: { id: true, isActivated: true, authType: true },
+        });
+
+        if (user) {
+          return res.json({
+            userId: user.id,
+            isActivated: user.isActivated,
+            authType: user.authType,
+          });
+        }
+      } catch (err) {
+        // Token 无效，继续创建匿名用户
+      }
+    }
+
+    // 创建匿名用户
+    const anonymousUser = await prisma.user.create({
+      data: {
+        authType: 'ANONYMOUS',
+        isActivated: false,
+        tokenVersion: 1,
+      },
+    });
+
+    // 生成 JWT
+    const newToken = jwt.sign(
+      {
+        id: anonymousUser.id,
+        authType: 'ANONYMOUS',
+        tokenVersion: anonymousUser.tokenVersion,
+      },
+      config.jwt.secret,
+      { expiresIn: '30d' }
+    );
+
+    // 设置 cookie
+    res.cookie('auth_token', newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30天
+      path: '/',
+    });
+
+    res.json({
+      userId: anonymousUser.id,
+      isActivated: false,
+      authType: 'ANONYMOUS',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // 获取当前用户信息
 router.get('/me', authenticate, async (req: AuthRequest, res: Response, next) => {

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import EmailLogin from './components/Auth/EmailLogin';
 import EmailRegister from './components/Auth/EmailRegister';
+import ActivatePage from './components/Auth/ActivatePage';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
 import CodeEditor from './components/Editor/CodeEditor';
@@ -48,7 +49,7 @@ const PUBLIC_VIEWS = ['knowledge-map', 'editor'];
 
 function MainApp() {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
-  const [authView, setAuthView] = useState<'login' | 'register'>('login');
+  const [authView, setAuthView] = useState<'login' | 'register' | 'activate'>('login');
 
   // 核心状态
   const [settings, setSettings] = useState<AppSettings>(() => getSettings());
@@ -561,12 +562,16 @@ function MainApp() {
     );
   }
 
-  // 未登录显示登录/注册页面
+  // 未登录显示登录/注册/激活页面
   if (!isAuthenticated) {
+    if (authView === 'activate') {
+      return <ActivatePage />;
+    }
     if (authView === 'login') {
       return (
         <EmailLogin
           onRegister={() => setAuthView('register')}
+          onActivate={() => setAuthView('activate')}
         />
       );
     }

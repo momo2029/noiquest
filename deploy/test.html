@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOI Quest 前端测试</title>
+</head>
+<body>
+    <h1>NOI Quest 前端测试页面</h1>
+    <div id="test-result">测试结果将在这里显示</div>
+
+    <script>
+        // 简单的前端功能测试
+        document.addEventListener('DOMContentLoaded', function() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = 'JavaScript执行成功！';
+            
+            // 测试CSS样式
+            setTimeout(() => {
+                resultDiv.innerHTML += '<br>CSS样式加载正常';
+                
+                // 测试API连接
+                fetch('/api/health')
+                    .then(response => response.json())
+                    .then(data => {
+                        resultDiv.innerHTML += `<br>API连接成功: ${data.status}`;
+                    })
+                    .catch(error => {
+                        resultDiv.innerHTML += `<br>API连接失败: ${error.message}`;
+                    });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

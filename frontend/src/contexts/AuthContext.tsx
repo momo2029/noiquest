@@ -3,6 +3,8 @@ import { AuthState, LoginRequest, RegisterRequest } from '../types';
 import { api } from '../services/api';
 
 interface AuthContextType extends AuthState {
+  userId: string | null;
+  isActivated: boolean;
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   emailLogin: (email: string, password: string) => Promise<void>;
@@ -13,6 +15,8 @@ interface AuthContextType extends AuthState {
     role?: 'STUDENT' | 'TEACHER';
     inviteCode?: string;
   }) => Promise<void>;
+  sendVerificationCode: (email: string) => Promise<void>;
+  activateAccount: (email: string, code: string, name?: string) => Promise<void>;
   updateProfile: (data: { name?: string; avatar?: string }) => Promise<void>;
   logout: () => void;
 }
@@ -26,37 +30,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: false,
     isLoading: true,
   });
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isActivated, setIsActivated] = useState(false);
 
-  // 初始化时检查 token 有效性
+  // 初始化时确保用户存在（匿名或已登录）
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = api.getToken();
-      if (!token) {
-        setState(prev => ({ ...prev, isLoading: false }));
-        return;
-      }
-
+    const initAuth = async () => {
       try {
-        const user = await api.getCurrentUser();
-        setState({
-          user,
-          token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-      } catch {
-        // Token 无效，清除
-        api.logout();
-        setState({
-          user: null,
-          token: null,
-          isAuthenticated: false,
-          isLoading: false,
-        });
+        // 先尝试确保用户存在
+        const userData = await api.ensureUser();
+        setUserId(userData.userId);
+        setIsActivated(userData.isActivated);
+
+        // 如果已激活，获取完整用户信息
+        if (userData.isActivated) {
+          try {
+            const user = await api.getCurrentUser();
+            setState({
+              user,
+              token: api.getToken(),
+              isAuthenticated: true,
+              isLoading: false,
+            });
+          } catch {
+            // 获取用户信息失败，保持匿名状态
+            setState(prev => ({ ...prev, isLoading: false }));
+          }
+        } else {
+          // 匿名用户
+          setState(prev => ({ ...prev, isLoading: false }));
+        }
+      } catch (error) {
+        console.error('初始化认证失败:', error);
+        setState(prev => ({ ...prev, isLoading: false }));
       }
     };
 
-    checkAuth();
+    initAuth();
   }, []);
 
   const login = async (data: LoginRequest) => {
@@ -105,6 +115,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const sendVerificationCode = async (email: string) => {
+    await api.sendVerificationCode(email);
+  };
+
+  const activateAccount = async (email: string, code: string, name?: string) => {
+    if (!userId) {
+      throw new Error('用户ID不存在');
+    }
+
+    const response = await api.activateAccount({
+      userId,
+      email,
+      code,
+      name,
+    });
+
+    // 激活成功后，获取用户信息
+    const user = await api.getCurrentUser();
+    setState({
+      user,
+      token: api.getToken(),
+      isAuthenticated: true,
+      isLoading: false,
+    });
+    setIsActivated(true);
+  };
+
   const updateProfile = async (data: { name?: string; avatar?: string }) => {
     const updatedUser = await api.updateProfile(data);
     setState(prev => ({
@@ -121,6 +158,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: false,
       isLoading: false,
     });
+    setIsActivated(false);
+    setUserId(null);
   };
 
   // 监听登录失效事件（单设备登录）
@@ -135,7 +174,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ ...state, login, register, emailLogin, emailRegister, updateProfile, logout }}>
+    <AuthContext.Provider
+      value={{
+        ...state,
+        userId,
+        isActivated,
+        login,
+        register,
+        emailLogin,
+        emailRegister,
+        sendVerificationCode,
+        activateAccount,
+        updateProfile,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

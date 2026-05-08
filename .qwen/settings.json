@@ -3,7 +3,12 @@
     "allow": [
       "Bash(\\\")",
       "Read(//Users/jf/code/server-tools/all-config/**)",
-      "Read(//Users/jf/code/workspace/noiquest/../**)"
+      "Read(//Users/jf/code/workspace/noiquest/../**)",
+      "Read(//Users/jf/code/server-tools/**)",
+      "Bash(./update-deploy.sh)",
+      "Bash(npm run *)",
+      "Bash(chmod *)",
+      "Bash(npx *)"
     ]
   },
   "$version": 3

@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 后端 API
+  # 后端 API - 连接到远程 PostgreSQL (47.80.18.138)
   backend:
     build:
       context: ../backend
@@ -13,23 +13,42 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-    networks:
-      - noiquest_network
-    expose:
-      - "3001"
+    ports:
+      - "3001:3001"
+    # 添加健康检查确保数据库连接正常
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # 前端
+  # 前端 - 使用宿主机 Nginx，这里只做构建
   frontend:
     build:
       context: ../frontend
       dockerfile: ../deploy/Dockerfile.frontend
     container_name: noiquest_frontend
     restart: always
-    networks:
-      - noiquest_network
-    expose:
-      - "80"
+    ports:
+      - "8080:80"
+    # 前端静态文件会复制到宿主机目录供 Nginx 使用
+    volumes:
+      - ../frontend/dist:/usr/share/nginx/html/noiquest:ro
 
-networks:
-  noiquest_network:
-    driver: bridge
+  # 监控服务（可选）
+  monitor:
+    image: alpine:latest
+    container_name: noiquest_monitor
+    restart: unless-stopped
+    volumes:
+      - /var/log:/var/log:ro
+      - ./monitor.sh:/opt/monitor.sh:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        chmod +x /opt/monitor.sh
+        echo "NOI Quest Monitor started"
+        while true; do
+          /opt/monitor.sh
+          sleep 300  # 5分钟检查一次
+        done

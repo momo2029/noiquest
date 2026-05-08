@@ -83,6 +83,39 @@ class ApiService {
   }
 
   // 认证相关
+
+  // 确保用户存在（自动创建匿名用户）
+  async ensureUser(): Promise<{ userId: string; isActivated: boolean; authType: string }> {
+    const response = await this.request<{ userId: string; isActivated: boolean; authType: string }>('/user/ensure', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    return response;
+  }
+
+  // 发送邮箱验证码
+  async sendVerificationCode(email: string): Promise<{ message: string; code?: string }> {
+    return this.request('/email-auth/send-code', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  // 激活账号
+  async activateAccount(data: {
+    userId: string;
+    email: string;
+    code: string;
+    name?: string;
+  }): Promise<{ success: boolean; merged: boolean; user: any }> {
+    const response = await this.request<{ success: boolean; merged: boolean; user: any }>('/email-auth/activate', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      credentials: 'include',
+    });
+    return response;
+  }
+
   async login(data: LoginRequest): Promise<AuthResponse> {
     const response = await this.request<AuthResponse>('/auth/login', {
       method: 'POST',

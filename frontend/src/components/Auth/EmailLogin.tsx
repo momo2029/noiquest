@@ -5,9 +5,10 @@ import { useAuth } from '../../contexts/AuthContext';
 
 interface EmailLoginProps {
   onRegister: () => void;
+  onActivate?: () => void;
 }
 
-export default function EmailLogin({ onRegister }: EmailLoginProps) {
+export default function EmailLogin({ onRegister, onActivate }: EmailLoginProps) {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -112,7 +113,7 @@ export default function EmailLogin({ onRegister }: EmailLoginProps) {
             </button>
           </form>
 
-          <div className="text-center mt-6">
+          <div className="text-center mt-6 space-y-3">
             <p className="text-sm text-gray-600">
               {t('auth.noAccount')}
               <button
@@ -122,6 +123,14 @@ export default function EmailLogin({ onRegister }: EmailLoginProps) {
                 {t('auth.registerNow')}
               </button>
             </p>
+            {onActivate && (
+              <button
+                onClick={onActivate}
+                className="text-sm text-green-600 hover:text-green-700 font-medium"
+              >
+                使用邮箱激活账号 →
+              </button>
+            )}
           </div>
         </div>
       </div>

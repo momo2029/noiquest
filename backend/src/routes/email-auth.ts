@@ -68,6 +68,62 @@ async function sendEmail(to: string, code: string): Promise<boolean> {
 // 邮箱验证
 const emailSchema = z.string().email('邮箱格式不正确');
 
+// 账号合并函数 - 将匿名用户数据迁移到目标用户
+async function mergeAnonymousData(anonymousUserId: string, targetUserId: string) {
+  console.log(`[账号合并] 开始合并: ${anonymousUserId} -> ${targetUserId}`);
+
+  await prisma.$transaction(async (tx) => {
+    // 1. 迁移练习进度
+    await tx.exerciseProgress.updateMany({
+      where: { userId: anonymousUserId },
+      data: { userId: targetUserId },
+    });
+
+    // 2. 迁移代码提交记录
+    await tx.submission.updateMany({
+      where: { userId: anonymousUserId },
+      data: { userId: targetUserId },
+    });
+
+    // 3. 迁移成就
+    await tx.userAchievement.updateMany({
+      where: { userId: anonymousUserId },
+      data: { userId: targetUserId },
+    });
+
+    // 4. 迁移学习会话
+    await tx.learningSession.updateMany({
+      where: { userId: anonymousUserId },
+      data: { userId: targetUserId },
+    });
+
+    // 5. 迁移错题记录
+    await tx.mistakeRecord.updateMany({
+      where: { userId: anonymousUserId },
+      data: { userId: targetUserId },
+    });
+
+    // 6. 迁移课程进度
+    await tx.userCourseProgress.updateMany({
+      where: { userId: anonymousUserId },
+      data: { userId: targetUserId },
+    });
+
+    // 7. 迁移用户文件
+    await tx.userFile.updateMany({
+      where: { userId: anonymousUserId },
+      data: { userId: targetUserId },
+    });
+
+    // 8. 删除匿名用户
+    await tx.user.delete({
+      where: { id: anonymousUserId },
+    });
+  });
+
+  console.log(`[账号合并] 完成合并: ${anonymousUserId} -> ${targetUserId}`);
+}
+
 // 发送验证码
 const sendCodeSchema = z.object({
   email: emailSchema,
@@ -124,6 +180,156 @@ router.post('/send-code', async (req, res, next) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return next(new AppError('邮箱格式错误', 400));
+    }
+    next(error);
+  }
+});
+
+// 激活账号（邮箱验证码）
+const activateSchema = z.object({
+  userId: z.string(),
+  email: emailSchema,
+  code: z.string().length(6, '验证码必须是6位数字'),
+  name: z.string().min(1).max(50).optional(),
+});
+
+router.post('/activate', async (req, res, next) => {
+  try {
+    const { userId, email, code, name } = activateSchema.parse(req.body);
+
+    // 验证验证码
+    const verificationCode = await prisma.verificationCode.findFirst({
+      where: {
+        email,
+        code,
+        used: false,
+        expiresAt: { gt: new Date() },
+      },
+    });
+
+    if (!verificationCode) {
+      throw new AppError('验证码错误或已过期', 400);
+    }
+
+    // 标记验证码为已使用
+    await prisma.verificationCode.update({
+      where: { id: verificationCode.id },
+      data: { used: true },
+    });
+
+    // 查找当前用户（可能不存在，需要创建）
+    let currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!currentUser) {
+      // 自动创建匿名账号
+      currentUser = await prisma.user.create({
+        data: {
+          id: userId,
+          authType: 'ANONYMOUS',
+          isActivated: false,
+          tokenVersion: 1,
+        },
+      });
+      console.log(`[激活] 自动创建匿名用户: ${userId}`);
+    }
+
+    // 检查邮箱是否已被其他用户使用
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser && existingUser.id !== userId) {
+      // 智能合并：将当前匿名用户数据合并到已存在账号
+      console.log(`[激活] 检测到邮箱已存在，执行智能合并`);
+      await mergeAnonymousData(userId, existingUser.id);
+
+      // 生成已存在账号的 token
+      const token = jwt.sign(
+        {
+          id: existingUser.id,
+          username: existingUser.username,
+          email: existingUser.email,
+          role: existingUser.role,
+          tokenVersion: existingUser.tokenVersion,
+        },
+        config.jwt.secret,
+        { expiresIn: '30d' }
+      );
+
+      // 设置 cookie
+      res.cookie('auth_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: '/',
+      });
+
+      return res.json({
+        success: true,
+        merged: true,
+        user: {
+          id: existingUser.id,
+          email: existingUser.email,
+          name: existingUser.name,
+          isActivated: existingUser.isActivated,
+        },
+      });
+    }
+
+    // 激活当前账号
+    const username = email.split('@')[0];
+    const activatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        email,
+        username,
+        name: name || username,
+        authType: 'EMAIL',
+        isActivated: true,
+        activationMethod: 'email',
+        activatedAt: new Date(),
+        gems: { increment: 100 }, // 激活奖励
+      },
+    });
+
+    // 生成 token
+    const token = jwt.sign(
+      {
+        id: activatedUser.id,
+        username: activatedUser.username,
+        email: activatedUser.email,
+        role: activatedUser.role,
+        tokenVersion: activatedUser.tokenVersion,
+      },
+      config.jwt.secret,
+      { expiresIn: '30d' }
+    );
+
+    // 设置 cookie
+    res.cookie('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/',
+    });
+
+    res.json({
+      success: true,
+      merged: false,
+      user: {
+        id: activatedUser.id,
+        email: activatedUser.email,
+        name: activatedUser.name,
+        isActivated: true,
+      },
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return next(new AppError('输入数据格式错误', 400));
     }
     next(error);
   }
