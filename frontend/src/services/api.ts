@@ -151,12 +151,6 @@ class ApiService {
   }
 
   // 邮箱认证相关
-  async sendVerificationCode(email: string): Promise<{ message: string; code?: string }> {
-    return this.request<{ message: string; code?: string }>('/email-auth/send-code', {
-      method: 'POST',
-      body: JSON.stringify({ email }),
-    });
-  }
 
   async emailRegister(data: {
     email: string;

@@ -124,7 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error('用户ID不存在');
     }
 
-    const response = await api.activateAccount({
+    await api.activateAccount({
       userId,
       email,
       code,
