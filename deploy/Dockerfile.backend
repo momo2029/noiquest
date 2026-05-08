@@ -1,9 +1,9 @@
-FROM docker.io/library/node:24-alpine
+FROM docker.io/library/node:20-alpine
 
 WORKDIR /app
 
 # 安装构建依赖和 OpenSSL
-RUN apk add --no-cache python3 make g++ openssl
+RUN apk add --no-cache python3 make g++ openssl openssl-dev
 
 # 复制 package 文件
 COPY package*.json ./
