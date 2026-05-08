@@ -86,7 +86,7 @@ class ApiService {
 
   // 确保用户存在（自动创建匿名用户）
   async ensureUser(): Promise<{ userId: string; isActivated: boolean; authType: string }> {
-    const response = await this.request<{ userId: string; isActivated: boolean; authType: string }>('/user/ensure', {
+    const response = await this.request<{ userId: string; isActivated: boolean; authType: string }>('/users/ensure', {
       method: 'POST',
       credentials: 'include',
     });
